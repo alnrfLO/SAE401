@@ -19,6 +19,9 @@ switch ($page) {
     case 'spots':
         $page = new Spots();
     break;
+    case 'register':
+        $page = new Register();
+    break;
     default:
         $page = new Home();
     break;
