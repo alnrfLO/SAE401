@@ -1,9 +1,12 @@
 <?php
 class View {
     protected $data;
+    protected $lang;
     
     public function __construct($data = []) {
+        global $lang;
         $this->data = $data;
+        $this->lang = $lang;
     }
     
     public function render() {
@@ -19,9 +22,9 @@ class View {
     <header>
         <nav>
             <a href="?page=home">FAV</a>
-            <a href="?page=spots">Spots</a>
-            <a href="?page=login">Login</a>
-            <a href="?page=register">Register</a>
+            <a href="?page=spots">' . $this->lang['nav_spots'] . '</a>
+            <a href="?page=login">' . $this->lang['nav_login'] . '</a>
+            <a href="?page=register">' . $this->lang['nav_register'] . '</a>
             <div>
                 <a href="?lang=fr">FR</a>
                 <a href="?lang=en">EN</a>
@@ -34,9 +37,9 @@ class View {
         ' . $this->content() . '
     </main>
     <footer>
-        <a href="?page=legal">Mentions légales</a>
-        <a href="?page=terms">CGU</a>
-        <a href="?page=privacy">Politique de confidentialité</a>
+        <a href="?page=legal">' . $this->lang['footer_legal'] . '</a>
+        <a href="?page=terms">' . $this->lang['footer_terms'] . '</a>
+        <a href="?page=privacy">' . $this->lang['footer_privacy'] . '</a>
     </footer>
 </body>
 </html>';
