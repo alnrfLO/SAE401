@@ -36,3 +36,17 @@ CREATE TABLE `comments` (
     FOREIGN KEY (`spot_id`) REFERENCES `spots`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
+
+CREATE TABLE `events` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `titre` VARCHAR(255) NOT NULL,
+    `description` TEXT,
+    `lieu` VARCHAR(255),
+    `date_event` DATETIME NOT NULL,
+    `type` ENUM('private', 'shared', 'public') NOT NULL DEFAULT 'private',
+    `status` ENUM('pending', 'accepted', 'refused') NOT NULL DEFAULT 'pending',
+    `user_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
