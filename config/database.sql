@@ -15,3 +15,24 @@ CREATE TABLE `users` (
     UNIQUE (`pseudo`),
     CHECK (`role` IN ('admin', 'user'))
 );
+
+CREATE TABLE `spots` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `titre` VARCHAR(255) NOT NULL,
+    `description` TEXT NOT NULL,
+    `image` VARCHAR(255),
+    `user_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `comments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `spot_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `contenu` TEXT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`spot_id`) REFERENCES `spots`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
