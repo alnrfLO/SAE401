@@ -11,7 +11,7 @@ class View {
     
     public function render() {
         return '<!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,15 +21,15 @@ class View {
 <body>
     <header>
         <nav>
-            <a href="?page=home">FAV</a>
-            <a href="?page=spots">' . $this->lang['nav_spots'] . '</a>
-            <a href="?page=login">' . $this->lang['nav_login'] . '</a>
-            <a href="?page=register">' . $this->lang['nav_register'] . '</a>
+            <a href="?page=home&lang=' . ($_GET['lang'] ?? 'en') . '">FAV</a>
+            <a href="?page=spots&lang=' . ($_GET['lang'] ?? 'en') . '">spots</a>
+            <a href="?page=login&lang=' . ($_GET['lang'] ?? 'en') . '">login</a>
+            <a href="?page=register&lang=' . ($_GET['lang'] ?? 'en') . '">register</a>
             <div>
-                <a href="?lang=fr">FR</a>
-                <a href="?lang=en">EN</a>
-                <a href="?lang=al">AL</a>
-                <a href="?lang=vi">VI</a>
+                <a href="?page=' . ($this->data['page'] ?? 'home') . '&lang=fr">FR</a>
+                <a href="?page=' . ($this->data['page'] ?? 'home') . '&lang=en">EN</a>
+                <a href="?page=' . ($this->data['page'] ?? 'home') . '&lang=al">AL</a>
+                <a href="?page=' . ($this->data['page'] ?? 'home') . '&lang=vi">VI</a>
             </div>
         </nav>
     </header>

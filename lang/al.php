@@ -22,4 +22,5 @@ $lang = [
     'register_country' => 'Shteti',
     'register_submit' => 'Regjistrohu',
     'register_have_account' => 'Keni llogari ?',
+    'select_country' => 'Zgjidhni shtetin tuaj',
 ];

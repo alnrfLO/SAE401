@@ -22,4 +22,5 @@ $lang = [
     'register_country' => 'Quốc gia',
     'register_submit' => 'Đăng ký',
     'register_have_account' => 'Đã có tài khoản ?',
+    'select_country' => 'Chọn quốc gia của bạn',
 ];

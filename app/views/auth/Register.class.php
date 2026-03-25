@@ -21,7 +21,7 @@ class Register extends View {
                 <input type="password" name="confirm_password" placeholder="••••••••" style="width:100%; padding:8px; margin:8px 0;">
             </div>
             <div>
-                <label>' . $this->lang['register_country'] . '</label><br>
+                <option value="">' . $this->lang['select_country'] . '</option>
                 <select name="pays" style="width:100%; padding:8px; margin:8px 0;">
                     <option value="">Select your country</option>
                     <option value="fr">France</option>

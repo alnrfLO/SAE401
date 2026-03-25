@@ -11,16 +11,16 @@ require_once '../lang/' . $lang . '.php';
 
 switch ($page) {
     case 'home':
-        $page = new Home();
+        $page = new Home(['page' => 'home']);
     break;
     case 'login':
-        $page = new Login();
-    break;
-    case 'spots':
-        $page = new Spots();
+        $page = new Login(['page' => 'login']);
     break;
     case 'register':
-        $page = new Register();
+        $page = new Register(['page' => 'register']);
+    break;
+    case 'spots':
+        $page = new Spots(['page' => 'spots']);
     break;
     default:
         $page = new Home();

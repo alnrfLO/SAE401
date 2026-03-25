@@ -22,4 +22,5 @@ $lang = [
     'register_country' => 'Pays',
     'register_submit' => 'S\'inscrire',
     'register_have_account' => 'Déjà un compte ?',
+    'select_country' => 'Sélectionnez votre pays',
 ];
