@@ -23,4 +23,6 @@ $lang = [
     'register_submit' => 'Regjistrohu',
     'register_have_account' => 'Keni llogari ?',
     'select_country' => 'Zgjidhni shtetin tuaj',
+    'error_404' => 'Faqja nuk u gjet',
+    'error_back' => 'Kthehu në faqen kryesore',
 ];

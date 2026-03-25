@@ -23,4 +23,6 @@ $lang = [
     'register_submit' => 'Sign Up',
     'register_have_account' => 'Already have an account ?',
     'select_country' => 'Select your country',
+    'error_404' => 'Page not found',
+    'error_back' => 'Go back home',
 ];

@@ -23,4 +23,6 @@ $lang = [
     'register_submit' => 'S\'inscrire',
     'register_have_account' => 'Déjà un compte ?',
     'select_country' => 'Sélectionnez votre pays',
+    'error_404' => 'Page non trouvée',
+    'error_back' => 'Retour à l\'accueil',
 ];

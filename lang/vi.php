@@ -23,4 +23,6 @@ $lang = [
     'register_submit' => 'Đăng ký',
     'register_have_account' => 'Đã có tài khoản ?',
     'select_country' => 'Chọn quốc gia của bạn',
+    'error_404' => 'Không tìm thấy trang',
+    'error_back' => 'Quay về trang chủ',
 ];
