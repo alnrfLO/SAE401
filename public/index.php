@@ -23,7 +23,7 @@ switch ($page) {
         $page = new Spots(['page' => 'spots']);
     break;
     default:
-        $page = new Home();
+        $page = new NotFound(['page' => '404']);
     break;
 }
 echo $page->render();

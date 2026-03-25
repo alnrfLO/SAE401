@@ -6,6 +6,7 @@ spl_autoload_register(function ($class) {
         __DIR__ . '/../app/views/spots/',
         __DIR__ . '/../app/views/comments/',
         __DIR__ . '/../core/',
+        __DIR__ . '/../app/views/errors/',
     ];
     
     foreach ($dirs as $dir) {
