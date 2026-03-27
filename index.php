@@ -7,7 +7,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
 $lang = isset($_GET['lang']) ? $_GET['lang'] : 'en';
 $_SESSION['lang'] = $lang;
-require_once '../lang/' . $lang . '.php';
+require_once 'lang/' . $lang . '.php';
 
 switch ($page) {
     case 'home':

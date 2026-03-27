@@ -1,12 +1,8 @@
 <?php
 spl_autoload_register(function ($class) {
     $dirs = [
-        __DIR__ . '/../app/views/home/',
-        __DIR__ . '/../app/views/auth/',
-        __DIR__ . '/../app/views/spots/',
-        __DIR__ . '/../app/views/comments/',
-        __DIR__ . '/../core/',
-        __DIR__ . '/../app/views/errors/',
+        __DIR__ . '/app/views/',
+        __DIR__ . '/core/',
     ];
     
     foreach ($dirs as $dir) {
