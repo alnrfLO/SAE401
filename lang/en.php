@@ -25,4 +25,10 @@ $lang = [
     'select_country' => 'Select your country',
     'error_404' => 'Page not found',
     'error_back' => 'Go back home',
+    'home_video_btn' => 'Watch the video',
+'home_features_title' => 'Discover FAV',
+'home_features_subtitle' => 'Share your favorite spots with the world',
+'home_card1' => 'Share your spots',
+'home_card2' => 'Discover places',
+'home_card3' => 'Connect with others',
 ];

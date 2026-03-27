@@ -25,4 +25,10 @@ $lang = [
     'select_country' => 'Chọn quốc gia của bạn',
     'error_404' => 'Không tìm thấy trang',
     'error_back' => 'Quay về trang chủ',
+    'home_video_btn' => 'Xem video',
+'home_features_title' => 'Khám phá FAV',
+'home_features_subtitle' => 'Chia sẻ những địa điểm yêu thích của bạn với thế giới',
+'home_card1' => 'Chia sẻ địa điểm',
+'home_card2' => 'Khám phá nơi chốn',
+'home_card3' => 'Kết nối với mọi người',
 ];

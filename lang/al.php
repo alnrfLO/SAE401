@@ -25,4 +25,10 @@ $lang = [
     'select_country' => 'Zgjidhni shtetin tuaj',
     'error_404' => 'Faqja nuk u gjet',
     'error_back' => 'Kthehu në faqen kryesore',
+    'home_video_btn' => 'Shiko videon',
+'home_features_title' => 'Zbulo FAV',
+'home_features_subtitle' => 'Ndaj vendet e tua të preferuara me botën',
+'home_card1' => 'Ndaj vendet tuaja',
+'home_card2' => 'Zbulo vendete',
+'home_card3' => 'Lidhu me të tjerët',
 ];
