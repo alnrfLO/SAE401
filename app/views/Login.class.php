@@ -1,6 +1,8 @@
 <?php
-class Login extends View {
-    public function content() {
+class Login extends View
+{
+    public function content()
+    {
         return '
         <div style="max-width: 400px; margin: 100px auto;">
             <h1>' . $this->lang['login_title'] . '</h1>

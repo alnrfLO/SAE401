@@ -1,6 +1,8 @@
 <?php
-class Register extends View {
-    public function content() {
+class Register extends View
+{
+    public function content()
+    {
         return '
         <div style="max-width: 400px; margin: 100px auto;">
             <h1>' . $this->lang['register_title'] . '</h1>
