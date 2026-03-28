@@ -33,11 +33,11 @@ class View
                             <span class="badge">TRAVEL</span>
                         </a>
                         <div class="nav-links">
-                            <a href="?page=home&lang=' . ($_GET['lang'] ?? 'en') . '">Home</a>
-                            <a href="?page=spots&lang=' . ($_GET['lang'] ?? 'en') . '">Discover</a>
-                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">Presentation</a>
-                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">About</a>
-                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">News</a>
+                            <a href="?page=home&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_home'] . '</a>
+                            <a href="?page=spots&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_discover'] . '</a>
+                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_presentation'] . '</a>
+                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_about'] . '</a>
+                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_news'] . '</a>
                         </div>
                         <div class="action-group">
                             <div class="language-selector">
@@ -84,8 +84,8 @@ class View
                                     </a>
                                 </div>
                             </div>
-                            <a href="?page=login&lang=' . ($_GET['lang'] ?? 'en') . '" class="button-inline secondary">SIGN IN</a>
-                            <a href="?page=register&lang=' . ($_GET['lang'] ?? 'en') . '" class="button-inline primary">SIGN UP</a>
+                            <a href="?page=login&lang=' . ($_GET['lang'] ?? 'en') . '" class="button-inline secondary">' . $this->lang['nav_login'] . '</a>
+                            <a href="?page=register&lang=' . ($_GET['lang'] ?? 'en') . '" class="button-inline primary">' . $this->lang['nav_register'] . '</a>
                         </div>
                     </nav>
                 </header>
