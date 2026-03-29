@@ -13,6 +13,9 @@ class View
 
     public function render()
     {
+        $lang = $_GET['lang'] ?? 'en';
+        $page = $this->data['page'] ?? 'home';
+
         return
             '<!DOCTYPE html>
             <html lang="fr">
@@ -28,16 +31,22 @@ class View
             <body>
                 <header>
                     <nav class="site-nav">
-                        <a href="?page=home&lang=' . ($_GET['lang'] ?? 'en') . '" class="site-brand">
+                        <a href="?page=home&lang=' . $lang . '" class="site-brand">
                             FAV
                             <span class="badge">TRAVEL</span>
                         </a>
+                        <input type="checkbox" id="nav-toggle-input" class="nav-toggle-input" aria-hidden="true">
+                        <label for="nav-toggle-input" class="nav-toggle" aria-label="Toggle navigation">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </label>
                         <div class="nav-links">
-                            <a href="?page=home&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_home'] . '</a>
-                            <a href="?page=spots&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_discover'] . '</a>
-                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_presentation'] . '</a>
-                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_about'] . '</a>
-                            <a href="?page=about&lang=' . ($_GET['lang'] ?? 'en') . '">' . $this->lang['nav_news'] . '</a>
+                            <a href="?page=home&lang=' . $lang . '">' . $this->lang['nav_home'] . '</a>
+                            <a href="?page=spots&lang=' . $lang . '">' . $this->lang['nav_discover'] . '</a>
+                            <a href="?page=about&lang=' . $lang . '">' . $this->lang['nav_presentation'] . '</a>
+                            <a href="?page=about&lang=' . $lang . '">' . $this->lang['nav_about'] . '</a>
+                            <a href="?page=about&lang=' . $lang . '">' . $this->lang['nav_news'] . '</a>
                         </div>
                         <div class="action-group">
                             <div class="language-selector">
@@ -57,35 +66,35 @@ class View
                                             </defs>
                                         </svg>
                                     </span>
-                                    <span>' . strtoupper($_GET['lang'] ?? 'en') . '</span>
+                                    <span>' . strtoupper($lang) . '</span>
                                     <span class="language-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="#222222" stroke-width="1.16667" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                                 </label>
                                 <div class="language-menu">
                                     <div class="language-menu__header">LANGUAGE</div>
-                                    <a class="language-menu__item' . (((($_GET['lang'] ?? 'en') === 'en') ? ' active' : '')) . '" href="?page=' . ($this->data['page'] ?? 'home') . '&lang=en">
+                                    <a class="language-menu__item' . (($lang === 'en') ? ' active' : '') . '" href="?page=' . $page . '&lang=en">
                                         <span class="item-code">GB</span>
                                         <span class="item-label">English</span>
-                                        <span class="item-check">' . (((($_GET['lang'] ?? 'en') === 'en') ? '✓' : '')) . '</span>
+                                        <span class="item-check">' . (($lang === 'en') ? '✓' : '') . '</span>
                                     </a>
-                                    <a class="language-menu__item' . (((($_GET['lang'] ?? 'en') === 'fr') ? ' active' : '')) . '" href="?page=' . ($this->data['page'] ?? 'home') . '&lang=fr">
+                                    <a class="language-menu__item' . (($lang === 'fr') ? ' active' : '') . '" href="?page=' . $page . '&lang=fr">
                                         <span class="item-code">FR</span>
                                         <span class="item-label">Français</span>
-                                        <span class="item-check">' . (((($_GET['lang'] ?? 'en') === 'fr') ? '✓' : '')) . '</span>
+                                        <span class="item-check">' . (($lang === 'fr') ? '✓' : '') . '</span>
                                     </a>
-                                    <a class="language-menu__item' . (((($_GET['lang'] ?? 'en') === 'al') ? ' active' : '')) . '" href="?page=' . ($this->data['page'] ?? 'home') . '&lang=al">
+                                    <a class="language-menu__item' . (($lang === 'al') ? ' active' : '') . '" href="?page=' . $page . '&lang=al">
                                         <span class="item-code">AL</span>
                                         <span class="item-label">Shqip</span>
-                                        <span class="item-check">' . (((($_GET['lang'] ?? 'en') === 'al') ? '✓' : '')) . '</span>
+                                        <span class="item-check">' . (($lang === 'al') ? '✓' : '') . '</span>
                                     </a>
-                                    <a class="language-menu__item' . (((($_GET['lang'] ?? 'en') === 'vi') ? ' active' : '')) . '" href="?page=' . ($this->data['page'] ?? 'home') . '&lang=vi">
+                                    <a class="language-menu__item' . (($lang === 'vi') ? ' active' : '') . '" href="?page=' . $page . '&lang=vi">
                                         <span class="item-code">VN</span>
                                         <span class="item-label">Tiếng Việt</span>
-                                        <span class="item-check">' . (((($_GET['lang'] ?? 'en') === 'vi') ? '✓' : '')) . '</span>
+                                        <span class="item-check">' . (($lang === 'vi') ? '✓' : '') . '</span>
                                     </a>
                                 </div>
                             </div>
-                            <a href="?page=login&lang=' . ($_GET['lang'] ?? 'en') . '" class="button-inline secondary">' . $this->lang['nav_login'] . '</a>
-                            <a href="?page=register&lang=' . ($_GET['lang'] ?? 'en') . '" class="button-inline primary">' . $this->lang['nav_register'] . '</a>
+                            <a href="?page=login&lang=' . $lang . '" class="button-inline secondary">' . $this->lang['nav_login'] . '</a>
+                            <a href="?page=register&lang=' . $lang . '" class="button-inline primary">' . $this->lang['nav_register'] . '</a>
                         </div>
                     </nav>
                 </header>
