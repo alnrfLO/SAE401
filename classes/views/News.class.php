@@ -4,8 +4,7 @@ class News extends View
     public function content()
     {
         $currentLang = $_GET['lang'] ?? 'en';
-        $newsModel = new NewsModel();
-        $newsItems = $newsModel->getAll();
+        $newsItems = $this->data['newsItems'] ?? [];
 
         $html = '
         <link rel="stylesheet" href="public/css/news.css">
