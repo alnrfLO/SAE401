@@ -39,6 +39,64 @@ if (isset($_GET['action'])) {
     $userModel = new User($pdo);
     $userId = $_SESSION['user_id'] ?? null;
 
+    // ── RECHERCHE D'UTILISATEURS (Connections) ──────────────
+    if ($action === 'searchUsers') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode([]); exit; }
+        $q = trim($_GET['q'] ?? '');
+        if (strlen($q) < 2) { echo json_encode([]); exit; }
+        $friendshipModel = new Friendship($pdo);
+        echo json_encode($friendshipModel->searchUsers($_SESSION['user_id'], $q));
+        exit;
+    }
+ 
+    // ── ACTIONS AMIS : sendFriendRequest / friendAction ─────
+    if ($action === 'sendFriendRequest' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+        $receiverId = (int)($_POST['receiver_id'] ?? 0);
+        if (!$receiverId) { echo json_encode(['success'=>false,'error'=>'ID invalide']); exit; }
+        $friendshipModel = new Friendship($pdo);
+        $ok = $friendshipModel->sendRequest($_SESSION['user_id'], $receiverId);
+        echo json_encode(['success' => $ok, 'error' => $ok ? null : 'Déjà envoyé ou relation existante']);
+        exit;
+    }
+ 
+    if ($action === 'friendAction' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+        $type = $_POST['type'] ?? '';
+        $friendshipId = (int)($_POST['friendship_id'] ?? 0);
+        $userId = $_SESSION['user_id'];
+        $friendshipModel = new Friendship($pdo);
+        $ok = false; $message = '';
+        switch ($type) {
+            case 'accept':
+                $ok = $friendshipModel->acceptRequest($friendshipId, $userId);
+                $message = '✅ Friend request accepted!';
+                break;
+            case 'decline':
+            case 'cancel':
+                $ok = $friendshipModel->deleteRequest($friendshipId, $userId);
+                $message = $type === 'cancel' ? '↩️ Request cancelled.' : '❌ Request declined.';
+                break;
+            case 'remove':
+                // On récupère l'autre user_id depuis la DB
+                $stmt = $pdo->prepare('SELECT sender_id, receiver_id FROM friendships WHERE id = ?');
+                $stmt->execute([$friendshipId]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($row) {
+                    $otherId = ($row['sender_id'] == $userId) ? $row['receiver_id'] : $row['sender_id'];
+                    $ok = $friendshipModel->removeFriend($userId, $otherId);
+                    $message = '👋 Friend removed.';
+                }
+                break;
+        }
+        echo json_encode(['success' => $ok, 'message' => $message]);
+        exit;
+    }
+
+
     if ($action === 'saveFullProfile' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
             'username' => trim($_POST['username'] ?? ''),
@@ -274,6 +332,19 @@ switch ($page) {
 
     case 'directory':
     $view = new Directory(['page' => 'directory']);
+    break;
+
+    case 'connections':
+        if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
+        $userModel = new User($pdo);
+        $userData  = $userModel->findById($_SESSION['user_id']);
+        $friendshipModel = new Friendship($pdo);
+        $view = new Connections([
+            'profileUser' => $userData,
+            'friends'     => $friendshipModel->getFriends($_SESSION['user_id']),
+            'received'    => $friendshipModel->getReceivedRequests($_SESSION['user_id']),
+            'sent'        => $friendshipModel->getSentRequests($_SESSION['user_id']),
+        ]);
     break;
 
     case 'about':

@@ -16,39 +16,8 @@ main {
   text-align: center;
   overflow: hidden;
   padding: 120px 20px 80px;
-  background: linear-gradient(180deg, #87CEEB 0%, #b6e3f4 35%, #dff6e3 70%, #3aa26b 100%);
-}
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../img/homebg.webp') center/cover no-repeat;
 
-/* Decorative tropical leaves — top-left */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 280px;
-  height: 280px;
-  background:
-    radial-gradient(ellipse at 30% 40%, rgba(34, 139, 34, 0.5) 0%, transparent 60%),
-    radial-gradient(ellipse at 60% 20%, rgba(0, 100, 0, 0.35) 0%, transparent 55%);
-  filter: blur(30px);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Decorative tropical leaves — top-right */
-.hero::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 280px;
-  height: 280px;
-  background:
-    radial-gradient(ellipse at 70% 40%, rgba(34, 139, 34, 0.5) 0%, transparent 60%),
-    radial-gradient(ellipse at 40% 20%, rgba(0, 100, 0, 0.35) 0%, transparent 55%);
-  filter: blur(30px);
-  pointer-events: none;
-  z-index: 1;
 }
 
 .hero-content {
@@ -206,79 +175,6 @@ main {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-
-/* Floating decorative elements */
-.hero-floats {
-  position: absolute;
-  inset: 0;
-  max-width: 1564px;
-  margin: 0 auto;
-  pointer-events: none;
-  z-index: 2;
-  overflow: hidden;
-}
-
-.hero-float {
-  position: absolute;
-  font-size: 40px;
-  animation: floatUp 6s ease-in-out infinite;
-  opacity: 0.5;
-}
-
-.hero-float:nth-child(1) {
-  left: 8%;
-  top: 25%;
-  animation-delay: 0s;
-  font-size: 36px;
-}
-
-.hero-float:nth-child(2) {
-  right: 10%;
-  top: 20%;
-  animation-delay: 1s;
-  font-size: 30px;
-}
-
-.hero-float:nth-child(3) {
-  left: 15%;
-  bottom: 30%;
-  animation-delay: 2s;
-  font-size: 44px;
-}
-
-.hero-float:nth-child(4) {
-  right: 15%;
-  bottom: 25%;
-  animation-delay: 0.5s;
-  font-size: 34px;
-}
-
-.hero-float:nth-child(5) {
-  left: 5%;
-  top: 60%;
-  animation-delay: 3s;
-  font-size: 28px;
-}
-
-.hero-float:nth-child(6) {
-  right: 5%;
-  top: 55%;
-  animation-delay: 1.5s;
-  font-size: 38px;
-}
-
-@keyframes floatUp {
-
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-16px) rotate(5deg);
-  }
 }
 
 /* Stats cards row */

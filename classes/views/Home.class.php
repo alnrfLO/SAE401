@@ -10,16 +10,6 @@ class Home extends View
 
         <!-- HERO SECTION -->
         <section class="hero">
-            <!-- Floating decorative emojis -->
-            <div class="hero-floats">
-                <span class="hero-float">🌿</span>
-                <span class="hero-float">🌺</span>
-                <span class="hero-float">🍃</span>
-                <span class="hero-float">🌴</span>
-                <span class="hero-float">✨</span>
-                <span class="hero-float">🦋</span>
-            </div>
-
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="ph ph-globe-hemisphere-west"></i>

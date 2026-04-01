@@ -297,16 +297,44 @@ class User
      */
     public function getStats(int $userId): array
     {
-        // Paramètres nommés uniques obligatoires avec ATTR_EMULATE_PREPARES = false
         $sql = "SELECT
-            (SELECT COUNT(*) FROM spots   WHERE user_id = :id1 AND status = 'published') AS spots_count,
-            (SELECT COUNT(*) FROM follows WHERE followed_id = :id2)   AS followers_count,
-            (SELECT COUNT(*) FROM follows WHERE follower_id = :id3)   AS following_count,
-            (SELECT COUNT(*) FROM likes   WHERE spot_id IN (SELECT id FROM spots WHERE user_id = :id4)) AS total_likes";
+            (SELECT COUNT(*) FROM spots 
+                WHERE user_id = :id1 AND status = 'published') AS spots_count,
+
+            (SELECT COUNT(*) FROM follows 
+                WHERE followed_id = :id2) AS followers_count,
+
+            (SELECT COUNT(*) FROM follows 
+                WHERE follower_id = :id3) AS following_count,
+
+            (SELECT COUNT(*) FROM likes 
+                WHERE spot_id IN (
+                    SELECT id FROM spots WHERE user_id = :id4
+                )) AS total_likes,
+
+            (SELECT COUNT(*) FROM friendships
+                WHERE status = 'accepted'
+                AND (sender_id = :id5 OR receiver_id = :id6)
+            ) AS friends_count
+        ";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id1' => $userId, ':id2' => $userId, ':id3' => $userId, ':id4' => $userId]);
-        return $stmt->fetch() ?: ['spots_count' => 0, 'followers_count' => 0, 'following_count' => 0, 'total_likes' => 0];
+        $stmt->execute([
+            ':id1' => $userId,
+            ':id2' => $userId,
+            ':id3' => $userId,
+            ':id4' => $userId,
+            ':id5' => $userId,
+            ':id6' => $userId
+        ]);
+
+        return $stmt->fetch() ?: [
+            'spots_count' => 0,
+            'followers_count' => 0,
+            'following_count' => 0,
+            'total_likes' => 0,
+            'friends_count' => 0
+        ];
     }
 
     // ─── UTILITAIRES ─────────────────────────────────────────
