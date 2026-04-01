@@ -1,0 +1,316 @@
+/* ============================================================
+   connections.css — Page Connections / Amis
+   ============================================================ */
+
+/* ── Topbar counter ─────────────────────────────────────────── */
+.dash-topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+.conn-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1a1a1a;
+    border: 2px solid #fbad40;
+    border-radius: 12px;
+    padding: 12px 20px;
+    min-width: 80px;
+    flex-shrink: 0;
+}
+.conn-counter-number {
+    font-family: 'Bungee', cursive;
+    font-size: 28px;
+    color: #fbad40;
+    line-height: 1;
+}
+.conn-counter-label {
+    font-size: 11px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+}
+
+/* ── Search box ─────────────────────────────────────────────── */
+.conn-search-box {
+    position: relative;
+    margin-bottom: 24px;
+}
+.conn-search-wrap {
+    display: flex;
+    align-items: center;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 0 16px;
+    transition: border-color 0.2s;
+}
+.conn-search-wrap:focus-within {
+    border-color: #fbad40;
+}
+.conn-search-icon {
+    color: #666;
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+.conn-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    padding: 14px 0;
+}
+.conn-search-input::placeholder {
+    color: #555;
+}
+
+/* ── Search results dropdown ────────────────────────────────── */
+.conn-search-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    background: #1e1e1e;
+    border: 2px solid #333;
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.conn-search-results.active {
+    display: block;
+}
+.conn-search-loading {
+    padding: 16px 20px;
+    color: #999;
+    font-size: 14px;
+}
+.conn-sr-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #2a2a2a;
+    transition: background 0.15s;
+}
+.conn-sr-item:last-child { border-bottom: none; }
+.conn-sr-item:hover { background: #252525; }
+.conn-sr-avatar { flex-shrink: 0; }
+.conn-sr-avatar-img {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #333;
+}
+.conn-sr-avatar-ph {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: #fbad40;
+    color: #212121;
+    font-family: 'Bungee', cursive;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #333;
+}
+.conn-sr-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.conn-sr-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+}
+.conn-sr-country {
+    font-size: 12px;
+    color: #999;
+}
+.conn-sr-action { flex-shrink: 0; }
+
+/* ── Tabs ───────────────────────────────────────────────────── */
+.conn-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 2px solid #2a2a2a;
+    margin-bottom: 24px;
+}
+.conn-tab {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-family: 'Bungee', cursive;
+    font-size: 13px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+    letter-spacing: 0.04em;
+}
+.conn-tab:hover { color: #ccc; }
+.conn-tab--active {
+    color: #fbad40;
+    border-bottom-color: #fbad40;
+}
+.conn-tab-badge {
+    background: #333;
+    color: #ccc;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+}
+.conn-tab-badge--alert {
+    background: #e53e3e;
+    color: #fff;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ── Friend cards list ──────────────────────────────────────── */
+.conn-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.conn-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #1a1a1a;
+    border: 2px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: border-color 0.2s, transform 0.2s, opacity 0.2s;
+}
+.conn-card:hover { border-color: #444; }
+.conn-card-avatar { flex-shrink: 0; }
+.conn-card-avatar-img {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #333;
+}
+.conn-card-avatar-ph {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: #fbad40;
+    color: #212121;
+    font-family: 'Bungee', cursive;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+}
+.conn-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+.conn-card-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.conn-card-country {
+    font-size: 12px;
+    color: #888;
+}
+.conn-card-bio {
+    font-size: 13px;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.conn-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.conn-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+.conn-btn--sm { padding: 5px 10px; font-size: 12px; }
+.conn-btn--green {
+    background: #3aa26b;
+    border-color: #3aa26b;
+    color: #fff;
+}
+.conn-btn--green:hover { background: #2e8a59; border-color: #2e8a59; }
+.conn-btn--danger {
+    background: transparent;
+    border-color: #e53e3e;
+    color: #e53e3e;
+}
+.conn-btn--danger:hover { background: #e53e3e; color: #fff; }
+.conn-btn--outline {
+    background: transparent;
+    border-color: #555;
+    color: #aaa;
+}
+.conn-btn--outline:hover { border-color: #888; color: #fff; }
+
+/* ── Badges (dans search results) ──────────────────────────── */
+.conn-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
+.conn-badge--pending  { background: #2a2a2a; color: #999; border: 1px solid #444; }
+.conn-badge--received { background: #2a1a1a; color: #e53e3e; border: 1px solid #e53e3e44; }
+.conn-badge--friend   { background: #1a2e1a; color: #3aa26b; border: 1px solid #3aa26b44; }
+
+/* ── Empty state ────────────────────────────────────────────── */
+.conn-empty {
+    text-align: center;
+    padding: 60px 24px;
+    color: #666;
+}
+.conn-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.conn-empty h3 {
+    font-family: 'Bungee', cursive;
+    font-size: 18px;
+    color: #aaa;
+    margin: 0 0 8px;
+}
+.conn-empty p {
+    font-size: 14px;
+    max-width: 360px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
