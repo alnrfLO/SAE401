@@ -1,0 +1,195 @@
+/* --- Structure Générale --- */
+.prof-wrapper {
+    max-width: 1000px;
+    /* Marge de sécurité pour passer SOUS la barre de navigation (ajustable selon ta nav) */
+    margin: 120px auto 60px auto; 
+    padding: 0 30px;
+}
+
+/* --- L'en-tête (Account Settings + Subtitle) --- */
+.prof-header {
+    margin-bottom: 50px;
+    padding-bottom: 25px;
+    border-bottom: 4px solid #212121; /* Ligne épaisse style BD */
+    position: relative;
+}
+
+/* Petit accent orange sous la ligne noire */
+.prof-header::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 120px;
+    height: 4px;
+    background: #fbad40;
+}
+
+.prof-card-title {
+    font-family: 'Bungee', cursive;
+    font-size: 48px; /* Très visible */
+    color: #212121;
+    margin: 0;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.prof-subtitle-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.prof-subtitle-icon {
+    font-size: 24px;
+    background: #fbad40;
+    padding: 8px;
+    border-radius: 12px;
+    border: 3px solid #212121;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 0px #212121;
+}
+
+.prof-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px; /* Plus grand et bien lisible */
+    font-weight: 600;
+    color: #212121;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+/* --- La Grille de Formulaire --- */
+.edit-grid-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.form-card {
+    background: #fff;
+    border: 4px solid #212121;
+    border-radius: 24px;
+    padding: 25px 35px; /* Padding réduit en hauteur pour compacter */
+    box-shadow: 10px 10px 0px #212121;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.form-card:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: 15px 15px 0px #fbad40;
+}
+
+/* Utilitaires de Grille */
+.grid-full { grid-column: span 2; }
+.grid-col-2 { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 25px; 
+    grid-column: span 2;
+}
+
+/* --- Champs de saisie (Inputs, Select, Textarea) --- */
+.form-group label {
+    display: block;
+    font-family: 'Bungee', cursive;
+    font-size: 13px;
+    margin-bottom: 10px;
+    color: #212121;
+}
+
+.edit-grid-form input, 
+.edit-grid-form select, 
+.edit-grid-form textarea {
+    width: 100%;
+    padding: 14px 18px; /* Plus compact en hauteur */
+    border: 3px solid #f0f0f0;
+    border-radius: 15px;
+    background: #f9f9f9;
+    font-size: 16px;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.edit-grid-form input:focus, 
+.edit-grid-form textarea:focus,
+.edit-grid-form select:focus {
+    border-color: #fbad40;
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(251, 173, 64, 0.1);
+}
+
+.security-section {
+    background: #fdfdfd;
+    border-style: dashed;
+}
+
+/* --- Zone des Boutons d'Action --- */
+.prof-actions {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    margin-top: 20px;
+    padding: 30px;
+    background: #fdfdfd;
+    border-radius: 20px;
+    border: 3px dashed #ddd; /* Délimite bien la zone de validation */
+    margin-bottom: 50px;
+}
+
+.prof-btn {
+    font-family: 'Bungee', cursive;
+    padding: 18px 35px;
+    font-size: 16px;
+    border-radius: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 3px solid #212121;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Bouton Update (Orange) */
+.prof-btn--primary {
+    background: #fbad40;
+    color: #212121;
+    box-shadow: 6px 6px 0px #212121;
+}
+
+/* Bouton Discard (Outline / Rouge au hover) */
+.prof-btn--outline {
+    background: #fff;
+    color: #888;
+    border-color: #ddd;
+}
+
+.prof-btn--outline:hover {
+    color: #ff4757;
+    border-color: #212121;
+    background: #fff5f5;
+}
+
+.prof-btn:hover {
+    transform: translateY(-3px);
+}
+
+.prof-btn:active {
+    transform: translateY(2px);
+    box-shadow: 2px 2px 0px #212121;
+}
+
+/* --- Responsive --- */
+@media (max-width: 850px) {
+    .prof-wrapper { margin-top: 100px; }
+    .prof-card-title { font-size: 32px; }
+    .edit-grid-form, .grid-col-2 { grid-template-columns: 1fr; }
+    .grid-full, .grid-col-2, .prof-actions { grid-column: span 1; }
+    .prof-actions { flex-direction: column-reverse; }
+}

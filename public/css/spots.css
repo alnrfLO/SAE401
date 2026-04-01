@@ -1,0 +1,228 @@
+/* ══════════════════════════════════════════════════════
+   SPOTS PAGE — FAV — néo-brutalisme
+   ══════════════════════════════════════════════════════ */
+
+.spots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+.spot-card {
+  background: #fff;
+  border: 3px solid #212121;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0px #212121;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  cursor: pointer;
+}
+
+.spot-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0px #212121;
+}
+
+.spot-card-image {
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  background-color: #f0ebe0;
+}
+
+.spot-category {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 2px solid #212121;
+  background: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.spot-category--nature { background: #e8f5ef; color: #3aa26b; }
+.spot-category--city { background: #fff7e6; color: #e09010; }
+.spot-category--beach { background: #e3f2fd; color: #2196F3; }
+.spot-category--mountain { background: #f3e5f5; color: #9C27B0; }
+.spot-category--food { background: #fff3e0; color: #FF6F00; }
+.spot-category--culture { background: #ffe0b2; color: #FF6F00; }
+
+.spot-card-body {
+  padding: 16px;
+}
+
+.spot-card-title {
+  font-family: 'Bungee', cursive;
+  font-size: 16px;
+  color: #212121;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.spot-card-location {
+  font-size: 13px;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.spot-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spot-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 2px solid #212121;
+  border-radius: 999px;
+  background: #fbad40;
+  color: #212121;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.spot-like-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 2px 2px 0px #212121;
+}
+
+.spot-like-btn.liked {
+  background: #f05a66;
+  color: #fff;
+}
+
+.spots-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 24px;
+  text-align: center;
+  color: #aaa;
+}
+
+.spots-empty p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* ── MAP SECTION ── */
+
+.spots-map-section {
+  margin-top: 80px;
+  padding: 40px 0;
+  border-top: 3px solid #212121;
+}
+
+.spots-section-title {
+  font-family: 'Bungee', cursive;
+  font-size: 24px;
+  color: #212121;
+  margin: 0 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spots-map-wrapper {
+  background: #fff;
+  border: 3px solid #212121;
+  border-radius: 20px;
+  box-shadow: 8px 8px 0px #212121;
+  overflow: hidden;
+  position: relative;
+}
+
+.world-map {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #dff6e3;
+}
+
+.world-map path {
+  fill: #f0ebe0;
+  stroke: #ddd;
+  stroke-width: 0.5;
+  transition: fill 0.2s;
+  cursor: pointer;
+}
+
+.world-map path:hover {
+  fill: #fbad40;
+}
+
+.map-legend {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: #fff;
+  border: 2px solid #212121;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 4px 4px 0px #212121;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 8px;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid #212121;
+}
+
+/* ── RESPONSIVE ── */
+
+@media (max-width: 1200px) {
+  .spots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .spots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .spot-card-image {
+    height: 150px;
+  }
+
+  .spots-section-title {
+    font-size: 20px;
+  }
+
+  .map-legend {
+    bottom: 8px;
+    right: 8px;
+    padding: 8px 12px;
+  }
+}

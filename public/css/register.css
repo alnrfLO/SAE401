@@ -1,0 +1,199 @@
+/* Register Form Styles */
+
+.register-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 140px 20px 80px;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 480px;
+  background: #f5eedc;
+  border: 3px solid #212121;
+  border-radius: 24px;
+  box-shadow: 8px 8px 0px 0px #212121;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.register-header {
+  background: #f05a66;
+  padding: 40px 30px 20px;
+  text-align: center;
+  color: #fff;
+}
+
+/* Modifier for Login Page */
+.login-header {
+  background: #3aa26b; /* Green brand color */
+}
+
+.register-logo {
+  font-family: 'Bungee', cursive;
+  font-size: 36px;
+  margin: 0 0 10px;
+  letter-spacing: 2px;
+}
+
+.register-title {
+  font-family: 'Bungee', cursive;
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+
+.register-subtitle {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.register-body {
+  padding: 30px;
+}
+
+.register-form-group {
+  margin-bottom: 20px;
+}
+
+.register-form-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #212121;
+  font-size: 14.5px;
+}
+
+.register-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 2px solid #212121;
+  border-radius: 999px;
+  padding: 0 16px;
+  height: 50px;
+}
+
+.register-input-wrapper input,
+.register-input-wrapper select {
+  border: none;
+  background: transparent;
+  flex: 1;
+  height: 100%;
+  outline: none;
+  font-size: 15px;
+  color: #212121;
+  width: 100%;
+}
+
+.register-input-wrapper input::placeholder {
+  color: #999;
+}
+
+.register-icon {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.register-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.register-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #2d9cdb;
+  border-radius: 8px;
+  background: #fff;
+  margin-bottom: 24px;
+}
+
+.register-terms input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #2d9cdb;
+  cursor: pointer;
+}
+
+.register-terms label {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #444;
+  cursor: pointer;
+}
+
+.register-terms a {
+  color: #2b5b84;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.register-submit {
+  width: 100%;
+  height: 56px;
+  background: #f8a038;
+  color: #fff;
+  font-family: 'Bungee', cursive;
+  font-size: 18px;
+  border: 3px solid #212121;
+  border-radius: 999px;
+  box-shadow: 4px 4px 0px 0px #212121;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  margin-bottom: 24px;
+}
+
+.register-submit:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #212121;
+}
+
+.register-footer {
+  text-align: center;
+  font-size: 14.5px;
+  color: #666;
+  margin: 0;
+}
+
+.register-footer a {
+  color: #2b5b84;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Alerte d'erreur inscription ─── */
+.register-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  margin: 0 30px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid;
+}
+
+.register-alert--error {
+  background: #fff0f0;
+  border-color: #e53e3e;
+  color: #c53030;
+}
+
+.register-alert--error svg {
+  flex-shrink: 0;
+  color: #e53e3e;
+}
