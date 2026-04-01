@@ -154,6 +154,101 @@ if (isset($_GET['action'])) {
         exit;
     }
 
+
+    // ── LISTE DES CONVERSATIONS ──────────────────────────────────
+    if ($action === 'getConversations') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode([]); exit; }
+        $messaging = new Messaging($pdo);
+        echo json_encode($messaging->getConversations($_SESSION['user_id']));
+        exit;
+    }
+    
+    // ── DÉTAILS D'UNE CONVERSATION ───────────────────────────────
+    if ($action === 'getConvInfo') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(null); exit; }
+        $convId = (int)($_GET['conv_id'] ?? 0);
+        $messaging = new Messaging($pdo);
+        echo json_encode($messaging->getConversation($convId, $_SESSION['user_id']));
+        exit;
+    }
+    
+    // ── MESSAGES D'UNE CONVERSATION ─────────────────────────────
+    if ($action === 'getMessages') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode([]); exit; }
+        $convId = (int)($_GET['conv_id'] ?? 0);
+        $before = (int)($_GET['before'] ?? 0);
+        $messaging = new Messaging($pdo);
+        echo json_encode($messaging->getMessages($convId, $_SESSION['user_id'], 50, $before));
+        exit;
+    }
+    
+    // ── POLLING : NOUVEAUX MESSAGES ──────────────────────────────
+    if ($action === 'pollMessages') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['messages' => []]); exit; }
+        $convId  = (int)($_GET['conv_id'] ?? 0);
+        $afterId = (int)($_GET['after_id'] ?? 0);
+        $messaging = new Messaging($pdo);
+        $msgs = $messaging->getNewMessages($convId, $_SESSION['user_id'], $afterId);
+        echo json_encode(['messages' => $msgs]);
+        exit;
+    }
+    
+    // ── ENVOYER UN MESSAGE ───────────────────────────────────────
+    if ($action === 'sendMessage' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success' => false]); exit; }
+        $convId  = (int)($_POST['conv_id'] ?? 0);
+        $content = trim($_POST['content'] ?? '');
+        if (!$convId || !$content) { echo json_encode(['success' => false]); exit; }
+        $messaging = new Messaging($pdo);
+        $msg = $messaging->sendMessage($convId, $_SESSION['user_id'], $content);
+        echo json_encode(['success' => (bool)$msg, 'message' => $msg]);
+        exit;
+    }
+    
+    // ── OUVRIR / CRÉER UNE CONVERSATION DIRECTE ─────────────────
+    if ($action === 'openDirect' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success' => false]); exit; }
+        $targetId = (int)($_POST['target_id'] ?? 0);
+        if (!$targetId) { echo json_encode(['success' => false]); exit; }
+        $messaging = new Messaging($pdo);
+        $convId = $messaging->getOrCreateDirect($_SESSION['user_id'], $targetId);
+        echo json_encode(['success' => true, 'conv_id' => $convId]);
+        exit;
+    }
+    
+    // ── CRÉER UN GROUPE ──────────────────────────────────────────
+    if ($action === 'createGroup' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success' => false]); exit; }
+        $name      = trim($_POST['group_name'] ?? '');
+        $memberIds = array_map('intval', $_POST['member_ids'] ?? []);
+        if (!$name || empty($memberIds)) {
+            echo json_encode(['success' => false, 'error' => 'Données invalides']);
+            exit;
+        }
+        $messaging = new Messaging($pdo);
+        $convId = $messaging->createGroup($_SESSION['user_id'], $name, $memberIds);
+        echo json_encode(['success' => true, 'conv_id' => $convId]);
+        exit;
+    }
+    
+    // ── QUITTER UNE CONVERSATION ─────────────────────────────────
+    if ($action === 'leaveConversation' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success' => false]); exit; }
+        $convId = (int)($_POST['conv_id'] ?? 0);
+        $messaging = new Messaging($pdo);
+        $ok = $messaging->leaveConversation($convId, $_SESSION['user_id']);
+        echo json_encode(['success' => $ok]);
+        exit;
+    }
+
     // AJOUT D'UN SPOT
     if ($action === 'create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
