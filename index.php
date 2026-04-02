@@ -260,9 +260,14 @@ if (isset($_GET['action'])) {
 
         $year  = max(1970, min(9999, (int)($_GET['year'] ?? date('Y'))));
         $month = max(1, min(12, (int)($_GET['month'] ?? date('m'))));
+        
+        // Determine whose calendar to show: ?user_id=X for another user, own calendar otherwise
+        $viewerId = $_SESSION['user_id'];
+        $targetId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $viewerId;
+        if ($targetId <= 0) $targetId = $viewerId;
 
         $eventModel = new Event($pdo);
-        $events = $eventModel->getByMonth($_SESSION['user_id'], $year, $month);
+        $events = $eventModel->getByMonthVisible($targetId, $year, $month, $viewerId);
 
         foreach ($events as &$e) {
             $e['event_date'] = date('Y-m-d H:i', strtotime($e['event_date']));
@@ -349,6 +354,58 @@ if (isset($_GET['action'])) {
         $eventModel = new Event($pdo);
         $ok = $eventModel->delete($eventId, $_SESSION['user_id']);
         echo json_encode(['success' => $ok]);
+        exit;
+    }
+
+    if ($action === 'inviteToEvent' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+
+        $eventId = (int)($_POST['event_id'] ?? 0);
+        $username = trim($_POST['username'] ?? '');
+        
+        if (!$eventId || !$username) {
+            echo json_encode(['success'=>false,'error'=>'Événement et utilisateur requis']);
+            exit;
+        }
+
+        // Verify event belongs to current user
+        $eventModel = new Event($pdo);
+        $event = $eventModel->findById($eventId);
+        if (!$event || $event['user_id'] != $_SESSION['user_id']) {
+            echo json_encode(['success'=>false,'error'=>'Événement non trouvé']);
+            exit;
+        }
+
+        // Only shared events can be shared (and public technically, but let's be safe)
+        if (!in_array($event['type'], ['shared', 'public'])) {
+            echo json_encode(['success'=>false,'error'=>'Cet événement ne peut pas être partagé']);
+            exit;
+        }
+
+        // Find target user
+        $userModel = new User($pdo);
+        $targetUser = $userModel->findByUsername($username);
+        if (!$targetUser || $targetUser['id'] == $_SESSION['user_id']) {
+            echo json_encode(['success'=>false,'error'=>'Utilisateur non trouvé']);
+            exit;
+        }
+
+        // Insert into event_participants (table must exist in DB)
+        try {
+            $sql = 'INSERT IGNORE INTO event_participants (event_id, user_id, status, invited_at) VALUES (:event_id, :user_id, :status, NOW())';
+            $stmt = $pdo->prepare($sql);
+            $ok = $stmt->execute([':event_id' => $eventId, ':user_id' => $targetUser['id'], ':status' => 'pending']);
+            
+            if ($ok) {
+                echo json_encode(['success'=>true,'message'=>'Invitation envoyée']);
+            } else {
+                echo json_encode(['success'=>false,'error'=>'Erreur lors de l\'invitation']);
+            }
+        } catch (Exception $e) {
+            // Table might not exist yet
+            echo json_encode(['success'=>false,'error'=>'La table event_participants n\'existe pas encore. Veuillez exécuter le script SQL.']);
+        }
         exit;
     }
 

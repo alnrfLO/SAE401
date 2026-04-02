@@ -82,6 +82,31 @@ class Event {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Get events by month with visibility filter (private events hidden for non-owners)
+    public function getByMonthVisible(int $userId, int $year, int $month, ?int $viewerId = null) {
+        if ($viewerId === null) $viewerId = $userId;
+        
+        $from = sprintf('%04d-%02d-01 00:00:00', $year, $month);
+        $toDate = new DateTime($from);
+        $toDate->modify('first day of next month');
+        $to = $toDate->format('Y-m-d H:i:s');
+
+        // If viewing own events, show all; if viewing others, show only public
+        if ($viewerId === $userId) {
+            // Own profile: show all events
+            $sql = 'SELECT * FROM events WHERE user_id = :user_id AND event_date >= :from AND event_date < :to ORDER BY event_date ASC';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':user_id' => $userId, ':from' => $from, ':to' => $to]);
+        } else {
+            // Other's profile: show only public events
+            $sql = 'SELECT * FROM events WHERE user_id = :user_id AND type = :type AND event_date >= :from AND event_date < :to ORDER BY event_date ASC';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':user_id' => $userId, ':type' => 'public', ':from' => $from, ':to' => $to]);
+        }
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getByDay(int $userId, string $date) {
         $start = $date . ' 00:00:00';
         $end = $date . ' 23:59:59';

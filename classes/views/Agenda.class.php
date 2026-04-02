@@ -83,6 +83,8 @@ class Agenda extends Dashboard
                 <div class="agenda-grid">
                     <!-- Calendrier -->
                     <div class="agenda-calendar-wrap">
+                        <!-- Hidden field to pass userId (for viewing other users' public events) -->
+                        <input type="hidden" id="viewedUserId" value="{$user['id']}">
                         <div class="cal-nav">
                             <a href="?page=agenda&month={$prevMonth}&year={$prevYear}" class="cal-nav-btn">&#8249;</a>
                             <span class="cal-month-label">{$monthName}</span>
@@ -166,6 +168,28 @@ class Agenda extends Dashboard
             </div>
         </div>
 
+        <!-- Modal Inviter à un événement -->
+        <div class="modal-overlay" id="inviteModal" style="display:none">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h2 class="modal-title">INVITE TO EVENT</h2>
+                    <button type="button" class="modal-close" onclick="closeInviteModal()">&#x2715;</button>
+                </div>
+                <div class="modal-form">
+                    <input type="hidden" id="inviteEventId" value="">
+                    <div class="modal-field">
+                        <label>USERNAME</label>
+                        <input type="text" placeholder="Search username..." id="inviteUsername">
+                    </div>
+                    <div id="inviteMessage" style="margin: 10px 0; font-weight: bold;"></div>
+                    <div class="modal-actions">
+                        <button type="button" class="prof-btn prof-btn--outline" onclick="closeInviteModal()">Cancel</button>
+                        <button type="button" class="prof-btn prof-btn--primary" onclick="inviteToEvent()">Send Invite</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
 const currentYear = {$year};
 const currentMonth = {$month};
@@ -210,7 +234,11 @@ function updateDayTitle(day) {
 
 async function loadEvents() {
     try {
-        const url = '?page=agenda&action=getAgendaEvents&year=' + currentYear + '&month=' + currentMonth;
+        const viewedUserId = document.getElementById('viewedUserId')?.value || '';
+        let url = '?page=agenda&action=getAgendaEvents&year=' + currentYear + '&month=' + currentMonth;
+        if (viewedUserId) {
+            url += '&user_id=' + viewedUserId;
+        }
         const resp = await fetch(url);
         const data = await resp.json();
 
@@ -288,6 +316,9 @@ function renderEvents(day) {
         if (e.notes) html += '<div class="agenda-event-notes">' + e.notes + '</div>';
         html += '<div class="agenda-event-actions">';
         html += '<button type="button" class="event-edit" data-id="' + e.id + '" data-day="' + day + '">&#x270F;&#xFE0F; Edit</button>';
+        if (e.type === 'shared' || e.type === 'public') {
+            html += '<button type="button" class="event-invite" data-id="' + e.id + '">&#x1F4C4; Invite</button>';
+        }
         html += '<button type="button" class="event-delete" data-id="' + e.id + '" data-day="' + day + '">&#x1F5D1;&#xFE0F; Delete</button>';
         html += '</div>';
         html += '</div>';
@@ -298,6 +329,11 @@ function renderEvents(day) {
     list.querySelectorAll('.event-edit').forEach(function(btn) {
         btn.addEventListener('click', function() {
             editEvent(parseInt(this.dataset.id, 10), parseInt(this.dataset.day, 10));
+        });
+    });
+    list.querySelectorAll('.event-invite').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            showInviteModal(parseInt(this.dataset.id, 10));
         });
     });
     list.querySelectorAll('.event-delete').forEach(function(btn) {
@@ -404,6 +440,56 @@ function editEvent(eventId, day) {
     btn.classList.add('active');
 
     openEventModal();
+}
+
+function showInviteModal(eventId) {
+    const modal = document.getElementById('inviteModal');
+    document.getElementById('inviteEventId').value = eventId;
+    document.getElementById('inviteUsername').value = '';
+    document.getElementById('inviteMessage').textContent = '';
+    modal.style.display = 'flex';
+}
+
+function closeInviteModal() {
+    document.getElementById('inviteModal').style.display = 'none';
+}
+
+async function inviteToEvent() {
+    const eventId = document.getElementById('inviteEventId').value;
+    const username = document.getElementById('inviteUsername').value.trim();
+    const msgDiv = document.getElementById('inviteMessage');
+    
+    if (!username) {
+        msgDiv.textContent = 'Entrez un nom d\'utilisateur';
+        msgDiv.style.color = 'red';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('event_id', eventId);
+    formData.append('username', username);
+
+    try {
+        const resp = await fetch('?page=agenda&action=inviteToEvent', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            msgDiv.textContent = 'Invitation envoyée !';
+            msgDiv.style.color = 'green';
+            setTimeout(function() {
+                closeInviteModal();
+            }, 1500);
+        } else {
+            msgDiv.textContent = data.error || 'Erreur lors de l\'invitation';
+            msgDiv.style.color = 'red';
+        }
+    } catch (err) {
+        msgDiv.textContent = 'Erreur réseau: ' + err;
+        msgDiv.style.color = 'red';
+    }
 }
 
 async function deleteEvent(eventId, day) {
