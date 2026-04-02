@@ -429,6 +429,26 @@ switch ($page) {
     $view = new Directory(['page' => 'directory']);
     break;
 
+    case 'news':
+        $newsModel = new NewsModel($pdo);
+        $newsItems = $newsModel->getAll();
+        $view = new News(['page' => 'news', 'newsItems' => $newsItems]);
+    break;
+
+    case 'article':
+        $articleId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $newsModel = new NewsModel($pdo);
+        $articleData = $newsModel->findById($articleId);
+        
+        if (!$articleData) {
+            header('Location: index.php?page=news');
+            exit;
+        }
+        
+        $view = new SingleNews(['page' => 'article', 'article' => $articleData]);
+    break;
+
+
     case 'connections':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);

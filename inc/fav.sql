@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost:8889
--- Généré le : mer. 01 avr. 2026 à 14:12
--- Version du serveur : 5.7.44
--- Version de PHP : 7.4.33
+-- Hôte : 127.0.0.1
+-- Généré le : mer. 01 avr. 2026 à 17:54
+-- Version du serveur : 10.4.32-MariaDB
+-- Version de PHP : 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,6 +24,32 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `chat_messages`
+--
+
+CREATE TABLE `chat_messages` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `conversation_id` int(10) UNSIGNED NOT NULL,
+  `sender_id` int(10) UNSIGNED NOT NULL,
+  `content` text NOT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `chat_messages`
+--
+
+INSERT INTO `chat_messages` (`id`, `conversation_id`, `sender_id`, `content`, `is_deleted`, `created_at`) VALUES
+(1, 1, 3, 'hey gab', 0, '2026-04-01 15:33:28'),
+(2, 1, 4, 'hey jean', 0, '2026-04-01 15:33:41'),
+(3, 2, 4, 'kys', 0, '2026-04-01 15:33:54'),
+(4, 3, 4, 'ah shit', 0, '2026-04-01 15:34:23'),
+(5, 1, 3, 'test', 0, '2026-04-01 15:52:16');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `comments`
 --
 
@@ -32,11 +58,63 @@ CREATE TABLE `comments` (
   `spot_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `parent_id` int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL = commentaire racine, sinon reply',
-  `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_hidden` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 = masqué par modération',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `content` text NOT NULL,
+  `is_hidden` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1 = masqué par modération',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `conversations`
+--
+
+CREATE TABLE `conversations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `type` enum('direct','group') NOT NULL DEFAULT 'direct',
+  `name` varchar(191) DEFAULT NULL COMMENT 'Nom du groupe uniquement',
+  `avatar` varchar(500) DEFAULT NULL COMMENT 'Avatar du groupe',
+  `created_by` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `conversations`
+--
+
+INSERT INTO `conversations` (`id`, `type`, `name`, `avatar`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'direct', NULL, NULL, 3, '2026-04-01 15:33:21', '2026-04-01 15:52:16'),
+(2, 'direct', NULL, NULL, 4, '2026-04-01 15:33:50', '2026-04-01 15:33:54'),
+(3, 'group', 'Test', NULL, 4, '2026-04-01 15:34:16', '2026-04-01 15:34:23');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `conversation_members`
+--
+
+CREATE TABLE `conversation_members` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `conversation_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `last_read_at` timestamp NULL DEFAULT NULL COMMENT 'Dernière lecture pour badge non-lus',
+  `joined_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `conversation_members`
+--
+
+INSERT INTO `conversation_members` (`id`, `conversation_id`, `user_id`, `last_read_at`, `joined_at`) VALUES
+(1, 1, 3, '2026-04-01 15:52:08', '2026-04-01 15:33:21'),
+(2, 1, 4, '2026-04-01 15:52:20', '2026-04-01 15:33:21'),
+(3, 2, 4, '2026-04-01 15:33:50', '2026-04-01 15:33:50'),
+(4, 2, 1, NULL, '2026-04-01 15:33:50'),
+(5, 3, 4, '2026-04-01 15:34:17', '2026-04-01 15:34:16'),
+(6, 3, 1, NULL, '2026-04-01 15:34:16'),
+(7, 3, 3, '2026-04-01 15:52:08', '2026-04-01 15:34:16');
 
 -- --------------------------------------------------------
 
@@ -47,14 +125,14 @@ CREATE TABLE `comments` (
 CREATE TABLE `events` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `title` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `location` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(191) NOT NULL,
+  `description` text DEFAULT NULL,
+  `location` varchar(191) DEFAULT NULL,
   `event_date` datetime NOT NULL,
-  `type` enum('private','shared','public') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
-  `status` enum('pending','accepted','refused') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `type` enum('private','shared','public') NOT NULL DEFAULT 'public',
+  `status` enum('pending','accepted','refused') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
@@ -67,8 +145,30 @@ CREATE TABLE `follows` (
   `id` int(10) UNSIGNED NOT NULL,
   `follower_id` int(10) UNSIGNED NOT NULL COMMENT 'celui qui suit',
   `followed_id` int(10) UNSIGNED NOT NULL COMMENT 'celui qui est suivi',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `friendships`
+--
+
+CREATE TABLE `friendships` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `sender_id` int(10) UNSIGNED NOT NULL COMMENT 'utilisateur qui envoie la demande',
+  `receiver_id` int(10) UNSIGNED NOT NULL COMMENT 'utilisateur qui reçoit la demande',
+  `status` enum('pending','accepted','declined') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ;
+
+--
+-- Déchargement des données de la table `friendships`
+--
+
+INSERT INTO `friendships` (`id`, `sender_id`, `receiver_id`, `status`, `created_at`, `updated_at`) VALUES
+(2, 4, 3, 'accepted', '2026-04-01 13:47:45', '2026-04-01 13:47:52');
 
 -- --------------------------------------------------------
 
@@ -81,8 +181,8 @@ CREATE TABLE `likes` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `spot_id` int(10) UNSIGNED DEFAULT NULL,
   `comment_id` int(10) UNSIGNED DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ;
 
 -- --------------------------------------------------------
 
@@ -94,11 +194,11 @@ CREATE TABLE `notifications` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL COMMENT 'destinataire',
   `actor_id` int(10) UNSIGNED NOT NULL COMMENT 'qui a declenche l action',
-  `type` enum('like_spot','like_comment','comment','reply','follow','mention') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('like_spot','like_comment','comment','reply','follow','mention') NOT NULL,
   `spot_id` int(10) UNSIGNED DEFAULT NULL,
   `comment_id` int(10) UNSIGNED DEFAULT NULL,
-  `is_read` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
@@ -109,11 +209,11 @@ CREATE TABLE `notifications` (
 
 CREATE TABLE `password_resets` (
   `id` int(10) UNSIGNED NOT NULL,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'max 191 car. pour index utf8mb4',
-  `token` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `used` tinyint(1) NOT NULL DEFAULT '0',
+  `email` varchar(191) NOT NULL COMMENT 'max 191 car. pour index utf8mb4',
+  `token` varchar(128) NOT NULL,
+  `used` tinyint(1) NOT NULL DEFAULT 0,
   `expires_at` datetime NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
@@ -127,11 +227,11 @@ CREATE TABLE `reports` (
   `reporter_id` int(10) UNSIGNED NOT NULL,
   `spot_id` int(10) UNSIGNED DEFAULT NULL,
   `comment_id` int(10) UNSIGNED DEFAULT NULL,
-  `reason` enum('spam','harcelement','contenu inapproprie','fausse information','autre') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'autre',
-  `details` text COLLATE utf8mb4_unicode_ci,
-  `status` enum('pending','reviewed','dismissed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `reason` enum('spam','harcelement','contenu inapproprie','fausse information','autre') NOT NULL DEFAULT 'autre',
+  `details` text DEFAULT NULL,
+  `status` enum('pending','reviewed','dismissed') NOT NULL DEFAULT 'pending',
   `reviewed_by` int(10) UNSIGNED DEFAULT NULL COMMENT 'admin qui a traite le signalement',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
@@ -143,11 +243,11 @@ CREATE TABLE `reports` (
 CREATE TABLE `sessions` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `token` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'token généré avec random_bytes()',
-  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'IPv4 / IPv6',
-  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `token` varchar(128) NOT NULL COMMENT 'token généré avec random_bytes()',
+  `ip_address` varchar(45) DEFAULT NULL COMMENT 'IPv4 / IPv6',
+  `user_agent` text DEFAULT NULL,
   `expires_at` datetime NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
@@ -159,17 +259,17 @@ CREATE TABLE `sessions` (
 CREATE TABLE `spots` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `title` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `location` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'lieu du spot (ville, pays...)',
+  `title` varchar(191) NOT NULL,
+  `description` text NOT NULL,
+  `location` varchar(191) DEFAULT NULL COMMENT 'lieu du spot (ville, pays...)',
   `latitude` decimal(10,8) DEFAULT NULL COMMENT 'coordonnées GPS',
   `longitude` decimal(11,8) DEFAULT NULL,
-  `image` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'chemin image principale',
-  `category` enum('voyage','nature','ville','gastronomie','culture','aventure','autre') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'autre',
-  `status` enum('draft','published','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'published',
-  `views_count` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `image` varchar(500) DEFAULT NULL COMMENT 'chemin image principale',
+  `category` enum('voyage','nature','ville','gastronomie','culture','aventure','autre') NOT NULL DEFAULT 'autre',
+  `status` enum('draft','published','archived') NOT NULL DEFAULT 'published',
+  `views_count` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 --
@@ -177,10 +277,7 @@ CREATE TABLE `spots` (
 --
 
 INSERT INTO `spots` (`id`, `user_id`, `title`, `description`, `location`, `latitude`, `longitude`, `image`, `category`, `status`, `views_count`, `created_at`, `updated_at`) VALUES
-(1, 3, 'DOO', 'evevbzzb', 'Paris, France', NULL, NULL, '', 'nature', 'published', 4, '2026-04-01 10:18:50', '2026-04-01 11:01:53'),
-(2, 3, 'DOO', 'fzfaagaega', 'Paris, France', NULL, NULL, 'uploads/spots/spot_3_1775042873.jpeg', 'gastronomie', 'published', 2, '2026-04-01 11:27:53', '2026-04-01 11:28:09'),
-(3, 3, 'DOO', 'fzfaagaega', 'Paris, France', NULL, NULL, 'uploads/spots/spot_3_1775042873.jpeg', 'gastronomie', 'published', 0, '2026-04-01 11:27:53', '2026-04-01 11:27:53'),
-(4, 3, 'adfaf', 'bzgbzzop', 'lfzf', NULL, NULL, 'uploads/spots/spot_3_1775042905.jpg', 'nature', 'published', 1, '2026-04-01 11:28:25', '2026-04-01 11:28:29');
+(1, 3, 'sdq', 'sqd', 'qsd', NULL, NULL, NULL, 'voyage', 'published', 2, '2026-04-01 13:11:50', '2026-04-01 13:40:52');
 
 -- --------------------------------------------------------
 
@@ -191,9 +288,9 @@ INSERT INTO `spots` (`id`, `user_id`, `title`, `description`, `location`, `latit
 CREATE TABLE `spot_images` (
   `id` int(10) UNSIGNED NOT NULL,
   `spot_id` int(10) UNSIGNED NOT NULL,
-  `image_path` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sort_order` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `image_path` varchar(500) NOT NULL,
+  `sort_order` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
@@ -215,8 +312,8 @@ CREATE TABLE `spot_tags` (
 
 CREATE TABLE `tags` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `name` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 --
@@ -224,18 +321,18 @@ CREATE TABLE `tags` (
 --
 
 INSERT INTO `tags` (`id`, `name`, `created_at`) VALUES
-(1, 'voyage', '2026-04-01 09:55:49'),
-(2, 'nature', '2026-04-01 09:55:49'),
-(3, 'citytrip', '2026-04-01 09:55:49'),
-(4, 'roadtrip', '2026-04-01 09:55:49'),
-(5, 'foodie', '2026-04-01 09:55:49'),
-(6, 'sunset', '2026-04-01 09:55:49'),
-(7, 'montagne', '2026-04-01 09:55:49'),
-(8, 'plage', '2026-04-01 09:55:49'),
-(9, 'architecture', '2026-04-01 09:55:49'),
-(10, 'culture', '2026-04-01 09:55:49'),
-(11, 'aventure', '2026-04-01 09:55:49'),
-(12, 'caché', '2026-04-01 09:55:49');
+(1, 'voyage', '2026-04-01 12:52:20'),
+(2, 'nature', '2026-04-01 12:52:20'),
+(3, 'citytrip', '2026-04-01 12:52:20'),
+(4, 'roadtrip', '2026-04-01 12:52:20'),
+(5, 'foodie', '2026-04-01 12:52:20'),
+(6, 'sunset', '2026-04-01 12:52:20'),
+(7, 'montagne', '2026-04-01 12:52:20'),
+(8, 'plage', '2026-04-01 12:52:20'),
+(9, 'architecture', '2026-04-01 12:52:20'),
+(10, 'culture', '2026-04-01 12:52:20'),
+(11, 'aventure', '2026-04-01 12:52:20'),
+(12, 'caché', '2026-04-01 12:52:20');
 
 -- --------------------------------------------------------
 
@@ -245,19 +342,19 @@ INSERT INTO `tags` (`id`, `name`, `created_at`) VALUES
 
 CREATE TABLE `users` (
   `id` int(10) UNSIGNED NOT NULL,
-  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'max 191 car. utf8mb4 = 764 octets < limite 767',
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'bcrypt hash — JAMAIS en clair',
-  `role` enum('user','admin') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
-  `avatar` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'chemin ou URL avatar',
-  `bio` text COLLATE utf8mb4_unicode_ci,
-  `country` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `language` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT 'fr',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = compte banni',
-  `email_verified` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `status` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT 'Hey, I''m on FAV!'
+  `username` varchar(50) NOT NULL,
+  `email` varchar(191) NOT NULL COMMENT 'max 191 car. utf8mb4 = 764 octets < limite 767',
+  `password` varchar(255) NOT NULL COMMENT 'bcrypt hash — JAMAIS en clair',
+  `role` enum('user','admin') NOT NULL DEFAULT 'user',
+  `avatar` varchar(500) DEFAULT NULL COMMENT 'chemin ou URL avatar',
+  `bio` text DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `language` varchar(10) DEFAULT 'fr',
+  `is_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '0 = compte banni',
+  `email_verified` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` varchar(100) DEFAULT 'Hey, I''m on FAV!'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 --
@@ -265,13 +362,23 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `avatar`, `bio`, `country`, `language`, `is_active`, `email_verified`, `created_at`, `updated_at`, `status`) VALUES
-(1, 'admin', 'admin@fav.fr', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', NULL, 'Administrateur FAV', 'France', 'fr', 1, 1, '2026-04-01 09:55:49', '2026-04-01 09:55:49', 'Hey, I\'m on FAV!'),
-(2, 'demo_user', 'user@fav.fr', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', NULL, 'Voyageur passionné 🌍', 'France', 'fr', 1, 1, '2026-04-01 09:55:49', '2026-04-01 09:55:49', 'Hey, I\'m on FAV!'),
-(3, 'edemvlp', '12400620@edu.sorbonne-paris-nord.fr', '$2y$12$dk3910nejqDsiBVmf04nqeD.bxeXM4z6NqFUubUOfR9/GpFcTpsPW', 'user', 'uploads/avatars/avatar_3_1775038672.png', 'spots under rated', 'fr', 'fr', 1, 0, '2026-04-01 09:59:19', '2026-04-01 10:17:52', 'Edemmmzer');
+(1, 'admin', 'admin@fav.fr', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', NULL, 'Administrateur FAV', 'France', 'fr', 1, 1, '2026-04-01 12:52:20', '2026-04-01 12:52:20', 'Hey, I\'m on FAV!'),
+(2, 'demo_user', 'user@fav.fr', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', NULL, 'Voyageur passionné 🌍', 'France', 'fr', 1, 1, '2026-04-01 12:52:20', '2026-04-01 12:52:20', 'Hey, I\'m on FAV!'),
+(3, 'jeanjean', 'jeanjean@jean.com', '$2y$12$VYzm1hfLAuRy6ct8SoSLme03FTUHG4zEh6xnQpoyA6Dk0xeP6P3Yq', 'user', NULL, NULL, 'fr', 'en', 1, 0, '2026-04-01 12:53:09', '2026-04-01 12:53:25', 'jeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjeanjean'),
+(4, 'gab', 'gabgab@gab.com', '$2y$12$puLwDjpyX0WrZy/tGZLsVOTjW5UDOKzo5oF5HY0XXF.7Jr8BsTOfS', 'user', NULL, NULL, '', 'en', 1, 0, '2026-04-01 13:46:22', '2026-04-01 13:46:22', 'Hey, I\'m on FAV!');
 
 --
 -- Index pour les tables déchargées
 --
+
+--
+-- Index pour la table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_conv_id` (`conversation_id`),
+  ADD KEY `idx_sender_id` (`sender_id`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Index pour la table `comments`
@@ -281,6 +388,22 @@ ALTER TABLE `comments`
   ADD KEY `idx_spot_id` (`spot_id`),
   ADD KEY `idx_user_id` (`user_id`),
   ADD KEY `idx_parent_id` (`parent_id`);
+
+--
+-- Index pour la table `conversations`
+--
+ALTER TABLE `conversations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_type` (`type`),
+  ADD KEY `fk_conv_creator` (`created_by`);
+
+--
+-- Index pour la table `conversation_members`
+--
+ALTER TABLE `conversation_members`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_conv_member` (`conversation_id`,`user_id`),
+  ADD KEY `fk_cm_user` (`user_id`);
 
 --
 -- Index pour la table `events`
@@ -297,6 +420,15 @@ ALTER TABLE `follows`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uq_follow` (`follower_id`,`followed_id`),
   ADD KEY `idx_followed_id` (`followed_id`);
+
+--
+-- Index pour la table `friendships`
+--
+ALTER TABLE `friendships`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_friendship` (`sender_id`,`receiver_id`),
+  ADD KEY `idx_receiver` (`receiver_id`),
+  ADD KEY `idx_status` (`status`);
 
 --
 -- Index pour la table `likes`
@@ -394,10 +526,28 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT pour la table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT pour la table `comments`
 --
 ALTER TABLE `comments`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `conversations`
+--
+ALTER TABLE `conversations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT pour la table `conversation_members`
+--
+ALTER TABLE `conversation_members`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT pour la table `events`
@@ -409,6 +559,12 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT pour la table `follows`
 --
 ALTER TABLE `follows`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `friendships`
+--
+ALTER TABLE `friendships`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -445,7 +601,7 @@ ALTER TABLE `sessions`
 -- AUTO_INCREMENT pour la table `spots`
 --
 ALTER TABLE `spots`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `spot_images`
@@ -463,11 +619,18 @@ ALTER TABLE `tags`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Contraintes pour les tables déchargées
 --
+
+--
+-- Contraintes pour la table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD CONSTRAINT `fk_msg_conv` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_msg_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `comments`
@@ -476,6 +639,19 @@ ALTER TABLE `comments`
   ADD CONSTRAINT `fk_comments_parent` FOREIGN KEY (`parent_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_comments_spot` FOREIGN KEY (`spot_id`) REFERENCES `spots` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_comments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `conversations`
+--
+ALTER TABLE `conversations`
+  ADD CONSTRAINT `fk_conv_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `conversation_members`
+--
+ALTER TABLE `conversation_members`
+  ADD CONSTRAINT `fk_cm_conv` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_cm_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `events`
@@ -489,6 +665,13 @@ ALTER TABLE `events`
 ALTER TABLE `follows`
   ADD CONSTRAINT `fk_follows_followed` FOREIGN KEY (`followed_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_follows_follower` FOREIGN KEY (`follower_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `friendships`
+--
+ALTER TABLE `friendships`
+  ADD CONSTRAINT `fk_friendship_receiver` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_friendship_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `likes`
