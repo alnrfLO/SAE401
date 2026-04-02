@@ -54,11 +54,14 @@ class SingleSpot extends View
             foreach ($comments as $comment) {
                 $cAvatar = !empty($comment['avatar']) ? htmlspecialchars($comment['avatar'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' . urlencode($comment['username']);
                 $cDate = date($this->lang['spot_date_format'] ?? 'M j, Y', strtotime($comment['created_at']));
+                $cUserId = (int)($comment['user_id'] ?? 0);
                 $commentsHtml .= '
                 <div class="comment-item">
                     <div class="comment-header">
-                        <img src="' . $cAvatar . '" class="comment-avatar">
-                        <span class="comment-author">' . htmlspecialchars($comment['username'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span>
+                        <a href="?page=profile&id=' . $cUserId . '" class="comment-avatar-link">
+                            <img src="' . $cAvatar . '" class="comment-avatar comment-avatar--link">
+                        </a>
+                        <a href="?page=profile&id=' . $cUserId . '" class="comment-author comment-author--link">' . htmlspecialchars($comment['username'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</a>
                         <span class="comment-date">' . $cDate . '</span>
                     </div>
                     <div class="comment-body">
@@ -168,6 +171,17 @@ class SingleSpot extends View
                 align-items: center;
                 gap: 15px;
             }
+            .spot-author--link {
+                text-decoration: none;
+                cursor: pointer;
+                transition: opacity 0.15s;
+            }
+            .spot-author--link:hover {
+                opacity: 0.8;
+            }
+            .spot-author--link:hover .spot-author-name {
+                text-decoration: underline;
+            }
             .spot-author-avatar {
                 width: 50px;
                 height: 50px;
@@ -178,6 +192,26 @@ class SingleSpot extends View
                 font-family: \'Bungee\', cursive;
                 font-size: 1.2rem;
                 color: #212121;
+            }
+            .comment-avatar-link {
+                display: contents;
+            }
+            .comment-avatar--link {
+                cursor: pointer;
+                transition: opacity 0.15s;
+            }
+            .comment-avatar--link:hover {
+                opacity: 0.75;
+            }
+            .comment-author--link {
+                text-decoration: none;
+                color: inherit;
+                cursor: pointer;
+                font-family: \'Bungee\', cursive;
+                font-size: 0.9rem;
+            }
+            .comment-author--link:hover {
+                text-decoration: underline;
             }
             .spot-actions {
                 display: flex;
@@ -334,10 +368,10 @@ class SingleSpot extends View
                     ' . ($tagsHtml ? '<div class="spot-detail-tags">' . $tagsHtml . '</div>' : '') . '
                     
                     <div class="spot-detail-footer">
-                        <div class="spot-author">
+                        <a href="?page=profile&id=' . ($spot['user_id'] ?? 0) . '" class="spot-author spot-author--link">
                             <div class="spot-author-avatar" style="' . $avatarInlineStyle . '"></div>
                             <div class="spot-author-name">' . htmlspecialchars($this->lang['spot_posted_by'] ?? 'Posted by', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ' ' . $authorName . '</div>
-                        </div>
+                        </a>
                         
                         <div class="spot-actions">
                             <button id="like-btn" class="spot-action-btn ' . ($isLiked ? 'is-liked' : '') . '" ' . (!$isLoggedIn ? 'disabled title="' . htmlspecialchars($this->lang['spot_login_to_like'] ?? 'Login to like', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"' : '') . ' onclick="handleLike()">

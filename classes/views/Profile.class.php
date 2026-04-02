@@ -17,7 +17,10 @@ class Profile extends View
         // --- CORRECTION : Définition des variables manquantes ---
         
         // 1. Est-ce que c'est le profil de l'utilisateur connecté ?
-        $isOwn = isset($_SESSION['user_id']) && $_SESSION['user_id'] == ($user['id'] ?? 0);
+        //    Le controller passe maintenant 'isOwn' explicitement.
+        $isOwn          = $this->data['isOwn'] ?? (isset($_SESSION['user_id']) && $_SESSION['user_id'] == ($user['id'] ?? 0));
+        $friendRelation = $this->data['friendRelation'] ?? null;   // array|null
+        $currentUserId  = (int)($this->data['currentUserId'] ?? ($_SESSION['user_id'] ?? 0));
 
         // 2. Extraction des compteurs depuis le tableau $stats (ton index.php les envoie via 'profileStats')
         $spotsCount     = $stats['spots_count']     ?? 0;
@@ -174,7 +177,7 @@ class Profile extends View
                                 </svg>
                                 Sign Out
                                </a>'
-                            : '<button class="prof-btn prof-btn--primary">Follow</button>'
+                            : $this->renderOtherProfileActions($user['id'], $currentUserId, $friendRelation)
                         ) . '
                     </div>
                 </div>
@@ -264,7 +267,7 @@ class Profile extends View
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                                 <path fill-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-2.003 3.5-4.697 3.5-8.327a8 8 0 1 0-16 0c0 3.63 1.556 6.324 3.5 8.327a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.144.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
                             </svg>
-                            My Spots <span class="prof-count-badge">' . $spotsCount . '</span>
+                            ' . ($isOwn ? 'My' : htmlspecialchars($user['username'], ENT_QUOTES) . "'s") . ' Spots <span class="prof-count-badge">' . $spotsCount . '</span>
                         </h2>
                         ' . ($isOwn ? '<button class="prof-btn prof-btn--primary" onclick="openSpotModal()" style="padding: 6px 14px; font-size: 13px;">+ Add Spot</button>' : '') . '
                     </div>
@@ -467,6 +470,9 @@ if (avatarInput) {
     });
 }
 
+        // ── Boutons profil étranger ──
+        ' . (!$isOwn ? $this->renderOtherProfileJs() : '') . '
+
         function openSpotModal() {
             document.getElementById("spotModal").style.display = "flex";
         }
@@ -516,5 +522,194 @@ if (avatarInput) {
             });
         }
         </script>';
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Boutons d'action pour le profil d'un autre utilisateur
+    // ──────────────────────────────────────────────────────────────
+    private function renderOtherProfileActions(int $profileUserId, int $currentUserId, $relation): string
+    {
+        $sendMsgBtn = '
+            <button class="prof-btn prof-btn--primary" id="sendMsgBtn" data-uid="' . $profileUserId . '">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16">
+                    <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/>
+                    <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/>
+                </svg>
+                Message
+            </button>';
+
+        // Determine friend button state
+        if (!$relation) {
+            // No relation → Add Friend
+            $friendBtn = '
+                <button class="prof-btn prof-btn--outline" id="friendActionBtn"
+                        data-action="add" data-uid="' . $profileUserId . '">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"/>
+                    </svg>
+                    Add Friend
+                </button>';
+        } elseif ($relation['status'] === 'accepted') {
+            // Already friends → Remove Friend
+            $friendBtn = '
+                <button class="prof-btn prof-btn--outline prof-btn--friend" id="friendActionBtn"
+                        data-action="remove" data-fid="' . $relation['id'] . '">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM18.75 10.5a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z"/>
+                    </svg>
+                    Friends ✓
+                </button>';
+        } elseif ($relation['status'] === 'pending' && (int)$relation['sender_id'] === $currentUserId) {
+            // Current user sent the request → Cancel
+            $friendBtn = '
+                <button class="prof-btn prof-btn--outline" id="friendActionBtn"
+                        data-action="cancel" data-fid="' . $relation['id'] . '">
+                    ↩️ Cancel Request
+                </button>';
+        } elseif ($relation['status'] === 'pending' && (int)$relation['receiver_id'] === $currentUserId) {
+            // Other user sent a request → Accept or Decline
+            $friendBtn = '
+                <div style="display:flex;gap:8px;">
+                    <button class="prof-btn prof-btn--primary" id="acceptFriendBtn"
+                            data-fid="' . $relation['id'] . '">
+                        ✅ Accept
+                    </button>
+                    <button class="prof-btn prof-btn--danger" id="declineFriendBtn"
+                            data-fid="' . $relation['id'] . '">
+                        ❌ Decline
+                    </button>
+                </div>';
+        } else {
+            $friendBtn = '';
+        }
+
+        return $friendBtn . $sendMsgBtn;
+    }
+
+    // JS for other-profile buttons (injected only on other profiles)
+    private function renderOtherProfileJs(): string
+    {
+        return '
+        // ── Send Message button ──
+        const sendMsgBtn = document.getElementById("sendMsgBtn");
+        if (sendMsgBtn) {
+            sendMsgBtn.addEventListener("click", function () {
+                const uid = this.dataset.uid;
+                fetch("?action=openDirect", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "target_id=" + uid
+                })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) {
+                        window.location.href = "?page=messages&conv=" + d.conv_id;
+                    } else {
+                        showToast("❌ Could not open conversation.");
+                    }
+                });
+            });
+        }
+
+        // ── Add / Cancel / Remove friend button ──
+        const friendBtn = document.getElementById("friendActionBtn");
+        if (friendBtn) {
+            friendBtn.addEventListener("click", function () {
+                const action = this.dataset.action;
+                const uid    = this.dataset.uid  || "";
+                const fid    = this.dataset.fid  || "";
+
+                if (action === "add") {
+                    fetch("?action=sendFriendRequest", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "receiver_id=" + uid
+                    })
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.success) {
+                            friendBtn.textContent = "↩️ Cancel Request";
+                            friendBtn.dataset.action = "cancel";
+                            showToast("✅ Friend request sent!");
+                            // Re-fetch to get friendship id for cancel
+                            location.reload();
+                        } else {
+                            showToast("❌ " + (d.error || "Error"));
+                        }
+                    });
+                } else if (action === "cancel") {
+                    fetch("?action=friendAction", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "type=cancel&friendship_id=" + fid
+                    })
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.success) {
+                            friendBtn.innerHTML = \'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"/></svg> Add Friend\';
+                            friendBtn.dataset.action = "add";
+                            friendBtn.dataset.uid    = \'\' + (friendBtn.dataset.uid || "");
+                            showToast("↩️ Request cancelled.");
+                        }
+                    });
+                } else if (action === "remove") {
+                    if (!confirm("Remove this friend?")) return;
+                    fetch("?action=friendAction", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "type=remove&friendship_id=" + fid
+                    })
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.success) {
+                            friendBtn.innerHTML = \'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"/></svg> Add Friend\';
+                            friendBtn.dataset.action = "add";
+                            delete friendBtn.dataset.fid;
+                            showToast("👋 Friend removed.");
+                        }
+                    });
+                }
+            });
+        }
+
+        // ── Accept / Decline buttons (incoming request) ──
+        const acceptBtn  = document.getElementById("acceptFriendBtn");
+        const declineBtn = document.getElementById("declineFriendBtn");
+
+        if (acceptBtn) {
+            acceptBtn.addEventListener("click", function () {
+                const fid = this.dataset.fid;
+                fetch("?action=friendAction", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "type=accept&friendship_id=" + fid
+                })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) {
+                        showToast("✅ You are now friends!");
+                        location.reload();
+                    }
+                });
+            });
+        }
+
+        if (declineBtn) {
+            declineBtn.addEventListener("click", function () {
+                const fid = this.dataset.fid;
+                fetch("?action=friendAction", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "type=decline&friendship_id=" + fid
+                })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) {
+                        location.reload();
+                    }
+                });
+            });
+        }
+        ';
     }
 }

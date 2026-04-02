@@ -69,9 +69,9 @@ class Connections extends View
 
             return '
             <div class="conn-card">
-                <div class="conn-card-avatar">' . $uavatar . '</div>
+                <a href="?page=profile&id=' . $uid . '" class="conn-card-avatar conn-card-avatar--link" title="View profile">' . $uavatar . '</a>
                 <div class="conn-card-info">
-                    <span class="conn-card-name">' . $uname . '</span>
+                    <a href="?page=profile&id=' . $uid . '" class="conn-card-name conn-card-name--link">' . $uname . '</a>
                     <span class="conn-card-country">' . $flag . ' ' . htmlspecialchars($u['country'] ?? '', ENT_QUOTES) . '</span>
                     ' . ($ubio ? '<span class="conn-card-bio">' . $ubio . '</span>' : '') . '
                 </div>
@@ -121,6 +121,14 @@ class Connections extends View
         return '
         <link rel="stylesheet" href="public/css/dashboard.css">
         <link rel="stylesheet" href="public/css/connections.css">
+        <style>
+            .conn-card-avatar--link { display: contents; }
+            .conn-card-name--link { text-decoration: none; color: white; font-family: "Bungee", cursive; font-size: 1rem; }
+            .conn-card-name--link:hover { text-decoration: underline; }
+            .conn-sr-avatar--link { display: contents; }
+            .conn-sr-name--link { text-decoration: none; color: white; font-weight: 700; }
+            .conn-sr-name--link:hover { text-decoration: underline; }
+        </style>
         <div class="dash-layout">
 
             ' . $this->sidebar($user, $avatar, "connections") . '
@@ -248,9 +256,9 @@ class Connections extends View
                 }
 
                 return `<div class="conn-sr-item">
-                    <div class="conn-sr-avatar">${avatarHtml}</div>
+                    <a href="?page=profile&id=${u.id}" class="conn-sr-avatar conn-sr-avatar--link">${avatarHtml}</a>
                     <div class="conn-sr-info">
-                        <span class="conn-sr-name">${u.username}</span>
+                        <a href="?page=profile&id=${u.id}" class="conn-sr-name conn-sr-name--link">${u.username}</a>
                         <span class="conn-sr-country">${u.country || ""}</span>
                     </div>
                     <div class="conn-sr-action">${actionHtml}</div>

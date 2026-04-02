@@ -390,21 +390,45 @@ switch ($page) {
             header('Location: ?page=login');
             exit;
         }
-        $userModel = new User($pdo);
-        $userData  = $userModel->findById($_SESSION['user_id']);
+        $userModel      = new User($pdo);
+        $currentUserId  = (int)$_SESSION['user_id'];
 
-        if (isset($_GET['action']) && $_GET['action'] === 'edit') {
+        // Determine whose profile to show: ?id=X for another user, own profile otherwise
+        $targetId = isset($_GET['id']) ? (int)$_GET['id'] : $currentUserId;
+        if ($targetId <= 0) $targetId = $currentUserId;
+
+        $userData = $userModel->findById($targetId);
+        if (!$userData) {
+            header('Location: ?page=home');
+            exit;
+        }
+
+        $isOwn = ($targetId === $currentUserId);
+
+        // Only the owner can reach the edit form
+        if ($isOwn && isset($_GET['action']) && $_GET['action'] === 'edit') {
             $view = new EditProfile(['user' => $userData]);
         } else {
-            $profileStats = $userModel->getStats($_SESSION['user_id']);
-            $spotModel = new Spot($pdo);
-            $userSpots = $spotModel->getByUser($_SESSION['user_id'], 6);
+            $profileStats    = $userModel->getStats($targetId);
+            $spotModel       = new Spot($pdo);
+            $userSpots       = $spotModel->getByUser($targetId, 6);
+
+            // Friendship relation between current user and target (null if own profile)
+            $friendRelation  = null;
+            if (!$isOwn) {
+                $friendshipModel = new Friendship($pdo);
+                $friendRelation  = $friendshipModel->getRelation($currentUserId, $targetId);
+            }
+
             $view = new Profile([
-                'page'         => 'profile',
-                'profileUser'  => $userData,
-                'profileStats' => $profileStats,
-                'userSpots'    => $userSpots,
-                'fullWidth'    => true
+                'page'           => 'profile',
+                'profileUser'    => $userData,
+                'profileStats'   => $profileStats,
+                'userSpots'      => $userSpots,
+                'isOwn'          => $isOwn,
+                'friendRelation' => $friendRelation,
+                'currentUserId'  => $currentUserId,
+                'fullWidth'      => true
             ]);
         }
     break;

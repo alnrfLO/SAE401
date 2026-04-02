@@ -128,13 +128,13 @@ class Dashboard extends View
 
         return '
         <aside class="dash-sidebar">
-            <div class="sidebar-user">
+            <a href="?page=profile" class="sidebar-user sidebar-user--link" title="View my profile" style="text-decoration:none;display:flex;align-items:center;gap:12px;padding:20px 16px;border-bottom:2px solid rgba(255,255,255,0.08);transition:background 0.15s;" onmouseover="this.style.background=\'rgba(255,255,255,0.06)\'" onmouseout="this.style.background=\'\'">
                 <div class="sidebar-avatar">' . $avatar . '</div>
                 <div class="sidebar-user-info">
                     <div class="sidebar-username">' . $username . '</div>
                     <div class="sidebar-country">' . $flag . ' ' . htmlspecialchars($country, ENT_QUOTES) . '</div>
                 </div>
-            </div>
+            </a>
             <nav class="sidebar-nav">
                 ' . $navItems . '
             </nav>

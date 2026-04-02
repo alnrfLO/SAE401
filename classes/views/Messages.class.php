@@ -18,6 +18,13 @@ class Messages extends Dashboard
         return '
         <link rel="stylesheet" href="public/css/dashboard.css">
         <link rel="stylesheet" href="public/css/messages.css">
+        <style>
+            .msg-header-profile-link { text-decoration: none; color: inherit; }
+            .msg-header-profile-link:hover { text-decoration: underline; }
+            .msg-bubble-sender--link { display: contents; cursor: pointer; }
+            .msg-bubble-name--link { text-decoration: none; color: inherit; font-weight: 700; font-size: 0.78rem; }
+            .msg-bubble-name--link:hover { text-decoration: underline; }
+        </style>
         <div class="dash-layout">
 
             ' . $this->sidebar($user, $avatar, 'messages') . '
@@ -285,8 +292,10 @@ class Messages extends Dashboard
 
                 document.getElementById("chatHeaderAvatar").innerHTML = conv.type === "group"
                     ? `<div class="msg-avatar msg-avatar-letter msg-avatar-group" style="width:38px;height:38px">${name.substring(0,2).toUpperCase()}</div>`
-                    : avatar(other?.avatar, name, 38);
-                document.getElementById("chatHeaderName").textContent = name;
+                    : `<a href="?page=profile&id=${other?.id}" style="display:contents">${avatar(other?.avatar, name, 38)}</a>`;
+                document.getElementById("chatHeaderName").innerHTML = conv.type === "group"
+                    ? escHtml(name)
+                    : `<a href="?page=profile&id=${other?.id}" class="msg-header-profile-link">${escHtml(name)}</a>`;
                 document.getElementById("chatHeaderSub").textContent = sub;
             }
 
@@ -305,9 +314,9 @@ class Messages extends Dashboard
                     ? `<em class="msg-deleted">Message deleted</em>`
                     : escHtml(m.content).replace(/\n/g, "<br>");
                 return `<div class="msg-bubble-wrap ${isMine ? "msg-bubble-wrap--mine" : ""}">
-                    ${!isMine ? `<div class="msg-bubble-sender">${avatar(m.sender_avatar, m.sender_username, 26)}</div>` : ""}
+                    ${!isMine ? `<a href="?page=profile&id=${m.sender_id}" class="msg-bubble-sender msg-bubble-sender--link">${avatar(m.sender_avatar, m.sender_username, 26)}</a>` : ""}
                     <div class="msg-bubble ${isMine ? "msg-bubble--mine" : "msg-bubble--other"}">
-                        ${!isMine ? `<div class="msg-bubble-name">${escHtml(m.sender_username)}</div>` : ""}
+                        ${!isMine ? `<a href="?page=profile&id=${m.sender_id}" class="msg-bubble-name msg-bubble-name--link">${escHtml(m.sender_username)}</a>` : ""}
                         <div class="msg-bubble-text">${content}</div>
                         <div class="msg-bubble-time">${formatTime(m.created_at)}</div>
                     </div>
