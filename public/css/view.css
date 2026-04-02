@@ -159,6 +159,7 @@ header {
 
 .nav-links {
   flex: 2;
+  font-family: Bungee, sans-serif;
   display: flex;
   justify-content: center;
   gap: 28px;
@@ -169,8 +170,10 @@ header {
   position: relative;
   color: #222;
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 600;
+  font-family: Bungee, sans-serif;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 400;
   padding: 8px 12px;
   transition: all 0.2s;
 }

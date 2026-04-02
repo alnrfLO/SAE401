@@ -1,14 +1,14 @@
 <?php
 $lang = [
     'nav_home' => 'Accueil',
-    'nav_discover' => 'Découvrir',
+    'nav_discover' => 'Découvrir & Spots',
     'nav_presentation' => 'Présentation',
     'nav_about' => 'À propos',
     'nav_news' => 'Actualités',
     'nav_login' => 'CONNEXION',
     'nav_register' => 'INSCRIPTION',
 
-    'footer_subtext' => 'Un journal de voyage intergénérationnel.',
+    'footer_subtext' => 'Partagez vos spots préférés.',
     'footer_links_title' => 'Liens',
     'footer_questions' => 'Aide & FAQ',
     'footer_legal' => 'Mentions légales',
@@ -46,7 +46,7 @@ $lang = [
     'agreement_title' => 'Accord Utilisateur',
     'agreement_text' => 'En créant un compte sur FAV, vous acceptez de partager vos découvertes avec la communauté et de respecter la charte de bonne conduite.',
 
-    'hero_badge' => 'Journal de voyage',
+    'hero_badge' => 'Partagez vos spots',
     'hero_title_line1' => 'Découvre des Spots',
     'hero_title_line2' => 'Autour du Monde',
     'hero_subtitle' => 'Un guide de voyage interactif pour partager les meilleurs spot entre la France, l\'Albanie et le Vietnam.',

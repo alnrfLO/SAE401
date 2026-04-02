@@ -1,7 +1,7 @@
 <?php
 $lang = [
     'nav_home' => 'Trang chủ',
-    'nav_discover' => 'Khám phá',
+    'nav_discover' => 'Khám phá & Spots',
     'nav_presentation' => 'Giới thiệu',
     'nav_about' => 'Về chúng tôi',
     'nav_news' => 'Tin tức',

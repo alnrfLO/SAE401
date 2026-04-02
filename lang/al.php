@@ -1,14 +1,14 @@
 <?php
 $lang = [
     'nav_home' => 'Kryefaqja',
-    'nav_discover' => 'Zbuloni',
+    'nav_discover' => 'Zbuloni & Spots',
     'nav_presentation' => 'Prezantimi',
     'nav_about' => 'Rreth nesh',
     'nav_news' => 'Lajme',
     'nav_login' => 'HYRJE',
     'nav_register' => 'REGJISTRIM',
 
-    'footer_subtext' => 'Një ditar udhëtimi ndërbrezor.',
+    'footer_subtext' => 'Ndaj vendet tuaja të preferuara.',
     'footer_links_title' => 'Lidhje',
     'footer_questions' => 'Pyetje & FAQ',
     'footer_legal' => 'Informacion ligjor',
@@ -46,7 +46,7 @@ $lang = [
     'agreement_title' => 'Marrëveshja e Përdoruesit',
     'agreement_text' => 'Duke krijuar një llogari në FAV, ju pranoni të ndani zbulimet tuaja me komunitetin dhe të respektoni kodin e sjelljes.',
 
-    'hero_badge' => 'Ditar udhëtimi',
+    'hero_badge' => 'Ndaj vendet tuaja',
     'hero_title_line1' => 'Zbuloni Spots',
     'hero_title_line2' => 'Rreth Botës',
     'hero_subtitle' => 'Një guide udhëtimi interaktiv për të ndarë zbulimet tuaja ndërmjet Francës, Shqipërisë dhe Vietnamit.',

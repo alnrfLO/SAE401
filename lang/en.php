@@ -1,14 +1,14 @@
 <?php
 $lang = [
     'nav_home' => 'Home',
-    'nav_discover' => 'Discover',
+    'nav_discover' => 'Discover & Spots',
     'nav_presentation' => 'Presentation',
     'nav_about' => 'About',
     'nav_news' => 'News',
     'nav_login' => 'SIGN IN',
     'nav_register' => 'SIGN UP',
 
-    'footer_subtext' => 'An intergenerational travel diary.',
+    'footer_subtext' => 'Share your favorite spots.',
     'footer_links_title' => 'Links',
     'footer_questions' => 'Help & FAQ',
     'footer_legal' => 'Legal information',
@@ -46,7 +46,7 @@ $lang = [
     'agreement_title' => 'User Agreement',
     'agreement_text' => 'By creating an account on FAV, you agree to share your discoveries with the community and to respect the code of conduct.',
 
-    'hero_badge' => 'Travel Journal',
+    'hero_badge' => 'Share your spots',
     'hero_title_line1' => 'Discover Spots',
     'hero_title_line2' => 'Around the World',
     'hero_subtitle' => 'An interactive travel guide to share the best spots between France, Albania and Vietnam.',
