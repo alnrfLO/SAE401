@@ -373,7 +373,8 @@ switch ($page) {
                 'page'         => 'profile',
                 'profileUser'  => $userData,
                 'profileStats' => $profileStats,
-                'userSpots'    => $userSpots
+                'userSpots'    => $userSpots,
+                'fullWidth'    => true
             ]);
         }
     break;

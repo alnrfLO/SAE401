@@ -21,8 +21,8 @@ class Discover extends View {
                         <input type="text" placeholder="SPOT TITLE (e.g. Hidden Beach)" id="spotTitle" style="padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none;" required>
                         <input type="text" placeholder="LOCATION (e.g. Bali, Indonesia)" id="spotLocation" style="padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none;" required>
                         <textarea placeholder="Describe this amazing place..." id="spotDescription" rows="3" style="padding:12px; border:3px solid #212121; border-radius:8px; font-family:inherit; font-size:14px; outline:none; resize:vertical;"></textarea>
-                        <div style="display:flex; gap:16px;">
-                            <select id="spotCategory" style="flex:1; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none;">
+                        <div style="display:flex; align-items:center; gap:16px; width:100%;">
+                            <select id="spotCategory" style="flex:1; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none; cursor:pointer;">
                                 <option value="nature">🌿 Nature</option>
                                 <option value="ville">🏙️ City</option>
                                 <option value="voyage">🏖️ Beach/Trip</option>
@@ -31,7 +31,7 @@ class Discover extends View {
                                 <option value="culture">🎭 Culture</option>
                                 <option value="autre">✨ Other</option>
                             </select>
-                            <input type="file" accept="image/*" id="spotImage" style="flex:1; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none; background:#f5eedc;">
+                            <input type="file" accept="image/*" id="spotImage" style="flex:1; min-width:0; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none; background:#f5eedc; overflow:hidden; max-width:100%;">
                         </div>
                         <button type="button" onclick="saveSpot()" style="margin-top:8px; padding:14px; border:3px solid #212121; border-radius:8px; background:#fbad40; color:#212121; font-family:\'Bungee\', cursive; font-size:16px; cursor:pointer; box-shadow:4px 4px 0px #212121; transition:transform 0.1s;">PUBLISH IT !</button>
                     </form>
