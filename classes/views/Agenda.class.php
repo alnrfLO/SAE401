@@ -21,21 +21,21 @@ class Agenda extends Dashboard
         if ($month < 1)  { $month = 12; $year--; }
         if ($month > 12) { $month = 1;  $year++; }
 
-        $firstDay  = new DateTime("$year-$month-01");
+        $firstDay    = new DateTime("$year-$month-01");
         $daysInMonth = (int)$firstDay->format('t');
-        $startDow  = (int)$firstDay->format('N'); // 1=Mon … 7=Sun
-        $monthName = $firstDay->format('F Y');
-        $todayNum  = ($today->format('Y-m') === "$year-" . str_pad($month, 2, '0', STR_PAD_LEFT))
-                     ? (int)$today->format('j') : 0;
+        $startDow    = (int)$firstDay->format('N'); // 1=Mon … 7=Sun
+        $monthName   = strtoupper($firstDay->format('F Y'));
+        $todayNum    = ($today->format('Y-m') === "$year-" . str_pad($month, 2, '0', STR_PAD_LEFT))
+                       ? (int)$today->format('j') : 0;
 
         // Navigation prev/next
         $prevMonth = $month - 1; $prevYear = $year;
-        if ($prevMonth < 1) { $prevMonth = 12; $prevYear--; }
+        if ($prevMonth < 1)  { $prevMonth = 12; $prevYear--; }
         $nextMonth = $month + 1; $nextYear = $year;
-        if ($nextMonth > 12) { $nextMonth = 1; $nextYear++; }
+        if ($nextMonth > 12) { $nextMonth = 1;  $nextYear++; }
 
         // Grille du calendrier
-        $cells = '';
+        $cells      = '';
         $dayHeaders = '';
         foreach (['MON','TUE','WED','THU','FRI','SAT','SUN'] as $d) {
             $dayHeaders .= '<div class="cal-head">' . $d . '</div>';
@@ -55,14 +55,18 @@ class Agenda extends Dashboard
         }
 
         // Jour sélectionné (today par défaut)
-        $selectedDay = $todayNum ?: 1;
-        $selectedDate = (new DateTime("$year-$month-$selectedDay"))->format('l, F j');
+        $selectedDay  = $todayNum ?: 1;
+        $selectedDate = strtoupper((new DateTime("$year-$month-$selectedDay"))->format('l, F j'));
+        $todayDate    = $today->format('Y-m-d');
 
-        return '
+        // Sidebar
+        $sidebar = $this->sidebar($user, $avatar, 'agenda');
+
+        return <<<HTML
         <link rel="stylesheet" href="public/css/dashboard.css">
         <div class="dash-layout">
 
-            ' . $this->sidebar($user, $avatar, 'agenda') . '
+            {$sidebar}
 
             <div class="dash-main">
                 <div class="dash-topbar">
@@ -70,7 +74,7 @@ class Agenda extends Dashboard
                         <h1 class="dash-title">MY AGENDA</h1>
                         <p class="dash-subtitle">Plan your cultural exchanges, meetings, and travel events.</p>
                     </div>
-                    <button class="dash-new-event-btn" onclick="openEventModal()">
+                    <button class="dash-new-event-btn" id="btnNewEventMain">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"/></svg>
                         New Event
                     </button>
@@ -80,13 +84,13 @@ class Agenda extends Dashboard
                     <!-- Calendrier -->
                     <div class="agenda-calendar-wrap">
                         <div class="cal-nav">
-                            <a href="?page=agenda&month=' . $prevMonth . '&year=' . $prevYear . '" class="cal-nav-btn">&#8249;</a>
-                            <span class="cal-month-label">' . strtoupper($monthName) . '</span>
-                            <a href="?page=agenda&month=' . $nextMonth . '&year=' . $nextYear . '" class="cal-nav-btn">&#8250;</a>
+                            <a href="?page=agenda&month={$prevMonth}&year={$prevYear}" class="cal-nav-btn">&#8249;</a>
+                            <span class="cal-month-label">{$monthName}</span>
+                            <a href="?page=agenda&month={$nextMonth}&year={$nextYear}" class="cal-nav-btn">&#8250;</a>
                         </div>
                         <div class="cal-grid">
-                            ' . $dayHeaders . '
-                            ' . $cells . '
+                            {$dayHeaders}
+                            {$cells}
                         </div>
                         <div class="cal-legend">
                             <span class="cal-legend-dot cal-legend-dot--private"></span> Private
@@ -99,8 +103,8 @@ class Agenda extends Dashboard
                     <!-- Panel jour sélectionné -->
                     <div class="agenda-day-panel" id="agendaDayPanel">
                         <div class="agenda-day-header" id="agendaDayTitle">
-                            ' . strtoupper($selectedDate) . '
-                            <button class="dash-new-event-btn dash-new-event-btn--sm" onclick="openEventModal()">+ ADD</button>
+                            {$selectedDate}
+                            <button class="dash-new-event-btn dash-new-event-btn--sm" id="btnAddEvent">+ ADD</button>
                         </div>
                         <div class="agenda-events" id="agendaEventsList">
                             <div class="agenda-no-events">No events for this day.<br>Click a day or "+ New Event" to add one.</div>
@@ -116,16 +120,17 @@ class Agenda extends Dashboard
             <div class="modal-box">
                 <div class="modal-header">
                     <h2 class="modal-title">NEW EVENT</h2>
-                    <button class="modal-close" onclick="closeEventModal()">✕</button>
+                    <button class="modal-close" id="btnCloseModal">&#x2715;</button>
                 </div>
                 <form class="modal-form" onsubmit="return false;">
+                    <input type="hidden" id="evtId" value="">
                     <div class="modal-field">
                         <label>EVENT TITLE</label>
                         <input type="text" placeholder="e.g. French Cooking Class" id="evtTitle">
                     </div>
                     <div class="modal-field">
                         <label>DATE</label>
-                        <input type="date" id="evtDate" value="' . $today->format('Y-m-d') . '">
+                        <input type="date" id="evtDate" value="{$todayDate}">
                     </div>
                     <div class="modal-row">
                         <div class="modal-field">
@@ -138,95 +143,300 @@ class Agenda extends Dashboard
                         </div>
                     </div>
                     <div class="modal-field">
+                        <label>LOCATION</label>
+                        <input type="text" id="evtLocation" placeholder="e.g. Lyon, France">
+                    </div>
+                    <div class="modal-field">
                         <label>TYPE</label>
                         <div class="modal-type-btns">
-                            <button type="button" class="type-btn type-btn--private active" data-type="private" onclick="selectType(this)">🔒 Private</button>
-                            <button type="button" class="type-btn type-btn--shared" data-type="shared" onclick="selectType(this)">🤝 Shared</button>
-                            <button type="button" class="type-btn type-btn--public" data-type="public" onclick="selectType(this)">🌍 Public</button>
+                            <button type="button" class="type-btn type-btn--private active" data-type="private">&#x1F512; Private</button>
+                            <button type="button" class="type-btn type-btn--shared" data-type="shared">&#x1F91D; Shared</button>
+                            <button type="button" class="type-btn type-btn--public" data-type="public">&#x1F30D; Public</button>
                         </div>
                     </div>
                     <div class="modal-field">
                         <label>NOTES</label>
-                        <textarea placeholder="Optional notes…" id="evtNotes" rows="2"></textarea>
+                        <textarea placeholder="Optional notes..." id="evtNotes" rows="2"></textarea>
                     </div>
                     <div class="modal-actions">
-                        <button type="button" class="prof-btn prof-btn--outline" onclick="closeEventModal()">Cancel</button>
-                        <button type="button" class="prof-btn prof-btn--primary" onclick="saveEvent()">Save Event</button>
+                        <button type="button" class="prof-btn prof-btn--outline" id="btnCancel">Cancel</button>
+                        <button type="button" class="prof-btn prof-btn--primary" id="btnSave">Save Event</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <script>
-        // ── Sélection de jour ──
-        document.querySelectorAll(".cal-cell:not(.cal-cell--empty)").forEach(cell => {
-            cell.addEventListener("click", function() {
-                document.querySelectorAll(".cal-cell--selected").forEach(c => c.classList.remove("cal-cell--selected"));
-                this.classList.add("cal-cell--selected");
-                const day = this.dataset.day;
-                const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-                const date = new Date(' . $year . ', ' . ($month - 1) . ', day);
-                const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-                document.getElementById("agendaDayTitle").innerHTML =
-                    days[date.getDay()].toUpperCase() + ", " + months[date.getMonth()].toUpperCase() + " " + day +
-                    \'<button class="dash-new-event-btn dash-new-event-btn--sm" onclick="openEventModal()">+ ADD</button>\';
-                renderEvents(day);
+const currentYear = {$year};
+const currentMonth = {$month};
+let selectedDay = {$selectedDay};
+let events = {};
+
+// Attach all listeners AFTER functions are defined
+function attachListeners() {
+    document.getElementById('btnNewEventMain').addEventListener('click', openEventModal);
+    document.getElementById('btnAddEvent').addEventListener('click', openEventModal);
+    document.getElementById('btnCloseModal').addEventListener('click', closeEventModal);
+    document.getElementById('btnCancel').addEventListener('click', closeEventModal);
+    document.getElementById('btnSave').addEventListener('click', saveEvent);
+
+    document.querySelectorAll('.type-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectType(this);
+        });
+    });
+
+    document.querySelectorAll('.cal-cell:not(.cal-cell--empty)').forEach(function(cell) {
+        cell.addEventListener('click', function() {
+            document.querySelectorAll('.cal-cell--selected').forEach(function(c) {
+                c.classList.remove('cal-cell--selected');
+            });
+            this.classList.add('cal-cell--selected');
+            selectedDay = parseInt(this.dataset.day, 10);
+            updateDayTitle(selectedDay);
+            renderEvents(selectedDay);
+        });
+    });
+}
+
+function updateDayTitle(day) {
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const dt = new Date(currentYear, currentMonth - 1, day);
+    const title = days[dt.getDay()].toUpperCase() + ', ' + months[dt.getMonth()].toUpperCase() + ' ' + day;
+    document.getElementById('agendaDayTitle').textContent = title;
+}
+
+async function loadEvents() {
+    try {
+        const url = '?page=agenda&action=getAgendaEvents&year=' + currentYear + '&month=' + currentMonth;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (!data.success) {
+            console.error('Erreur chargement:', data.error);
+            document.getElementById('agendaEventsList').innerHTML = '<div class="agenda-no-events">Erreur chargement</div>';
+            return;
+        }
+
+        events = {};
+        data.events.forEach(function(e) {
+            const day = new Date(e.event_date).getDate();
+            if (!events[day]) events[day] = [];
+            const starts = e.event_date.substr(11, 5);
+            const endMatch = e.description ? e.description.match(/\[end:(\d{1,2}:\d{2})\]/) : null;
+            const endTime = endMatch ? endMatch[1] : '';
+            const notes = e.description ? e.description.replace(/\[end:\d{1,2}:\d{2}\]\s*/, '').trim() : '';
+
+            events[day].push({
+                id: e.id,
+                title: e.title,
+                location: e.location || '',
+                notes: notes,
+                start: starts,
+                end: endTime,
+                type: e.type,
+                date: e.event_date.substr(0, 10)
             });
         });
 
-        // Données locales (à remplacer par fetch BDD plus tard)
-        let events = {};
+        markDayDots();
+        renderEvents(selectedDay);
+    } catch (err) {
+        console.error('Erreur fetch:', err);
+    }
+}
 
-        function renderEvents(day) {
-            const list = document.getElementById("agendaEventsList");
-            const evts = events[day] || [];
-            if (evts.length === 0) {
-                list.innerHTML = \'<div class="agenda-no-events">No events for this day.<br>Click "+ ADD" to create one.</div>\';
-                return;
+function markDayDots() {
+    document.querySelectorAll('.cal-cell').forEach(function(cell) {
+        const day = cell.dataset.day;
+        if (!day || cell.classList.contains('cal-cell--empty')) return;
+        const exists = events[day] && events[day].length > 0;
+        let dot = cell.querySelector('.cal-dot');
+        if (exists) {
+            if (!dot) {
+                dot = document.createElement('span');
+                dot.className = 'cal-dot cal-dot--shared';
+                cell.appendChild(dot);
             }
-            list.innerHTML = evts.map(e => `
-                <div class="agenda-event agenda-event--\${e.type}">
-                    <div class="agenda-event-type">\${e.type === "shared" ? "Cultural Exchange" : e.type === "public" ? "Public Event" : "Private"}</div>
-                    <div class="agenda-event-title">\${e.title}</div>
-                    <div class="agenda-event-meta">⏰ \${e.start} — \${e.end}</div>
-                    ${e.notes ? `<div class="agenda-event-notes">${String(e.notes)}</div>` : ""}
-                </div>
-            `).join("");
+        } else {
+            if (dot) dot.remove();
+        }
+    });
+}
+
+function renderEvents(day) {
+    const list = document.getElementById('agendaEventsList');
+    const evts = events[day] || [];
+
+    if (evts.length === 0) {
+        list.innerHTML = '<div class="agenda-no-events">No events for this day.<br>Click &quot;+ ADD&quot; to create one.</div>';
+        return;
+    }
+
+    let html = '';
+    evts.forEach(function(e) {
+        const typeLabel = e.type === 'shared' ? 'Cultural Exchange' : e.type === 'public' ? 'Public Event' : 'Private';
+        html += '<div class="agenda-event agenda-event--' + e.type + '">';
+        html += '<div class="agenda-event-type">' + typeLabel + '</div>';
+        html += '<div class="agenda-event-title">' + e.title + '</div>';
+        html += '<div class="agenda-event-meta">&#x23F0; ' + e.start;
+        if (e.end) html += ' &mdash; ' + e.end;
+        html += '</div>';
+        if (e.location) html += '<div class="agenda-event-location">&#x1F4CD; ' + e.location + '</div>';
+        if (e.notes) html += '<div class="agenda-event-notes">' + e.notes + '</div>';
+        html += '<div class="agenda-event-actions">';
+        html += '<button type="button" class="event-edit" data-id="' + e.id + '" data-day="' + day + '">&#x270F;&#xFE0F; Edit</button>';
+        html += '<button type="button" class="event-delete" data-id="' + e.id + '" data-day="' + day + '">&#x1F5D1;&#xFE0F; Delete</button>';
+        html += '</div>';
+        html += '</div>';
+    });
+    list.innerHTML = html;
+
+    // Attach listeners to dynamically created buttons
+    list.querySelectorAll('.event-edit').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            editEvent(parseInt(this.dataset.id, 10), parseInt(this.dataset.day, 10));
+        });
+    });
+    list.querySelectorAll('.event-delete').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            deleteEvent(parseInt(this.dataset.id, 10), parseInt(this.dataset.day, 10));
+        });
+    });
+}
+
+function openEventModal() {
+    document.getElementById('evtId').value = '';
+    document.getElementById('evtTitle').value = '';
+    document.getElementById('evtLocation').value = '';
+    const dateStr = currentYear + '-' + String(currentMonth).padStart(2, '0') + '-' + String(selectedDay).padStart(2, '0');
+    document.getElementById('evtDate').value = dateStr;
+    document.getElementById('evtStart').value = '10:00';
+    document.getElementById('evtEnd').value = '11:00';
+    document.getElementById('evtNotes').value = '';
+    document.querySelectorAll('.type-btn').forEach(function(b) {
+        b.classList.remove('active');
+    });
+    document.querySelector('.type-btn--private').classList.add('active');
+    document.getElementById('eventModal').style.display = 'flex';
+}
+
+function closeEventModal() {
+    document.getElementById('eventModal').style.display = 'none';
+}
+
+function selectType(btn) {
+    document.querySelectorAll('.type-btn').forEach(function(b) {
+        b.classList.remove('active');
+    });
+    btn.classList.add('active');
+}
+
+async function saveEvent() {
+    const title    = document.getElementById('evtTitle').value.trim();
+    const date     = document.getElementById('evtDate').value;
+    const start    = document.getElementById('evtStart').value;
+    const end      = document.getElementById('evtEnd').value;
+    const location = document.getElementById('evtLocation').value.trim();
+    const notes    = document.getElementById('evtNotes').value.trim();
+    const typeBtn  = document.querySelector('.type-btn.active');
+    const type     = typeBtn ? typeBtn.dataset.type : 'private';
+    const id       = document.getElementById('evtId').value;
+
+    if (!title || !date || !start) {
+        alert('Titre, date et heure requis');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('date', date);
+    formData.append('start', start);
+    formData.append('end', end);
+    formData.append('location', location);
+    formData.append('notes', notes);
+    formData.append('type', type);
+    if (id) formData.append('event_id', id);
+
+    const action = id ? 'updateAgendaEvent' : 'createAgendaEvent';
+
+    try {
+        const resp = await fetch('?page=agenda&action=' + action, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await resp.json();
+
+        if (!data.success) {
+            alert('Erreur: ' + (data.error || 'Erreur inconnue'));
+            console.error('Erreur POST:', data);
+            return;
         }
 
-        function openEventModal() {
-            document.getElementById("eventModal").style.display = "flex";
-        }
-        function closeEventModal() {
-            document.getElementById("eventModal").style.display = "none";
-        }
-        function selectType(btn) {
-            document.querySelectorAll(".type-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-        }
-        function saveEvent() {
-            const title = document.getElementById("evtTitle").value.trim();
-            if (!title) { alert("Please enter a title."); return; }
-            const date  = document.getElementById("evtDate").value;
-            const day   = parseInt(date.split("-")[2]);
-            const start = document.getElementById("evtStart").value;
-            const end   = document.getElementById("evtEnd").value;
-            const type  = document.querySelector(".type-btn.active")?.dataset.type || "private";
-            const notes = document.getElementById("evtNotes").value.trim();
+        closeEventModal();
+        await loadEvents();
+    } catch (err) {
+        alert('Erreur POST: ' + err);
+        console.error(err);
+    }
+}
 
-            if (!events[day]) events[day] = [];
-            events[day].push({ title, start, end, type, notes });
+function editEvent(eventId, day) {
+    const evt = (events[day] || []).find(function(e) {
+        return e.id === eventId;
+    });
+    if (!evt) return;
 
-            // Marquer le jour dans le calendrier
-            const cell = document.querySelector(`.cal-cell[data-day="${day}"]`);
-            if (cell) {
-                let dot = cell.querySelector(".cal-dot");
-                if (!dot) { dot = document.createElement("span"); dot.className = "cal-dot cal-dot--" + type; cell.appendChild(dot); }
-            }
+    document.getElementById('evtId').value       = eventId;
+    document.getElementById('evtTitle').value    = evt.title;
+    document.getElementById('evtLocation').value = evt.location || '';
+    document.getElementById('evtDate').value     = evt.date;
+    document.getElementById('evtStart').value    = evt.start;
+    document.getElementById('evtEnd').value      = evt.end || '';
+    document.getElementById('evtNotes').value    = evt.notes || '';
 
-            closeEventModal();
-            renderEvents(day);
+    document.querySelectorAll('.type-btn').forEach(function(b) {
+        b.classList.remove('active');
+    });
+    const btn = document.querySelector('.type-btn--' + evt.type) || document.querySelector('.type-btn--private');
+    btn.classList.add('active');
+
+    openEventModal();
+}
+
+async function deleteEvent(eventId, day) {
+    if (!confirm('Supprimer cet événement ?')) return;
+
+    const formData = new FormData();
+    formData.append('event_id', eventId);
+
+    try {
+        const resp = await fetch('?page=agenda&action=deleteAgendaEvent', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await resp.json();
+
+        if (!data.success) {
+            alert('Impossible de supprimer');
+            return;
         }
-        </script>';
+
+        await loadEvents();
+    } catch (err) {
+        alert('Erreur DELETE: ' + err);
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    attachListeners();
+    updateDayTitle(selectedDay);
+    loadEvents();
+});
+        </script>
+HTML;
     }
 }

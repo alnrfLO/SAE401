@@ -253,6 +253,105 @@ if (isset($_GET['action'])) {
         exit;
     }
 
+    // ── AGENDA API ─────────────────────────────────────────────
+    if ($action === 'getAgendaEvents' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+
+        $year  = max(1970, min(9999, (int)($_GET['year'] ?? date('Y'))));
+        $month = max(1, min(12, (int)($_GET['month'] ?? date('m'))));
+
+        $eventModel = new Event($pdo);
+        $events = $eventModel->getByMonth($_SESSION['user_id'], $year, $month);
+
+        foreach ($events as &$e) {
+            $e['event_date'] = date('Y-m-d H:i', strtotime($e['event_date']));
+        }
+
+        echo json_encode(['success'=>true,'events'=>$events]);
+        exit;
+    }
+
+    if ($action === 'createAgendaEvent' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+
+        $title = trim($_POST['title'] ?? '');
+        $date  = trim($_POST['date'] ?? '');
+        $start = trim($_POST['start'] ?? '00:00');
+        $end   = trim($_POST['end'] ?? '00:00');
+        $type  = $_POST['type'] ?? 'private';
+        $notes = trim($_POST['notes'] ?? '');
+
+        if (!$title || !$date || !$start) {
+            echo json_encode(['success'=>false,'error'=>'Titre, date, heure de début requis']);
+            exit;
+        }
+
+        $eventDate = date('Y-m-d H:i:s', strtotime($date . ' ' . $start));
+        $description = $notes;
+        if ($end) {
+            $description = "[end:" . $end . "] " . $description;
+        }
+
+        $eventModel = new Event($pdo);
+        $eventId = $eventModel->create($_SESSION['user_id'], [
+            'title' => $title,
+            'description' => $description,
+            'location' => trim($_POST['location'] ?? ''),
+            'event_date' => $eventDate,
+            'type' => $type,
+            'status' => 'accepted'
+        ]);
+
+        if ($eventId) {
+            echo json_encode(['success'=>true,'event_id'=>$eventId]);
+        } else {
+            echo json_encode(['success'=>false,'error'=>'Impossible de créer l\'événement']);
+        }
+        exit;
+    }
+
+    if ($action === 'updateAgendaEvent' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+
+        $eventId = (int)($_POST['event_id'] ?? 0);
+        if (!$eventId) { echo json_encode(['success'=>false,'error'=>'ID événement invalide']); exit; }
+
+        $data = [
+            'title' => trim($_POST['title'] ?? ''),
+            'location' => trim($_POST['location'] ?? ''),
+            'type' => $_POST['type'] ?? 'private',
+            'status' => $_POST['status'] ?? 'accepted',
+            'description' => trim($_POST['notes'] ?? ''),
+        ];
+
+        $date = trim($_POST['date'] ?? '');
+        $start = trim($_POST['start'] ?? '00:00');
+        if ($date && $start) {
+            $data['event_date'] = date('Y-m-d H:i:s', strtotime($date . ' ' . $start));
+        }
+
+        $eventModel = new Event($pdo);
+        $ok = $eventModel->update($eventId, $_SESSION['user_id'], $data);
+        echo json_encode(['success' => $ok]);
+        exit;
+    }
+
+    if ($action === 'deleteAgendaEvent' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+
+        $eventId = (int)($_POST['event_id'] ?? 0);
+        if (!$eventId) { echo json_encode(['success'=>false,'error'=>'ID événement invalide']); exit; }
+
+        $eventModel = new Event($pdo);
+        $ok = $eventModel->delete($eventId, $_SESSION['user_id']);
+        echo json_encode(['success' => $ok]);
+        exit;
+    }
+
     // AJOUT D'UN SPOT
     if ($action === 'create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
