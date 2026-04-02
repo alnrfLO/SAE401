@@ -12,12 +12,30 @@
   overflow: hidden;
 }
 
+/* -- MODIFS SI PAS DE HEADER SITE -- */
+body.no-header .dash-layout {
+  height: 100vh;
+  padding-top: 0;
+}
+body.no-header .dash-sidebar {
+  padding-top: 24px;
+}
+body.no-header .dash-main {
+  padding-top: 32px;
+}
+body.no-header .dash-main--messages {
+  padding-top: 0;
+}
+
 @media (max-width: 1100px) {
   .dash-layout {
     height: auto;
     max-height: none;
     padding-top: 130px;
     flex-direction: column;
+  }
+  body.no-header .dash-layout {
+    padding-top: 0;
   }
 }
 

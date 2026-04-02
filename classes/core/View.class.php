@@ -16,9 +16,13 @@ class View
         $lang = $_GET['lang'] ?? 'en';
         $page = $this->data['page'] ?? 'home';
 
-        ob_start();
-        require __DIR__ . '/../views/partials/header.php';
-        $headerHtml = ob_get_clean();
+        $showHeader = $this->data['showHeader'] ?? true;
+        $headerHtml = '';
+        if ($showHeader) {
+            ob_start();
+            require __DIR__ . '/../views/partials/header.php';
+            $headerHtml = ob_get_clean();
+        }
 
         ob_start();
         require __DIR__ . '/../views/partials/footer.php';
@@ -40,7 +44,7 @@ class View
                 <script src="https://unpkg.com/@phosphor-icons/web"></script>
                 <link rel="stylesheet" href="public/css/view.css">
             </head>
-            <body>
+            <body class="' . ($showHeader ? '' : 'no-header') . '">
                 ' . $headerHtml . '
                 <main class="' . ($fullWidth ? 'main--full' : '') . '">
                     ' . $this->content() . '

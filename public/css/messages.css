@@ -11,8 +11,12 @@
 
 .msg-layout {
     display: flex;
-    height: calc(100vh - 60px); /* ajuste si ton topbar a une autre hauteur */
+    flex: 1;
     overflow: hidden;
+}
+
+body.no-header .msg-layout {
+    height: 100vh;
 }
 
 /* ── SIDEBAR CONVERSATIONS ──────────────────────────────── */

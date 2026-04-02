@@ -163,7 +163,7 @@ if (isset($_GET['action'])) {
     if ($action === 'getConversations') {
         header('Content-Type: application/json');
         if (!User::isLoggedIn()) { echo json_encode([]); exit; }
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         echo json_encode($messaging->getConversations($_SESSION['user_id']));
         exit;
     }
@@ -173,7 +173,7 @@ if (isset($_GET['action'])) {
         header('Content-Type: application/json');
         if (!User::isLoggedIn()) { echo json_encode(null); exit; }
         $convId = (int)($_GET['conv_id'] ?? 0);
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         echo json_encode($messaging->getConversation($convId, $_SESSION['user_id']));
         exit;
     }
@@ -184,7 +184,7 @@ if (isset($_GET['action'])) {
         if (!User::isLoggedIn()) { echo json_encode([]); exit; }
         $convId = (int)($_GET['conv_id'] ?? 0);
         $before = (int)($_GET['before'] ?? 0);
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         echo json_encode($messaging->getMessages($convId, $_SESSION['user_id'], 50, $before));
         exit;
     }
@@ -195,7 +195,7 @@ if (isset($_GET['action'])) {
         if (!User::isLoggedIn()) { echo json_encode(['messages' => []]); exit; }
         $convId  = (int)($_GET['conv_id'] ?? 0);
         $afterId = (int)($_GET['after_id'] ?? 0);
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         $msgs = $messaging->getNewMessages($convId, $_SESSION['user_id'], $afterId);
         echo json_encode(['messages' => $msgs]);
         exit;
@@ -208,7 +208,7 @@ if (isset($_GET['action'])) {
         $convId  = (int)($_POST['conv_id'] ?? 0);
         $content = trim($_POST['content'] ?? '');
         if (!$convId || !$content) { echo json_encode(['success' => false]); exit; }
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         $msg = $messaging->sendMessage($convId, $_SESSION['user_id'], $content);
         echo json_encode(['success' => (bool)$msg, 'message' => $msg]);
         exit;
@@ -220,7 +220,7 @@ if (isset($_GET['action'])) {
         if (!User::isLoggedIn()) { echo json_encode(['success' => false]); exit; }
         $targetId = (int)($_POST['target_id'] ?? 0);
         if (!$targetId) { echo json_encode(['success' => false]); exit; }
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         $convId = $messaging->getOrCreateDirect($_SESSION['user_id'], $targetId);
         echo json_encode(['success' => true, 'conv_id' => $convId]);
         exit;
@@ -236,7 +236,7 @@ if (isset($_GET['action'])) {
             echo json_encode(['success' => false, 'error' => 'Données invalides']);
             exit;
         }
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         $convId = $messaging->createGroup($_SESSION['user_id'], $name, $memberIds);
         echo json_encode(['success' => true, 'conv_id' => $convId]);
         exit;
@@ -247,7 +247,7 @@ if (isset($_GET['action'])) {
         header('Content-Type: application/json');
         if (!User::isLoggedIn()) { echo json_encode(['success' => false]); exit; }
         $convId = (int)($_POST['conv_id'] ?? 0);
-        $messaging = new Messaging($pdo);
+        $messaging = new Message($pdo);
         $ok = $messaging->leaveConversation($convId, $_SESSION['user_id']);
         echo json_encode(['success' => $ok]);
         exit;
@@ -294,6 +294,36 @@ if (isset($_GET['action'])) {
             echo json_encode(['success' => true, 'id' => $spotId]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Erreur de création']);
+        }
+        exit;
+    }
+
+    // ── LIKE / UNLIKE UN SPOT ─────────────────────────────────────
+    if ($action === 'toggleLikeSpot' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success' => false, 'error' => 'Not logged in']); exit; }
+        $spotId = (int)($_POST['spot_id'] ?? 0);
+        if (!$spotId) { echo json_encode(['success' => false, 'error' => 'Invalid ID']); exit; }
+        $spotModel = new Spot($pdo);
+        $isLiked = $spotModel->toggleLike($spotId, $_SESSION['user_id']);
+        $newCount = (int)$pdo->query("SELECT COUNT(*) FROM likes WHERE spot_id = $spotId")->fetchColumn();
+        echo json_encode(['success' => true, 'isLiked' => $isLiked, 'likes_count' => $newCount]);
+        exit;
+    }
+
+    // ── POSTER UN COMMENTAIRE ────────────────────────────────────
+    if ($action === 'postComment' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success' => false, 'error' => 'Not logged in']); exit; }
+        $spotId  = (int)($_POST['spot_id'] ?? 0);
+        $content = trim($_POST['content'] ?? '');
+        if (!$spotId || !$content) { echo json_encode(['success' => false, 'error' => 'Invalid data']); exit; }
+        $commentModel = new Comment($pdo);
+        $commentId = $commentModel->create($spotId, $_SESSION['user_id'], $content);
+        if ($commentId) {
+            echo json_encode(['success' => true, 'comment_id' => $commentId]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error creating comment']);
         }
         exit;
     }
@@ -392,7 +422,21 @@ switch ($page) {
         $spotId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $spotModel = new Spot($pdo);
         $spotData = $spotModel->findById($spotId);
-        $view = new SingleSpot(['page' => 'spot', 'spot' => $spotData]);
+        
+        $commentModel = new Comment($pdo);
+        $comments = $commentModel->getBySpot($spotId);
+        
+        $isLiked = false;
+        if (User::isLoggedIn()) {
+            $isLiked = $spotModel->isLikedBy($spotId, $_SESSION['user_id']);
+        }
+        
+        $view = new SingleSpot([
+            'page'     => 'spot',
+            'spot'     => $spotData,
+            'comments' => $comments,
+            'isLiked'  => $isLiked
+        ]);
     break;
 
     case 'admin':
@@ -407,21 +451,21 @@ switch ($page) {
     $userModel = new User($pdo);
     $userData  = $userModel->findById($_SESSION['user_id']);
     $profileStats = $userModel->getStats($_SESSION['user_id']);
-    $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats, 'fullWidth' => true, 'showFooter' => false]);
+    $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
 
     case 'agenda':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);
         $userData  = $userModel->findById($_SESSION['user_id']);
-        $view = new Agenda(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false]);
+        $view = new Agenda(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
 
     case 'messages':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);
         $userData  = $userModel->findById($_SESSION['user_id']);
-        $view = new Messages(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false]);
+        $view = new Messages(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
     
     case 'discover':
@@ -465,7 +509,8 @@ switch ($page) {
             'received'    => $friendshipModel->getReceivedRequests($_SESSION['user_id']),
             'sent'        => $friendshipModel->getSentRequests($_SESSION['user_id']),
             'fullWidth'   => true,
-            'showFooter'  => false
+            'showFooter'  => false,
+            'showHeader'  => false
         ]);
     break;
 
