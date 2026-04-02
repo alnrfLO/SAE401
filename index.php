@@ -269,23 +269,39 @@ if (isset($_GET['action'])) {
             exit;
         }
 
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
             $file = $_FILES['image'];
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                echo json_encode(['success' => false, 'error' => 'Upload error code '. $file['error']]);
+                exit;
+            }
+
             $maxSize = 5 * 1024 * 1024; // 5MB limit
             $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-            if ($file['size'] <= $maxSize && in_array($file['type'], $allowedTypes)) {
-                $uploadDir = 'uploads/spots/';
-                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+            if ($file['size'] > $maxSize || !in_array($file['type'], $allowedTypes)) {
+                echo json_encode(['success' => false, 'error' => 'Type ou taille de l\'image invalide']);
+                exit;
+            }
 
-                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $newFilename = 'spot_' . $userId . '_' . time() . '.' . $ext;
-                $destPath = $uploadDir . $newFilename;
-
-                if (move_uploaded_file($file['tmp_name'], $destPath)) {
-                    $input['image'] = $destPath;
+            $uploadDir = __DIR__ . '/uploads/spots/';
+            if (!is_dir($uploadDir)) {
+                if (!mkdir($uploadDir, 0777, true) && !is_dir($uploadDir)) {
+                    echo json_encode(['success' => false, 'error' => 'Impossible de créer le dossier uploads/spots']);
+                    exit;
                 }
             }
+
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $newFilename = 'spot_' . $userId . '_' . time() . '.' . $ext;
+            $destPathLocal = $uploadDir . $newFilename;
+
+            if (!move_uploaded_file($file['tmp_name'], $destPathLocal)) {
+                echo json_encode(['success' => false, 'error' => 'Impossible de déplacer le fichier image']);
+                exit;
+            }
+
+            $input['image'] = 'uploads/spots/' . $newFilename;
         }
 
         $spotModel = new Spot($pdo);
