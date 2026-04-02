@@ -78,13 +78,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const marker = L.marker(point, { icon: customIcon });
 
-                const imgSrc = s.image ? s.image : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23212121%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23fff%22 font-family=%22sans-serif%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ENO IMAGE%3C/text%3E%3C/svg%3E';
+                const imgSrc = s.image ? s.image : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23212121%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23fff%22 font-family=%22sans-serif%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E' + (window.FAV_LANG_DATA?.no_image || 'NO IMAGE') + '%3C/text%3E%3C/svg%3E';
                 const infoHtml = `
                     <div class="custom-popup">
                         <img src="${imgSrc}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:5px; border:2px solid #212121;">
                         <h4>${s.title}</h4>
-                        <p>📍 ${s.location || 'Unknown'}</p>
-                        <a href="?page=spot&id=${s.id}" style="display:inline-block; margin-top:5px; padding:2px 6px; border:2px solid #212121; background:#fff; border-radius:4px; color:#212121; text-decoration:none; font-family:'Bungee', cursive; font-size:10px;">Voir la fiche</a>
+                        <p>📍 ${s.location || (window.FAV_LANG_DATA?.unknown || 'Unknown')}</p>
+                        <a href="?page=spot&id=${s.id}" style="display:inline-block; margin-top:5px; padding:2px 6px; border:2px solid #212121; background:#fff; border-radius:4px; color:#212121; text-decoration:none; font-family:'Bungee', cursive; font-size:10px;">${window.FAV_LANG_DATA?.view_details || 'View details'}</a>
                     </div>
                 `;
                 marker.bindPopup(infoHtml);
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Si le nombre de followers ou de comments était dispo on l'utiliserait, là on donne une estimation fictive basée sur likes
             const travelers = Math.max(1, likes * 3 + Math.floor(Math.random() * 10));
 
-            const imgSrc = s.image ? s.image : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23212121%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23fff%22 font-family=%22sans-serif%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ENO IMAGE%3C/text%3E%3C/svg%3E';
+            const imgSrc = s.image ? s.image : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23212121%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23fff%22 font-family=%22sans-serif%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E' + (window.FAV_LANG_DATA?.no_image || 'NO IMAGE') + '%3C/text%3E%3C/svg%3E';
 
             const card = document.createElement('a');
             card.href = `?page=spot&id=${s.id}`;
@@ -158,10 +158,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
                 <h3 class="discover-card-title">${s.title}</h3>
-                <p class="discover-card-desc">${s.description || 'No description available for this place.'}</p>
+                <p class="discover-card-desc">${s.description || (window.FAV_LANG_DATA?.no_description || 'No description available for this place.')}</p>
                 <div class="discover-card-footer">
                     <svg width="12" height="12" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    &nbsp;${travelers} travelers
+                    &nbsp;${travelers} ${window.FAV_LANG_DATA?.travelers || 'travelers'}
                 </div>
             `;
             gridEl.appendChild(card);
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Pagination buttons state
         if (totalPages > 1) {
             paginationEl.style.display = 'flex';
-            pageInd.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+            pageInd.textContent = `${window.FAV_LANG_DATA?.page || 'PAGE'} ${currentPage} ${window.FAV_LANG_DATA?.of || 'OF'} ${totalPages}`;
             btnPrev.disabled = currentPage === 1;
             btnNext.disabled = currentPage === totalPages;
         } else {

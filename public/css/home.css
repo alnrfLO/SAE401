@@ -16,7 +16,7 @@ main {
   text-align: center;
   overflow: hidden;
   padding: 120px 20px 80px;
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../img/homebg.webp') center/cover no-repeat;
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../img/homebg.png') center/cover no-repeat;
 
 }
 
