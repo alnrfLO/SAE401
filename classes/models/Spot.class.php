@@ -29,8 +29,8 @@ class Spot
         $stmt = $this->pdo->prepare($sql);
         $ok = $stmt->execute([
             ':user_id'     => $userId,
-            ':title'       => htmlspecialchars(trim($data['title']), ENT_QUOTES),
-            ':description' => htmlspecialchars(trim($data['description']), ENT_QUOTES),
+            ':title'       => trim($data['title']),
+            ':description' => trim($data['description']),
             ':location'    => $data['location']  ?? null,
             ':latitude'    => $data['latitude']  ?? null,
             ':longitude'   => $data['longitude'] ?? null,

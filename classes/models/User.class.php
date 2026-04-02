@@ -24,7 +24,7 @@ class User
         $sql = "UPDATE users SET status = :status WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
-            ':status' => htmlspecialchars($status, ENT_QUOTES),
+            ':status' => $status,
             ':id'     => $userId
         ]);
     }
@@ -45,7 +45,7 @@ class User
         $sql = "UPDATE users SET bio = :bio WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
-            ':bio' => htmlspecialchars($bio, ENT_QUOTES),
+            ':bio' => $bio,
             ':id'  => $userId
         ]);
     }
@@ -71,7 +71,7 @@ class User
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-            ':username' => htmlspecialchars(trim($username), ENT_QUOTES),
+            ':username' => trim($username),
             ':email'    => strtolower(trim($email)),
             ':password' => $hash,
             ':country'  => $country,

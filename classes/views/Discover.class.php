@@ -3,8 +3,15 @@ class Discover extends View {
     public function content() {
         $spots = $this->data['spots'] ?? [];
         
-        // Sécurisation de l'encodage JSON pour JavaScript
-        $spotsJson = json_encode($spots, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+        // Sécurisation des données pour le JS (XSS protection)
+        $safeSpots = array_map(function($s) {
+            $s['title']       = htmlspecialchars($s['title'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $s['description'] = htmlspecialchars($s['description'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $s['location']    = htmlspecialchars($s['location'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            return $s;
+        }, $spots);
+
+        $spotsJson = json_encode($safeSpots, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
         // Check login state constraint
         $addBtn = '';

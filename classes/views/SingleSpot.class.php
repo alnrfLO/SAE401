@@ -8,11 +8,11 @@ class SingleSpot extends View
             return '<div style="padding-top: 150px; text-align:center;"><h2>' . $this->lang['spot_not_found'] . '</h2><br><a href="?page=home" style="color:#212121; text-decoration:underline;">' . $this->lang['spot_back_home'] . '</a></div>';
         }
 
-        $image = !empty($spot['image']) ? htmlspecialchars($spot['image'], ENT_QUOTES) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f0ebe0%22 width=%22400%22 height=%22300%22/%3E%3C/svg%3E';
-        $title = htmlspecialchars($spot['title'] ?? 'Untitled', ENT_QUOTES);
-        $description = nl2br(htmlspecialchars($spot['description'] ?? '', ENT_QUOTES));
-        $location = htmlspecialchars($spot['location'] ?? 'Unknown location', ENT_QUOTES);
-        $category = htmlspecialchars($spot['category'] ?? 'other', ENT_QUOTES);
+        $image = !empty($spot['image']) ? htmlspecialchars($spot['image'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f0ebe0%22 width=%22400%22 height=%22300%22/%3E%3C/svg%3E';
+        $title = htmlspecialchars($spot['title'] ?? 'Untitled', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $description = nl2br(htmlspecialchars($spot['description'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+        $location = htmlspecialchars($spot['location'] ?? 'Unknown location', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $category = htmlspecialchars($spot['category'] ?? 'other', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         
         // Localized category name mapping
         $catMap = [
@@ -25,15 +25,15 @@ class SingleSpot extends View
             'autre'       => 'other'
         ];
         $catKey = $catMap[$category] ?? 'other';
-        $categoryLabel = $this->lang['discover_category_' . $catKey] ?? $category;
+        $categoryLabel = htmlspecialchars($this->lang['discover_category_' . $catKey] ?? $category, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         $createdAt = date($this->lang['spot_date_format'] ?? 'F j, Y', strtotime($spot['created_at']));
-        $authorName = htmlspecialchars($spot['username'] ?? 'User', ENT_QUOTES);
+        $authorName = htmlspecialchars($spot['username'] ?? 'User', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $likes = $spot['likes_count'] ?? 0;
         $views = $spot['views_count'] ?? 0;
         $tags = $spot['tags'] ?? [];
 
-        $avatarSrc = !empty($spot['avatar']) ? htmlspecialchars($spot['avatar'], ENT_QUOTES) : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' . urlencode($authorName);
+        $avatarSrc = !empty($spot['avatar']) ? htmlspecialchars($spot['avatar'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' . urlencode($spot['username'] ?? 'User');
         $avatarInlineStyle = "background-image: url('$avatarSrc'); background-size: cover; background-position: center; border-radius: 50%;";
 
         $isLiked = $this->data['isLiked'] ?? false;
@@ -43,26 +43,26 @@ class SingleSpot extends View
         // Formatting tags
         $tagsHtml = '';
         foreach ($tags as $tag) {
-            $tagsHtml .= '<span class="spot-detail-tag">#' . htmlspecialchars($tag, ENT_QUOTES) . '</span>';
+            $tagsHtml .= '<span class="spot-detail-tag">#' . htmlspecialchars($tag, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span>';
         }
 
         // Formatting comments
         $commentsHtml = '';
         if (empty($comments)) {
-            $commentsHtml = '<p style="text-align:center; color:#555; padding: 20px;">' . $this->lang['spot_no_comments'] . '</p>';
+            $commentsHtml = '<p style="text-align:center; color:#555; padding: 20px;">' . htmlspecialchars($this->lang['spot_no_comments'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</p>';
         } else {
             foreach ($comments as $comment) {
-                $cAvatar = !empty($comment['avatar']) ? htmlspecialchars($comment['avatar'], ENT_QUOTES) : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' . urlencode($comment['username']);
+                $cAvatar = !empty($comment['avatar']) ? htmlspecialchars($comment['avatar'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' . urlencode($comment['username']);
                 $cDate = date($this->lang['spot_date_format'] ?? 'M j, Y', strtotime($comment['created_at']));
                 $commentsHtml .= '
                 <div class="comment-item">
                     <div class="comment-header">
                         <img src="' . $cAvatar . '" class="comment-avatar">
-                        <span class="comment-author">' . htmlspecialchars($comment['username'], ENT_QUOTES) . '</span>
+                        <span class="comment-author">' . htmlspecialchars($comment['username'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span>
                         <span class="comment-date">' . $cDate . '</span>
                     </div>
                     <div class="comment-body">
-                        ' . nl2br(htmlspecialchars($comment['content'], ENT_QUOTES)) . '
+                        ' . nl2br(htmlspecialchars($comment['content'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '
                     </div>
                 </div>';
             }
@@ -323,7 +323,7 @@ class SingleSpot extends View
                         </span>
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.48c.35.79,8.82,19.58,27.65,38.41C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.35c18.83-18.83,27.3-37.62,27.65-38.41A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"></path></svg>
-                            ' . $views . ' ' . $this->lang['spot_views'] . '
+                            ' . $views . ' ' . htmlspecialchars($this->lang['spot_views'] ?? 'views', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '
                         </span>
                     </div>
                     
@@ -336,16 +336,16 @@ class SingleSpot extends View
                     <div class="spot-detail-footer">
                         <div class="spot-author">
                             <div class="spot-author-avatar" style="' . $avatarInlineStyle . '"></div>
-                            <div class="spot-author-name">' . $this->lang['spot_posted_by'] . ' ' . $authorName . '</div>
+                            <div class="spot-author-name">' . htmlspecialchars($this->lang['spot_posted_by'] ?? 'Posted by', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ' ' . $authorName . '</div>
                         </div>
                         
                         <div class="spot-actions">
-                            <button id="like-btn" class="spot-action-btn ' . ($isLiked ? 'is-liked' : '') . '" ' . (!$isLoggedIn ? 'disabled title="' . $this->lang['spot_login_to_like'] . '"' : '') . ' onclick="handleLike()">
+                            <button id="like-btn" class="spot-action-btn ' . ($isLiked ? 'is-liked' : '') . '" ' . (!$isLoggedIn ? 'disabled title="' . htmlspecialchars($this->lang['spot_login_to_like'] ?? 'Login to like', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"' : '') . ' onclick="handleLike()">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="' . ($isLiked ? '#fff' : 'currentColor') . '" viewBox="0 0 256 256"><path d="M240,94c0,70-104,122.34-108.58,124.54a8,8,0,0,1-6.84,0C120,216.34,16,164,16,94A62.07,62.07,0,0,1,78,32c22.59,0,41.94,11.83,50,29.93C136.06,43.83,155.41,32,178,32A62.07,62.07,0,0,1,240,94Z"></path></svg>
                                 <span id="likes-count">' . $likes . '</span>
                             </button>
                             <button class="spot-action-btn" onclick="window.history.back()">
-                                ' . $this->lang['spot_back'] . '
+                                ' . htmlspecialchars($this->lang['spot_back'] ?? 'Back', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '
                             </button>
                         </div>
                     </div>
@@ -353,7 +353,7 @@ class SingleSpot extends View
             </div>
             
             <div style="margin-top: 40px; margin-bottom: 20px;">
-                <h2 style="font-family:\'Bungee\', cursive; font-size:2rem; color:#212121;">' . $this->lang['spot_comments'] . '</h2>
+                <h2 style="font-family:\'Bungee\', cursive; font-size:2rem; color:#212121;">' . htmlspecialchars($this->lang['spot_comments'] ?? 'Comments', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</h2>
             </div>
             
             <div class="spot-detail-card" style="padding: 40px;">
@@ -363,12 +363,12 @@ class SingleSpot extends View
                 
                 <div class="comment-form-container">
                     ' . ($isLoggedIn ? '
-                        <h3 style="font-family:\'Bungee\', cursive; margin-bottom: 20px;">' . $this->lang['spot_leave_comment'] . '</h3>
-                        <textarea id="comment-content" class="comment-textarea" placeholder="' . $this->lang['spot_comment_placeholder'] . '"></textarea>
-                        <button id="submit-comment" class="submit-comment-btn" onclick="handleComment()">' . $this->lang['spot_post_comment'] . '</button>
+                        <h3 style="font-family:\'Bungee\', cursive; margin-bottom: 20px;">' . htmlspecialchars($this->lang['spot_leave_comment'] ?? 'Leave a comment', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</h3>
+                        <textarea id="comment-content" class="comment-textarea" placeholder="' . htmlspecialchars($this->lang['spot_comment_placeholder'] ?? 'Write a comment...', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"></textarea>
+                        <button id="submit-comment" class="submit-comment-btn" onclick="handleComment()">' . htmlspecialchars($this->lang['spot_post_comment'] ?? 'Post comment', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</button>
                     ' : '
                         <p style="text-align:center; padding: 20px; font-family:\'Inter\', sans-serif;">
-                            <a href="?page=login" style="color: #fbad40; font-weight: 800; text-decoration: underline;">Login</a> ' . $this->lang['spot_login_to_comment'] . '
+                            <a href="?page=login" style="color: #fbad40; font-weight: 800; text-decoration: underline;">Login</a> ' . htmlspecialchars($this->lang['spot_login_to_comment'] ?? 'to leave a comment!', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '
                         </p>
                     ') . '
                 </div>
@@ -414,11 +414,11 @@ class SingleSpot extends View
                 const content = document.getElementById(\'comment-content\').value.trim();
                 const btn = document.getElementById(\'submit-comment\');
                 
-                if (!content) return;
+                 if (!content) return;
                 
                 btn.disabled = true;
                 const originalText = btn.innerText;
-                btn.innerText = "' . ($this->lang['spot_posting'] ?? 'POSTING...') . '";
+                btn.innerText = ' . json_encode($this->lang['spot_posting'] ?? 'POSTING...') . ';
                 
                 try {
                     const formData = new FormData();
@@ -434,11 +434,11 @@ class SingleSpot extends View
                     if (res.success) {
                         window.location.reload();
                     } else {
-                        alert("' . ($this->lang['spot_error_comment'] ?? 'Error') . ' " + (res.error || ""));
+                        alert(' . json_encode($this->lang['spot_error_comment'] ?? 'Error') . ' + " " + (res.error || ""));
                     }
                 } catch (e) {
                     console.error(\'Comment error:\', e);
-                    alert("' . ($this->lang['spot_system_error'] ?? 'System error') . '");
+                    alert(' . json_encode($this->lang['spot_system_error'] ?? 'System error') . ');
                 } finally {
                     btn.disabled = false;
                     btn.innerText = originalText;

@@ -31,7 +31,7 @@ class Comment
         $ok = $stmt->execute([
             ':spot_id'   => $spotId,
             ':user_id'   => $userId,
-            ':content'   => htmlspecialchars(trim($content), ENT_QUOTES),
+            ':content'   => trim($content),
             ':parent_id' => $parentId,
         ]);
 
@@ -95,7 +95,7 @@ class Comment
                  WHERE id = :id AND user_id = :user_id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
-            ':content' => htmlspecialchars(trim($content), ENT_QUOTES),
+            ':content' => trim($content),
             ':id'      => $commentId,
             ':user_id' => $userId,
         ]);
