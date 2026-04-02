@@ -10,12 +10,40 @@ $lang = [
 
     'footer_subtext' => 'An intergenerational travel diary.',
     'footer_links_title' => 'Links',
-    'footer_questions' => 'Questions',
+    'footer_questions' => 'Help & FAQ',
     'footer_legal' => 'Legal information',
-    'footer_terms' => 'User agreement and terms of service',
-    'footer_privacy' => 'Privacy policy',
+    'footer_terms' => 'Terms of Use',
+    'footer_privacy' => 'Privacy Policy',
+    'footer_tos' => 'Terms of Service',
+    'footer_user_agreement' => 'User Agreement',
     'footer_contact_title' => 'Contact Us',
     'footer_bottom' => 'All rights reserved.',
+
+    'legal_title' => 'Legal Information',
+    'legal_editor_title' => 'Site Edition',
+    'legal_editor_text' => 'The FAV website is published by the SAE 401 team, located at the IUT of Troyes.',
+    'legal_host_title' => 'Hosting',
+    'legal_host_text' => 'The site is hosted by the servers of the IUT of Troyes.',
+    'legal_privacy_title' => 'Data Collection',
+    'legal_privacy_text' => 'In accordance with the GDPR, you have the right to access, rectify and delete your personal data.',
+
+    'faq_title' => 'Frequently Asked Questions',
+    'faq_q1' => 'How to add a spot?',
+    'faq_a1' => 'Log in to your account, go to your profile and click on the "Add a spot" button.',
+    'faq_q2' => 'Why are my photos not appearing?',
+    'faq_a2' => 'Check the size of your image (max 5MB) and make sure it is in a supported format (JPG, PNG, WebP).',
+    'faq_q3' => 'Can I edit my profile?',
+    'faq_a3' => 'Yes, go to your profile settings to change your username, bio, or avatar.',
+
+    'terms_title' => 'Terms of Use',
+    'terms_intro' => 'Using the FAV website implies full and complete acceptance of the terms of use described below.',
+    'terms_content' => 'Users agree not to publish offensive or illegal content. The moderation team reserves the right to delete any content that does not comply with these rules.',
+
+    'tos_title' => 'Terms of Service',
+    'tos_text' => 'Currently, the FAV website is an educational project and does not offer any paid services.',
+
+    'agreement_title' => 'User Agreement',
+    'agreement_text' => 'By creating an account on FAV, you agree to share your discoveries with the community and to respect the code of conduct.',
 
     'hero_badge' => 'Travel Journal',
     'hero_title_line1' => 'Discover Spots',

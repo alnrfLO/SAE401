@@ -40,10 +40,11 @@
             <h4><?= $this->lang['footer_links_title'] ?></h4>
             <div class="footer-links">
                 <a href="?page=presentation&lang=<?= $lang ?>"><?= $this->lang['nav_presentation'] ?></a>
-                <a href="?page=about&lang=<?= $lang ?>"><?= $this->lang['nav_about'] ?></a>
-                <a href="?page=questionst&lang=<?= $lang ?>"><?= $this->lang['footer_questions'] ?></a>
+                <a href="?page=faq&lang=<?= $lang ?>"><?= $this->lang['footer_questions'] ?></a>
                 <a href="?page=legal&lang=<?= $lang ?>"><?= $this->lang['footer_legal'] ?></a>
+                <a href="?page=user-agreement&lang=<?= $lang ?>"><?= $this->lang['footer_user_agreement'] ?></a>
                 <a href="?page=terms&lang=<?= $lang ?>"><?= $this->lang['footer_terms'] ?></a>
+                <a href="?page=tos&lang=<?= $lang ?>"><?= $this->lang['footer_tos'] ?></a>
                 <a href="?page=privacy&lang=<?= $lang ?>"><?= $this->lang['footer_privacy'] ?></a>
             </div>
         </div>

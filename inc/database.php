@@ -7,6 +7,7 @@
 // En production, ces valeurs devraient venir de variables d'env
 // Ex: define('DB_HOST', $_ENV['DB_HOST']);
 define('DB_HOST',    'localhost');
+
 define('DB_USER',    'fav');
 define('DB_PASS',    'fav2026');
 define('DB_NAME',    'fav');

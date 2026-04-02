@@ -15,7 +15,7 @@ class SingleNews extends View
             </div>
 
             <article class="full-article">
-                <header class="article-meta-section">
+                <div class="article-meta-section">
                     <div class="article-tags">
                         <span class="article-tag">' . $article['category'] . '</span>
                     </div>
@@ -28,7 +28,7 @@ class SingleNews extends View
                             <i class="ph ph-clock"></i> 5 min read
                         </span>
                     </div>
-                </header>
+                </div>
 
                 <div class="article-hero-image">
                     <img src="' . $article['image'] . '" alt="' . $article['title'] . '">
@@ -41,7 +41,7 @@ class SingleNews extends View
                     </div>
                 </div>
 
-                <footer class="article-footer-section">
+                <div class="article-footer-section">
                     <div class="share-article">
                         <span>' . ($this->lang['news_share'] ?? 'Share this article') . '</span>
                         <div class="share-btns">
@@ -50,7 +50,7 @@ class SingleNews extends View
                             <a href="#"><i class="ph ph-link"></i></a>
                         </div>
                     </div>
-                </footer>
+                </div>
             </article>
 
             <section class="related-articles">

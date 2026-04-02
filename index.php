@@ -470,6 +470,9 @@ switch ($page) {
     case 'legal':
     case 'terms':
     case 'privacy':
+    case 'faq':
+    case 'user-agreement':
+    case 'tos':
     $view = new LegalPages(['page' => $page]);
     break;
 

@@ -10,12 +10,40 @@ $lang = [
 
     'footer_subtext' => 'Un journal de voyage intergénérationnel.',
     'footer_links_title' => 'Liens',
-    'footer_questions' => 'Questions',
+    'footer_questions' => 'Aide & FAQ',
     'footer_legal' => 'Mentions légales',
     'footer_terms' => "Conditions générales d'utilisation",
     'footer_privacy' => 'Politique de confidentialité',
+    'footer_tos' => 'Conditions générales de vente',
+    'footer_user_agreement' => 'Accord Utilisateur',
     'footer_contact_title' => 'Nous contacter',
     'footer_bottom' => 'Tous droits réservés.',
+
+    'legal_title' => 'Mentions Légales',
+    'legal_editor_title' => 'Édition du site',
+    'legal_editor_text' => 'Le site FAV est édité par l\'équipe de la SAE 401 de l\'IUT de Bobigny.',
+    'legal_host_title' => 'Hébergement',
+    'legal_host_text' => 'Le site est hébergé par les serveurs de l\'IUT de Bobigny.',
+    'legal_privacy_title' => 'Collecte de données',
+    'legal_privacy_text' => 'Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données personnelles.',
+
+    'faq_title' => 'Foire Aux Questions',
+    'faq_q1' => 'Comment ajouter un spot ?',
+    'faq_a1' => 'Connectez-vous à votre compte, rendez-vous sur votre profil et cliquez sur le bouton "Ajouter un spot".',
+    'faq_q2' => 'Pourquoi mes photos ne s\'affichent pas ?',
+    'faq_a2' => 'Vérifiez la taille de votre image (max 5Mo) et assurez-vous qu\'il s\'agit d\'un format supporté (JPG, PNG, WebP).',
+    'faq_q3' => 'Puis-je modifier mon profil ?',
+    'faq_a3' => 'Oui, allez dans les paramètres de votre profil pour changer votre pseudo, bio ou avatar.',
+
+    'terms_title' => 'Conditions Générales d\'Utilisation',
+    'terms_intro' => 'L\'utilisation du site FAV implique l\'acceptation pleine et entière des conditions d\'utilisation décrites ci-après.',
+    'terms_content' => 'Les utilisateurs s\'engagent à ne pas publier de contenu offensant ou illégal. L\'équipe de modération se réserve le droit de supprimer tout contenu ne respectant pas ces règles.',
+
+    'tos_title' => 'Conditions Générales de Vente',
+    'tos_text' => 'Actuellement, le site FAV est un projet pédagogique et ne propose aucun service payant.',
+
+    'agreement_title' => 'Accord Utilisateur',
+    'agreement_text' => 'En créant un compte sur FAV, vous acceptez de partager vos découvertes avec la communauté et de respecter la charte de bonne conduite.',
 
     'hero_badge' => 'Journal de voyage',
     'hero_title_line1' => 'Découvre des Spots',
