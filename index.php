@@ -43,18 +43,165 @@ if (isset($_GET['action'])) {
     $userModel = new User($pdo);
     $userId = $_SESSION['user_id'] ?? null;
 
-    // ── RECHERCHE D'UTILISATEURS (Connections) ──────────────
-    if ($action === 'searchUsers') {
+    // ── NOTIFICATIONS : MARK READ / MARK ALL ────────────────────
+    if ($action === 'markRead' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
-        if (!User::isLoggedIn()) { echo json_encode([]); exit; }
-        $q = trim($_GET['q'] ?? '');
-        if (strlen($q) < 2) { echo json_encode([]); exit; }
-        $friendshipModel = new Friendship($pdo);
-        echo json_encode($friendshipModel->searchUsers($_SESSION['user_id'], $q));
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false]); exit; }
+        $notifId = (int)($_POST['notif_id'] ?? 0);
+        $notifModel = new Notification($pdo);
+        $ok = $notifModel->markOneRead($notifId, $_SESSION['user_id']);
+        echo json_encode(['success' => $ok]);
         exit;
     }
- 
-    // ── ACTIONS AMIS : sendFriendRequest / friendAction ─────
+
+    if ($action === 'markAllRead' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false]); exit; }
+        $notifModel = new Notification($pdo);
+        $ok = $notifModel->markAllRead($_SESSION['user_id']);
+        echo json_encode(['success' => $ok]);
+        exit;
+    }
+
+    if ($action === 'getUnreadCount') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['count'=>0]); exit; }
+        $notifModel = new Notification($pdo);
+        echo json_encode(['count' => $notifModel->countUnread($_SESSION['user_id'])]);
+        exit;
+    }
+
+    // ── AGENDA : GET INVITATIONS ─────────────────────────────────
+    if ($action === 'getInvitations' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'invitations'=>[]]); exit; }
+        try {
+            $stmt = $pdo->prepare(
+                'SELECT ep.id, ep.event_id, ep.status, ep.invited_at,
+                        e.title, e.description, e.location, e.event_date, e.type,
+                        u.id AS organizer_id, u.username AS organizer_username, u.avatar AS organizer_avatar
+                 FROM event_participants ep
+                 JOIN events e ON e.id = ep.event_id
+                 JOIN users u ON u.id = e.user_id
+                 WHERE ep.user_id = ? AND ep.status = "pending"
+                 ORDER BY ep.invited_at DESC'
+            );
+            $stmt->execute([$_SESSION['user_id']]);
+            $invitations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'invitations'=>$invitations]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false,'invitations'=>[],'error'=>$e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ── AGENDA : RESPOND TO INVITATION ───────────────────────────
+    if ($action === 'respondInvitation' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+
+        $participantId = (int)($_POST['participant_id'] ?? 0);
+        $eventId       = (int)($_POST['event_id'] ?? 0);
+        $status        = $_POST['status'] ?? '';
+        $userId        = $_SESSION['user_id'];
+
+        if (!in_array($status, ['accepted','declined']) || !$participantId || !$eventId) {
+            echo json_encode(['success'=>false,'error'=>'Données invalides']); exit;
+        }
+
+        try {
+            // Vérifier que l'invitation appartient bien à cet user
+            $stmt = $pdo->prepare('SELECT * FROM event_participants WHERE id = ? AND user_id = ? AND status = "pending" LIMIT 1');
+            $stmt->execute([$participantId, $userId]);
+            $ep = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$ep) { echo json_encode(['success'=>false,'error'=>'Invitation introuvable']); exit; }
+
+            // Mettre à jour le statut
+            $stmt = $pdo->prepare('UPDATE event_participants SET status = ?, responded_at = NOW() WHERE id = ?');
+            $stmt->execute([$status, $participantId]);
+
+            // Récupérer l'organisateur pour la notification
+            $evtStmt = $pdo->prepare('SELECT user_id, title FROM events WHERE id = ? LIMIT 1');
+            $evtStmt->execute([$eventId]);
+            $event = $evtStmt->fetch(PDO::FETCH_ASSOC);
+
+            $notifModel = new Notification($pdo);
+
+            if ($status === 'accepted') {
+                // Ajouter l'event dans son propre agenda
+                $addStmt = $pdo->prepare(
+                    'INSERT INTO events (user_id, title, description, location, event_date, type, status)
+                     SELECT ?, title, description, location, event_date, type, "accepted"
+                     FROM events WHERE id = ?'
+                );
+                $addStmt->execute([$userId, $eventId]);
+
+                // Notifier l'organisateur
+                if ($event) {
+                    $notifModel->onEventAccepted($event['user_id'], $userId, $eventId);
+                }
+            } else {
+                // Notifier l'organisateur du refus
+                if ($event) {
+                    $notifModel->onEventDeclined($event['user_id'], $userId, $eventId);
+                }
+            }
+
+            echo json_encode(['success'=>true,'status'=>$status]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ── AGENDA : INVITE TO EVENT (updated with notification) ─────
+    if ($action === 'inviteToEvent' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
+
+        $eventId  = (int)($_POST['event_id'] ?? 0);
+        $username = trim($_POST['username'] ?? '');
+
+        if (!$eventId || !$username) {
+            echo json_encode(['success'=>false,'error'=>'Événement et utilisateur requis']); exit;
+        }
+
+        // Verify event belongs to current user
+        $eventModel = new Event($pdo);
+        $event = $eventModel->findById($eventId);
+        if (!$event || $event['user_id'] != $_SESSION['user_id']) {
+            echo json_encode(['success'=>false,'error'=>'Événement non trouvé']); exit;
+        }
+
+        // Find target user
+        $userModel   = new User($pdo);
+        $targetUser  = $userModel->findByUsername($username);
+        if (!$targetUser || $targetUser['id'] == $_SESSION['user_id']) {
+            echo json_encode(['success'=>false,'error'=>'Utilisateur non trouvé']); exit;
+        }
+
+        try {
+            $stmt = $pdo->prepare(
+                'INSERT IGNORE INTO event_participants (event_id, user_id, status, invited_at)
+                 VALUES (:event_id, :user_id, "pending", NOW())'
+            );
+            $ok = $stmt->execute([':event_id' => $eventId, ':user_id' => $targetUser['id']]);
+
+            if ($ok && $stmt->rowCount() > 0) {
+                // Créer la notification
+                $notifModel = new Notification($pdo);
+                $notifModel->onEventInvitation($targetUser['id'], $_SESSION['user_id'], $eventId);
+                echo json_encode(['success'=>true,'message'=>'Invitation envoyée à ' . $targetUser['username']]);
+            } else {
+                echo json_encode(['success'=>false,'error'=>'Déjà invité ou erreur']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ── FRIENDSHIP ACTIONS (hook notifications) ───────────────────
     if ($action === 'sendFriendRequest' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
         if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
@@ -62,10 +209,17 @@ if (isset($_GET['action'])) {
         if (!$receiverId) { echo json_encode(['success'=>false,'error'=>'ID invalide']); exit; }
         $friendshipModel = new Friendship($pdo);
         $ok = $friendshipModel->sendRequest($_SESSION['user_id'], $receiverId);
+        if ($ok) {
+            // Get the new friendship id
+            $rel = $friendshipModel->getRelation($_SESSION['user_id'], $receiverId);
+            $friendshipId = $rel ? (int)$rel['id'] : 0;
+            $notifModel = new Notification($pdo);
+            $notifModel->onFriendRequest($receiverId, $_SESSION['user_id'], $friendshipId);
+        }
         echo json_encode(['success' => $ok, 'error' => $ok ? null : 'Déjà envoyé ou relation existante']);
         exit;
     }
- 
+
     if ($action === 'friendAction' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
         if (!User::isLoggedIn()) { echo json_encode(['success'=>false,'error'=>'Non connecté']); exit; }
@@ -76,7 +230,15 @@ if (isset($_GET['action'])) {
         $ok = false; $message = '';
         switch ($type) {
             case 'accept':
+                // Get sender before accepting
+                $stmt = $pdo->prepare('SELECT sender_id FROM friendships WHERE id = ?');
+                $stmt->execute([$friendshipId]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $ok = $friendshipModel->acceptRequest($friendshipId, $userId);
+                if ($ok && $row) {
+                    $notifModel = new Notification($pdo);
+                    $notifModel->onFriendAccepted($row['sender_id'], $userId, $friendshipId);
+                }
                 $message = '✅ Friend request accepted!';
                 break;
             case 'decline':
@@ -85,7 +247,6 @@ if (isset($_GET['action'])) {
                 $message = $type === 'cancel' ? '↩️ Request cancelled.' : '❌ Request declined.';
                 break;
             case 'remove':
-                // On récupère l'autre user_id depuis la DB
                 $stmt = $pdo->prepare('SELECT sender_id, receiver_id FROM friendships WHERE id = ?');
                 $stmt->execute([$friendshipId]);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -101,6 +262,15 @@ if (isset($_GET['action'])) {
     }
 
 
+    if ($action === 'searchUsers' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        header('Content-Type: application/json');
+        if (!User::isLoggedIn()) { echo json_encode([]); exit; }
+        $q = trim($_GET['q'] ?? '');
+        if (strlen($q) < 2) { echo json_encode([]); exit; }
+        $friendshipModel = new Friendship($pdo);
+        echo json_encode($friendshipModel->searchUsers($_SESSION['user_id'], $q));
+        exit;
+    }
     if ($action === 'saveFullProfile' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
             'username' => trim($_POST['username'] ?? ''),
@@ -260,9 +430,14 @@ if (isset($_GET['action'])) {
 
         $year  = max(1970, min(9999, (int)($_GET['year'] ?? date('Y'))));
         $month = max(1, min(12, (int)($_GET['month'] ?? date('m'))));
+        
+        // Determine whose calendar to show: ?user_id=X for another user, own calendar otherwise
+        $viewerId = $_SESSION['user_id'];
+        $targetId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $viewerId;
+        if ($targetId <= 0) $targetId = $viewerId;
 
         $eventModel = new Event($pdo);
-        $events = $eventModel->getByMonth($_SESSION['user_id'], $year, $month);
+        $events = $eventModel->getByMonthVisible($targetId, $year, $month, $viewerId);
 
         foreach ($events as &$e) {
             $e['event_date'] = date('Y-m-d H:i', strtotime($e['event_date']));
@@ -535,6 +710,13 @@ switch ($page) {
                 $friendRelation  = $friendshipModel->getRelation($currentUserId, $targetId);
             }
 
+            // Upcoming events visible on this profile for the current viewer
+            $profileEvents = [];
+            if (!$isOwn) {
+                $eventModel    = new Event($pdo);
+                $profileEvents = $eventModel->getProfileVisible($targetId, $currentUserId, 10);
+            }
+
             $view = new Profile([
                 'page'           => 'profile',
                 'profileUser'    => $userData,
@@ -543,6 +725,7 @@ switch ($page) {
                 'isOwn'          => $isOwn,
                 'friendRelation' => $friendRelation,
                 'currentUserId'  => $currentUserId,
+                'profileEvents'  => $profileEvents,
                 'fullWidth'      => true
             ]);
         }
@@ -585,26 +768,49 @@ switch ($page) {
         }
         $view = new Admin(['page' => 'admin']);
     break;
+    case 'notifications':
+        if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
+        $userModel = new User($pdo);
+        $userData  = $userModel->findById($_SESSION['user_id']);
+        $notifModel = new Notification($pdo);
+        $notifications = $notifModel->getForUser($_SESSION['user_id'], 50);
+        $unreadNotifs  = $notifModel->countUnread($_SESSION['user_id']);
+        $view = new Notifications([
+            'profileUser'   => $userData,
+            'notifications' => $notifications,
+            'unreadNotifs'  => $unreadNotifs,
+            'fullWidth'     => true,
+            'showFooter'    => false,
+            'showHeader'    => false
+        ]);
+    break;
+
     case 'dashboard':
     if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
     $userModel = new User($pdo);
     $userData  = $userModel->findById($_SESSION['user_id']);
     $profileStats = $userModel->getStats($_SESSION['user_id']);
-    $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
+    $notifModel = new Notification($pdo);
+    $unreadNotifs = $notifModel->countUnread($_SESSION['user_id']);
+    $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats, 'unreadNotifs' => $unreadNotifs, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
 
     case 'agenda':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);
         $userData  = $userModel->findById($_SESSION['user_id']);
-        $view = new Agenda(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
+        $notifModel = new Notification($pdo);
+        $unreadNotifs = $notifModel->countUnread($_SESSION['user_id']);
+        $view = new Agenda(['profileUser' => $userData, 'unreadNotifs' => $unreadNotifs, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
 
     case 'messages':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);
         $userData  = $userModel->findById($_SESSION['user_id']);
-        $view = new Messages(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
+        $notifModel = new Notification($pdo);
+        $unreadNotifs = $notifModel->countUnread($_SESSION['user_id']);
+        $view = new Messages(['profileUser' => $userData, 'unreadNotifs' => $unreadNotifs, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
     
     case 'discover':
@@ -642,11 +848,14 @@ switch ($page) {
         $userModel = new User($pdo);
         $userData  = $userModel->findById($_SESSION['user_id']);
         $friendshipModel = new Friendship($pdo);
+        $notifModel = new Notification($pdo);
+        $unreadNotifs = $notifModel->countUnread($_SESSION['user_id']);
         $view = new Connections([
             'profileUser' => $userData,
             'friends'     => $friendshipModel->getFriends($_SESSION['user_id']),
             'received'    => $friendshipModel->getReceivedRequests($_SESSION['user_id']),
             'sent'        => $friendshipModel->getSentRequests($_SESSION['user_id']),
+            'unreadNotifs'=> $unreadNotifs,
             'fullWidth'   => true,
             'showFooter'  => false,
             'showHeader'  => false

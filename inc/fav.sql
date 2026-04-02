@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le : mer. 01 avr. 2026 à 17:54
--- Version du serveur : 10.4.32-MariaDB
--- Version de PHP : 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Apr 02, 2026 at 11:17 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `fav`
+-- Database: `fav`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `chat_messages`
+-- Table structure for table `chat_messages`
 --
 
 CREATE TABLE `chat_messages` (
@@ -37,7 +37,7 @@ CREATE TABLE `chat_messages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `chat_messages`
+-- Dumping data for table `chat_messages`
 --
 
 INSERT INTO `chat_messages` (`id`, `conversation_id`, `sender_id`, `content`, `is_deleted`, `created_at`) VALUES
@@ -45,12 +45,14 @@ INSERT INTO `chat_messages` (`id`, `conversation_id`, `sender_id`, `content`, `i
 (2, 1, 4, 'hey jean', 0, '2026-04-01 15:33:41'),
 (3, 2, 4, 'kys', 0, '2026-04-01 15:33:54'),
 (4, 3, 4, 'ah shit', 0, '2026-04-01 15:34:23'),
-(5, 1, 3, 'test', 0, '2026-04-01 15:52:16');
+(5, 1, 3, 'test', 0, '2026-04-01 15:52:16'),
+(6, 1, 4, 'test', 0, '2026-04-02 20:18:11'),
+(7, 1, 3, 'test', 0, '2026-04-02 20:20:57');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `comments`
+-- Table structure for table `comments`
 --
 
 CREATE TABLE `comments` (
@@ -67,7 +69,7 @@ CREATE TABLE `comments` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `conversations`
+-- Table structure for table `conversations`
 --
 
 CREATE TABLE `conversations` (
@@ -81,18 +83,18 @@ CREATE TABLE `conversations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `conversations`
+-- Dumping data for table `conversations`
 --
 
 INSERT INTO `conversations` (`id`, `type`, `name`, `avatar`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 'direct', NULL, NULL, 3, '2026-04-01 15:33:21', '2026-04-01 15:52:16'),
+(1, 'direct', NULL, NULL, 3, '2026-04-01 15:33:21', '2026-04-02 20:20:57'),
 (2, 'direct', NULL, NULL, 4, '2026-04-01 15:33:50', '2026-04-01 15:33:54'),
 (3, 'group', 'Test', NULL, 4, '2026-04-01 15:34:16', '2026-04-01 15:34:23');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `conversation_members`
+-- Table structure for table `conversation_members`
 --
 
 CREATE TABLE `conversation_members` (
@@ -104,22 +106,22 @@ CREATE TABLE `conversation_members` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `conversation_members`
+-- Dumping data for table `conversation_members`
 --
 
 INSERT INTO `conversation_members` (`id`, `conversation_id`, `user_id`, `last_read_at`, `joined_at`) VALUES
-(1, 1, 3, '2026-04-01 15:52:08', '2026-04-01 15:33:21'),
-(2, 1, 4, '2026-04-01 15:52:20', '2026-04-01 15:33:21'),
-(3, 2, 4, '2026-04-01 15:33:50', '2026-04-01 15:33:50'),
+(1, 1, 3, '2026-04-02 20:20:49', '2026-04-01 15:33:21'),
+(2, 1, 4, '2026-04-02 21:01:25', '2026-04-01 15:33:21'),
+(3, 2, 4, '2026-04-02 21:01:25', '2026-04-01 15:33:50'),
 (4, 2, 1, NULL, '2026-04-01 15:33:50'),
-(5, 3, 4, '2026-04-01 15:34:17', '2026-04-01 15:34:16'),
+(5, 3, 4, '2026-04-02 21:01:24', '2026-04-01 15:34:16'),
 (6, 3, 1, NULL, '2026-04-01 15:34:16'),
 (7, 3, 3, '2026-04-01 15:52:08', '2026-04-01 15:34:16');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `events`
+-- Table structure for table `events`
 --
 
 CREATE TABLE `events` (
@@ -135,10 +137,48 @@ CREATE TABLE `events` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `events`
+--
+
+INSERT INTO `events` (`id`, `user_id`, `title`, `description`, `location`, `event_date`, `type`, `status`, `created_at`, `updated_at`) VALUES
+(4, 3, 'redstd', '[end:11:00] dsqsqdsq', 'dsqdsqdsq', '2026-04-09 10:00:00', 'private', 'accepted', '2026-04-02 19:50:42', '2026-04-02 19:50:42'),
+(5, 3, 'gdsff', '[end:11:00] sqddsq', 'fqdsdsqdsqdqsdsq', '2026-04-10 10:00:00', 'shared', 'accepted', '2026-04-02 19:50:50', '2026-04-02 19:50:50'),
+(6, 3, 'sqsqddsqsqddsq', '[end:11:00] qsddsqqsddsq', 'sqdsdqdsqdsqqds', '2026-04-11 10:00:00', 'public', 'accepted', '2026-04-02 19:51:08', '2026-04-02 19:51:08'),
+(7, 3, 'sqd', '[end:11:00] qsd', 'dsq', '2026-04-11 10:00:00', 'private', 'accepted', '2026-04-02 20:01:42', '2026-04-02 20:01:42'),
+(8, 3, 'gdsff', '[end:11:00] gab et jean', 'dsqdsqdsq', '2026-04-16 10:00:00', 'shared', 'accepted', '2026-04-02 20:21:48', '2026-04-02 20:21:48'),
+(9, 4, 'gdsff', '[end:11:00] gab et jean', 'dsqdsqdsq', '2026-04-16 10:00:00', 'shared', 'accepted', '2026-04-02 20:28:40', '2026-04-02 20:28:40'),
+(10, 3, 'redstd', '[end:11:00] sqdsdqf', 'fqdsdsqdsqdqsdsq', '2026-04-17 10:00:00', 'public', 'accepted', '2026-04-02 20:28:54', '2026-04-02 20:28:54'),
+(11, 4, 'redstd', '[end:11:00] sqdsdqf', 'fqdsdsqdsqdqsdsq', '2026-04-17 10:00:00', 'public', 'accepted', '2026-04-02 20:29:08', '2026-04-02 20:29:08');
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `follows`
+-- Table structure for table `event_participants`
+--
+
+CREATE TABLE `event_participants` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `event_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `status` enum('pending','accepted','declined') NOT NULL DEFAULT 'pending',
+  `invited_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `responded_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `event_participants`
+--
+
+INSERT INTO `event_participants` (`id`, `event_id`, `user_id`, `status`, `invited_at`, `responded_at`, `created_at`) VALUES
+(1, 8, 4, 'accepted', '2026-04-02 20:21:56', '2026-04-02 20:28:40', '2026-04-02 20:21:56'),
+(2, 10, 4, 'accepted', '2026-04-02 20:28:59', '2026-04-02 20:29:08', '2026-04-02 20:28:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `follows`
 --
 
 CREATE TABLE `follows` (
@@ -146,12 +186,12 @@ CREATE TABLE `follows` (
   `follower_id` int(10) UNSIGNED NOT NULL COMMENT 'celui qui suit',
   `followed_id` int(10) UNSIGNED NOT NULL COMMENT 'celui qui est suivi',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `friendships`
+-- Table structure for table `friendships`
 --
 
 CREATE TABLE `friendships` (
@@ -161,19 +201,19 @@ CREATE TABLE `friendships` (
   `status` enum('pending','accepted','declined') NOT NULL DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `friendships`
+-- Dumping data for table `friendships`
 --
 
 INSERT INTO `friendships` (`id`, `sender_id`, `receiver_id`, `status`, `created_at`, `updated_at`) VALUES
-(2, 4, 3, 'accepted', '2026-04-01 13:47:45', '2026-04-01 13:47:52');
+(3, 4, 3, 'accepted', '2026-04-02 20:18:47', '2026-04-02 20:19:07');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `likes`
+-- Table structure for table `likes`
 --
 
 CREATE TABLE `likes` (
@@ -182,29 +222,40 @@ CREATE TABLE `likes` (
   `spot_id` int(10) UNSIGNED DEFAULT NULL,
   `comment_id` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `notifications`
+-- Table structure for table `notifications`
 --
 
 CREATE TABLE `notifications` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL COMMENT 'destinataire',
-  `actor_id` int(10) UNSIGNED NOT NULL COMMENT 'qui a declenche l action',
-  `type` enum('like_spot','like_comment','comment','reply','follow','mention') NOT NULL,
-  `spot_id` int(10) UNSIGNED DEFAULT NULL,
-  `comment_id` int(10) UNSIGNED DEFAULT NULL,
+  `actor_id` int(10) UNSIGNED NOT NULL COMMENT 'qui a déclenché l action',
+  `type` enum('friend_request','friend_accepted','new_message','event_invitation','event_accepted','event_declined','like_spot','like_comment','comment','reply','follow','mention') NOT NULL,
+  `reference_id` int(10) UNSIGNED DEFAULT NULL COMMENT 'ID de l objet lié (friendship_id, conv_id, event_id…)',
   `is_read` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `actor_id`, `type`, `reference_id`, `is_read`, `created_at`) VALUES
+(1, 3, 4, 'friend_request', 3, 1, '2026-04-02 20:18:47'),
+(2, 4, 3, 'friend_accepted', 3, 1, '2026-04-02 20:19:07'),
+(3, 4, 3, 'event_invitation', 8, 1, '2026-04-02 20:21:56'),
+(4, 3, 4, 'event_accepted', 8, 0, '2026-04-02 20:28:40'),
+(5, 4, 3, 'event_invitation', 10, 1, '2026-04-02 20:28:59'),
+(6, 3, 4, 'event_accepted', 10, 0, '2026-04-02 20:29:08');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `password_resets`
+-- Table structure for table `password_resets`
 --
 
 CREATE TABLE `password_resets` (
@@ -219,7 +270,7 @@ CREATE TABLE `password_resets` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `reports`
+-- Table structure for table `reports`
 --
 
 CREATE TABLE `reports` (
@@ -237,7 +288,7 @@ CREATE TABLE `reports` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `sessions`
+-- Table structure for table `sessions`
 --
 
 CREATE TABLE `sessions` (
@@ -253,7 +304,7 @@ CREATE TABLE `sessions` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `spots`
+-- Table structure for table `spots`
 --
 
 CREATE TABLE `spots` (
@@ -273,7 +324,7 @@ CREATE TABLE `spots` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 --
--- Déchargement des données de la table `spots`
+-- Dumping data for table `spots`
 --
 
 INSERT INTO `spots` (`id`, `user_id`, `title`, `description`, `location`, `latitude`, `longitude`, `image`, `category`, `status`, `views_count`, `created_at`, `updated_at`) VALUES
@@ -282,7 +333,7 @@ INSERT INTO `spots` (`id`, `user_id`, `title`, `description`, `location`, `latit
 -- --------------------------------------------------------
 
 --
--- Structure de la table `spot_images`
+-- Table structure for table `spot_images`
 --
 
 CREATE TABLE `spot_images` (
@@ -296,7 +347,7 @@ CREATE TABLE `spot_images` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `spot_tags`
+-- Table structure for table `spot_tags`
 --
 
 CREATE TABLE `spot_tags` (
@@ -307,7 +358,7 @@ CREATE TABLE `spot_tags` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `tags`
+-- Table structure for table `tags`
 --
 
 CREATE TABLE `tags` (
@@ -317,7 +368,7 @@ CREATE TABLE `tags` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 --
--- Déchargement des données de la table `tags`
+-- Dumping data for table `tags`
 --
 
 INSERT INTO `tags` (`id`, `name`, `created_at`) VALUES
@@ -337,7 +388,7 @@ INSERT INTO `tags` (`id`, `name`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -358,7 +409,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 --
--- Déchargement des données de la table `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `avatar`, `bio`, `country`, `language`, `is_active`, `email_verified`, `created_at`, `updated_at`, `status`) VALUES
@@ -368,11 +419,11 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `avatar`, `b
 (4, 'gab', 'gabgab@gab.com', '$2y$12$puLwDjpyX0WrZy/tGZLsVOTjW5UDOKzo5oF5HY0XXF.7Jr8BsTOfS', 'user', NULL, NULL, '', 'en', 1, 0, '2026-04-01 13:46:22', '2026-04-01 13:46:22', 'Hey, I\'m on FAV!');
 
 --
--- Index pour les tables déchargées
+-- Indexes for dumped tables
 --
 
 --
--- Index pour la table `chat_messages`
+-- Indexes for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
   ADD PRIMARY KEY (`id`),
@@ -381,7 +432,7 @@ ALTER TABLE `chat_messages`
   ADD KEY `idx_created_at` (`created_at`);
 
 --
--- Index pour la table `comments`
+-- Indexes for table `comments`
 --
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`),
@@ -390,7 +441,7 @@ ALTER TABLE `comments`
   ADD KEY `idx_parent_id` (`parent_id`);
 
 --
--- Index pour la table `conversations`
+-- Indexes for table `conversations`
 --
 ALTER TABLE `conversations`
   ADD PRIMARY KEY (`id`),
@@ -398,7 +449,7 @@ ALTER TABLE `conversations`
   ADD KEY `fk_conv_creator` (`created_by`);
 
 --
--- Index pour la table `conversation_members`
+-- Indexes for table `conversation_members`
 --
 ALTER TABLE `conversation_members`
   ADD PRIMARY KEY (`id`),
@@ -406,7 +457,7 @@ ALTER TABLE `conversation_members`
   ADD KEY `fk_cm_user` (`user_id`);
 
 --
--- Index pour la table `events`
+-- Indexes for table `events`
 --
 ALTER TABLE `events`
   ADD PRIMARY KEY (`id`),
@@ -414,7 +465,16 @@ ALTER TABLE `events`
   ADD KEY `idx_event_date` (`event_date`);
 
 --
--- Index pour la table `follows`
+-- Indexes for table `event_participants`
+--
+ALTER TABLE `event_participants`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_event_user` (`event_id`,`user_id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_event_id` (`event_id`);
+
+--
+-- Indexes for table `follows`
 --
 ALTER TABLE `follows`
   ADD PRIMARY KEY (`id`),
@@ -422,7 +482,7 @@ ALTER TABLE `follows`
   ADD KEY `idx_followed_id` (`followed_id`);
 
 --
--- Index pour la table `friendships`
+-- Indexes for table `friendships`
 --
 ALTER TABLE `friendships`
   ADD PRIMARY KEY (`id`),
@@ -431,7 +491,7 @@ ALTER TABLE `friendships`
   ADD KEY `idx_status` (`status`);
 
 --
--- Index pour la table `likes`
+-- Indexes for table `likes`
 --
 ALTER TABLE `likes`
   ADD PRIMARY KEY (`id`),
@@ -441,18 +501,17 @@ ALTER TABLE `likes`
   ADD KEY `idx_comment_id` (`comment_id`);
 
 --
--- Index pour la table `notifications`
+-- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_user_id` (`user_id`),
   ADD KEY `idx_is_read` (`is_read`),
-  ADD KEY `fk_notif_actor` (`actor_id`),
-  ADD KEY `fk_notif_spot` (`spot_id`),
-  ADD KEY `fk_notif_comment` (`comment_id`);
+  ADD KEY `idx_actor_id` (`actor_id`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
--- Index pour la table `password_resets`
+-- Indexes for table `password_resets`
 --
 ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`id`),
@@ -461,7 +520,7 @@ ALTER TABLE `password_resets`
   ADD KEY `idx_token` (`token`);
 
 --
--- Index pour la table `reports`
+-- Indexes for table `reports`
 --
 ALTER TABLE `reports`
   ADD PRIMARY KEY (`id`),
@@ -472,7 +531,7 @@ ALTER TABLE `reports`
   ADD KEY `fk_reports_admin` (`reviewed_by`);
 
 --
--- Index pour la table `sessions`
+-- Indexes for table `sessions`
 --
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
@@ -481,7 +540,7 @@ ALTER TABLE `sessions`
   ADD KEY `idx_user_id` (`user_id`);
 
 --
--- Index pour la table `spots`
+-- Indexes for table `spots`
 --
 ALTER TABLE `spots`
   ADD PRIMARY KEY (`id`),
@@ -491,28 +550,28 @@ ALTER TABLE `spots`
   ADD KEY `idx_created` (`created_at`);
 
 --
--- Index pour la table `spot_images`
+-- Indexes for table `spot_images`
 --
 ALTER TABLE `spot_images`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_spot_id` (`spot_id`);
 
 --
--- Index pour la table `spot_tags`
+-- Indexes for table `spot_tags`
 --
 ALTER TABLE `spot_tags`
   ADD PRIMARY KEY (`spot_id`,`tag_id`),
   ADD KEY `fk_spot_tags_tag` (`tag_id`);
 
 --
--- Index pour la table `tags`
+-- Indexes for table `tags`
 --
 ALTER TABLE `tags`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uq_tag_name` (`name`);
 
 --
--- Index pour la table `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
@@ -522,118 +581,124 @@ ALTER TABLE `users`
   ADD KEY `idx_is_active` (`is_active`);
 
 --
--- AUTO_INCREMENT pour les tables déchargées
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT pour la table `chat_messages`
+-- AUTO_INCREMENT for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT pour la table `comments`
+-- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `conversations`
+-- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT pour la table `conversation_members`
+-- AUTO_INCREMENT for table `conversation_members`
 --
 ALTER TABLE `conversation_members`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT pour la table `events`
+-- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT pour la table `follows`
+-- AUTO_INCREMENT for table `event_participants`
+--
+ALTER TABLE `event_participants`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `follows`
 --
 ALTER TABLE `follows`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `friendships`
+-- AUTO_INCREMENT for table `friendships`
 --
 ALTER TABLE `friendships`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT pour la table `likes`
+-- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `notifications`
+-- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT pour la table `password_resets`
+-- AUTO_INCREMENT for table `password_resets`
 --
 ALTER TABLE `password_resets`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `reports`
+-- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `sessions`
+-- AUTO_INCREMENT for table `sessions`
 --
 ALTER TABLE `sessions`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `spots`
+-- AUTO_INCREMENT for table `spots`
 --
 ALTER TABLE `spots`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT pour la table `spot_images`
+-- AUTO_INCREMENT for table `spot_images`
 --
 ALTER TABLE `spot_images`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `tags`
+-- AUTO_INCREMENT for table `tags`
 --
 ALTER TABLE `tags`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT pour la table `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- Contraintes pour les tables déchargées
+-- Constraints for dumped tables
 --
 
 --
--- Contraintes pour la table `chat_messages`
+-- Constraints for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
   ADD CONSTRAINT `fk_msg_conv` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_msg_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `comments`
+-- Constraints for table `comments`
 --
 ALTER TABLE `comments`
   ADD CONSTRAINT `fk_comments_parent` FOREIGN KEY (`parent_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
@@ -641,40 +706,47 @@ ALTER TABLE `comments`
   ADD CONSTRAINT `fk_comments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `conversations`
+-- Constraints for table `conversations`
 --
 ALTER TABLE `conversations`
   ADD CONSTRAINT `fk_conv_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `conversation_members`
+-- Constraints for table `conversation_members`
 --
 ALTER TABLE `conversation_members`
   ADD CONSTRAINT `fk_cm_conv` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_cm_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `events`
+-- Constraints for table `events`
 --
 ALTER TABLE `events`
   ADD CONSTRAINT `fk_events_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `follows`
+-- Constraints for table `event_participants`
+--
+ALTER TABLE `event_participants`
+  ADD CONSTRAINT `event_participants_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `event_participants_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `follows`
 --
 ALTER TABLE `follows`
   ADD CONSTRAINT `fk_follows_followed` FOREIGN KEY (`followed_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_follows_follower` FOREIGN KEY (`follower_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `friendships`
+-- Constraints for table `friendships`
 --
 ALTER TABLE `friendships`
   ADD CONSTRAINT `fk_friendship_receiver` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_friendship_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `likes`
+-- Constraints for table `likes`
 --
 ALTER TABLE `likes`
   ADD CONSTRAINT `fk_likes_comment` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
@@ -682,16 +754,14 @@ ALTER TABLE `likes`
   ADD CONSTRAINT `fk_likes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `notifications`
+-- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
   ADD CONSTRAINT `fk_notif_actor` FOREIGN KEY (`actor_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_notif_comment` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_notif_spot` FOREIGN KEY (`spot_id`) REFERENCES `spots` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_notif_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `reports`
+-- Constraints for table `reports`
 --
 ALTER TABLE `reports`
   ADD CONSTRAINT `fk_reports_admin` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
@@ -700,25 +770,25 @@ ALTER TABLE `reports`
   ADD CONSTRAINT `fk_reports_spot` FOREIGN KEY (`spot_id`) REFERENCES `spots` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `sessions`
+-- Constraints for table `sessions`
 --
 ALTER TABLE `sessions`
   ADD CONSTRAINT `fk_sessions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `spots`
+-- Constraints for table `spots`
 --
 ALTER TABLE `spots`
   ADD CONSTRAINT `fk_spots_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `spot_images`
+-- Constraints for table `spot_images`
 --
 ALTER TABLE `spot_images`
   ADD CONSTRAINT `fk_spot_images_spot` FOREIGN KEY (`spot_id`) REFERENCES `spots` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `spot_tags`
+-- Constraints for table `spot_tags`
 --
 ALTER TABLE `spot_tags`
   ADD CONSTRAINT `fk_spot_tags_spot` FOREIGN KEY (`spot_id`) REFERENCES `spots` (`id`) ON DELETE CASCADE,

@@ -83,6 +83,8 @@ class Agenda extends Dashboard
                 <div class="agenda-grid">
                     <!-- Calendrier -->
                     <div class="agenda-calendar-wrap">
+                        <!-- Hidden field to pass userId (for viewing other users' public events) -->
+                        <input type="hidden" id="viewedUserId" value="{$user['id']}">
                         <div class="cal-nav">
                             <a href="?page=agenda&month={$prevMonth}&year={$prevYear}" class="cal-nav-btn">&#8249;</a>
                             <span class="cal-month-label">{$monthName}</span>
@@ -109,6 +111,17 @@ class Agenda extends Dashboard
                         <div class="agenda-events" id="agendaEventsList">
                             <div class="agenda-no-events">No events for this day.<br>Click a day or "+ New Event" to add one.</div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- ── INVITATIONS REÇUES ── -->
+                <div class="dash-section" style="margin-top:28px;">
+                    <div class="dash-section-header">
+                        <h2 class="dash-section-title">EVENT INVITATIONS</h2>
+                        <span class="dash-subtitle" style="font-size:12px;margin:0;">Pending invitations to events from other users</span>
+                    </div>
+                    <div id="invitationsList">
+                        <div class="agenda-no-events" style="padding:24px 0;">Loading invitations…</div>
                     </div>
                 </div>
 
@@ -166,6 +179,38 @@ class Agenda extends Dashboard
             </div>
         </div>
 
+        <!-- Modal Inviter à un événement -->
+        <div class="modal-overlay" id="inviteModal" style="display:none">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h2 class="modal-title">INVITE TO EVENT</h2>
+                    <button type="button" class="modal-close" onclick="closeInviteModal()">&#x2715;</button>
+                </div>
+                <div class="modal-form">
+                    <input type="hidden" id="inviteEventId" value="">
+                    <input type="hidden" id="inviteUsername" value="">
+                    <div class="modal-field">
+                        <label>SEARCH USER</label>
+                        <div class="invite-search-wrap">
+                            <svg class="invite-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd"/></svg>
+                            <input type="text" class="invite-search-input" id="inviteSearchInput"
+                                   placeholder="Type a username…" autocomplete="off">
+                        </div>
+                        <div class="invite-search-results" id="inviteSearchResults"></div>
+                        <div id="inviteSelectedUser" style="display:none;" class="invite-selected-user">
+                            <span id="inviteSelectedName"></span>
+                            <button type="button" class="invite-clear-btn" onclick="clearInviteSelection()">&#x2715;</button>
+                        </div>
+                    </div>
+                    <div id="inviteMessage" style="margin: 10px 0; font-weight: bold;"></div>
+                    <div class="modal-actions">
+                        <button type="button" class="prof-btn prof-btn--outline" onclick="closeInviteModal()">Cancel</button>
+                        <button type="button" class="prof-btn prof-btn--primary" id="btnSendInvite" onclick="inviteToEvent()" disabled>Send Invite</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
 const currentYear = {$year};
 const currentMonth = {$month};
@@ -210,7 +255,11 @@ function updateDayTitle(day) {
 
 async function loadEvents() {
     try {
-        const url = '?page=agenda&action=getAgendaEvents&year=' + currentYear + '&month=' + currentMonth;
+        const viewedUserId = document.getElementById('viewedUserId')?.value || '';
+        let url = '?page=agenda&action=getAgendaEvents&year=' + currentYear + '&month=' + currentMonth;
+        if (viewedUserId) {
+            url += '&user_id=' + viewedUserId;
+        }
         const resp = await fetch(url);
         const data = await resp.json();
 
@@ -288,6 +337,7 @@ function renderEvents(day) {
         if (e.notes) html += '<div class="agenda-event-notes">' + e.notes + '</div>';
         html += '<div class="agenda-event-actions">';
         html += '<button type="button" class="event-edit" data-id="' + e.id + '" data-day="' + day + '">&#x270F;&#xFE0F; Edit</button>';
+        html += '<button type="button" class="event-invite" data-id="' + e.id + '">&#x1F4C4; Invite</button>';
         html += '<button type="button" class="event-delete" data-id="' + e.id + '" data-day="' + day + '">&#x1F5D1;&#xFE0F; Delete</button>';
         html += '</div>';
         html += '</div>';
@@ -298,6 +348,11 @@ function renderEvents(day) {
     list.querySelectorAll('.event-edit').forEach(function(btn) {
         btn.addEventListener('click', function() {
             editEvent(parseInt(this.dataset.id, 10), parseInt(this.dataset.day, 10));
+        });
+    });
+    list.querySelectorAll('.event-invite').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            showInviteModal(parseInt(this.dataset.id, 10));
         });
     });
     list.querySelectorAll('.event-delete').forEach(function(btn) {
@@ -406,6 +461,130 @@ function editEvent(eventId, day) {
     openEventModal();
 }
 
+// ── INVITE MODAL — predictive search ───────────────────────────
+
+let inviteSearchTimer = null;
+
+function showInviteModal(eventId) {
+    document.getElementById('inviteEventId').value = eventId;
+    document.getElementById('inviteUsername').value = '';
+    document.getElementById('inviteSearchInput').value = '';
+    document.getElementById('inviteSearchResults').innerHTML = '';
+    document.getElementById('inviteSearchResults').classList.remove('active');
+    document.getElementById('inviteMessage').textContent = '';
+    document.getElementById('inviteSelectedUser').style.display = 'none';
+    document.getElementById('btnSendInvite').disabled = true;
+    document.getElementById('inviteModal').style.display = 'flex';
+
+    // Attach search listener each time modal opens (safe — input is recreated)
+    const input = document.getElementById('inviteSearchInput');
+    input.oninput = function() {
+        clearTimeout(inviteSearchTimer);
+        const q = this.value.trim();
+        const results = document.getElementById('inviteSearchResults');
+        if (q.length < 2) {
+            results.innerHTML = '';
+            results.classList.remove('active');
+            return;
+        }
+        inviteSearchTimer = setTimeout(function() { doInviteSearch(q); }, 300);
+    };
+}
+
+function closeInviteModal() {
+    document.getElementById('inviteModal').style.display = 'none';
+    clearTimeout(inviteSearchTimer);
+}
+
+function doInviteSearch(q) {
+    const results = document.getElementById('inviteSearchResults');
+    results.innerHTML = '<div class="invite-search-loading">Searching…</div>';
+    results.classList.add('active');
+    fetch('?action=searchUsers&q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(users) { renderInviteResults(users); })
+        .catch(function() { results.innerHTML = '<div class="invite-search-loading">Error searching.</div>'; });
+}
+
+function renderInviteResults(users) {
+    const results = document.getElementById('inviteSearchResults');
+    if (!users || users.length === 0) {
+        results.innerHTML = '<div class="invite-search-loading">No users found.</div>';
+        return;
+    }
+    results.innerHTML = users.map(function(u) {
+        const avatarHtml = u.avatar
+            ? '<img src="' + u.avatar + '" alt="" class="invite-sr-avatar-img">'
+            : '<div class="invite-sr-avatar-ph">' + u.username.substring(0, 2).toUpperCase() + '</div>';
+        return '<div class="invite-sr-item" onclick="selectInviteUser(\'' + u.username.replace(/'/g, "\\'") + '\')">'
+             +   '<div class="invite-sr-avatar">' + avatarHtml + '</div>'
+             +   '<div class="invite-sr-info">'
+             +     '<span class="invite-sr-name">' + u.username + '</span>'
+             +     (u.country ? '<span class="invite-sr-country">' + u.country + '</span>' : '')
+             +   '</div>'
+             + '</div>';
+    }).join('');
+}
+
+function selectInviteUser(username) {
+    document.getElementById('inviteUsername').value = username;
+    document.getElementById('inviteSelectedName').textContent = '👤 ' + username;
+    document.getElementById('inviteSelectedUser').style.display = 'flex';
+    document.getElementById('inviteSearchInput').value = '';
+    document.getElementById('inviteSearchResults').innerHTML = '';
+    document.getElementById('inviteSearchResults').classList.remove('active');
+    document.getElementById('btnSendInvite').disabled = false;
+    document.getElementById('inviteMessage').textContent = '';
+}
+
+function clearInviteSelection() {
+    document.getElementById('inviteUsername').value = '';
+    document.getElementById('inviteSelectedUser').style.display = 'none';
+    document.getElementById('btnSendInvite').disabled = true;
+    document.getElementById('inviteSearchInput').focus();
+}
+
+async function inviteToEvent() {
+    const eventId  = document.getElementById('inviteEventId').value;
+    const username = document.getElementById('inviteUsername').value.trim();
+    const msgDiv   = document.getElementById('inviteMessage');
+
+    if (!username) {
+        msgDiv.textContent = 'Please select a user first.';
+        msgDiv.style.color = 'red';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('event_id', eventId);
+    formData.append('username', username);
+
+    try {
+        const resp = await fetch('?page=agenda&action=inviteToEvent', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.success) {
+            msgDiv.textContent = 'Invitation sent to ' + username + '!';
+            msgDiv.style.color = 'green';
+            setTimeout(function() { closeInviteModal(); }, 1500);
+        } else {
+            msgDiv.textContent = data.error || 'Error sending invitation';
+            msgDiv.style.color = 'red';
+        }
+    } catch (err) {
+        msgDiv.textContent = 'Network error: ' + err;
+        msgDiv.style.color = 'red';
+    }
+}
+
+// Close invite search results when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#inviteModal')) return;
+    if (!e.target.closest('.invite-search-wrap') && !e.target.closest('.invite-search-results')) {
+        const results = document.getElementById('inviteSearchResults');
+        if (results) { results.innerHTML = ''; results.classList.remove('active'); }
+    }
+});
+
 async function deleteEvent(eventId, day) {
     if (!confirm('Supprimer cet événement ?')) return;
 
@@ -430,13 +609,229 @@ async function deleteEvent(eventId, day) {
     }
 }
 
+// ── INVITATIONS ────────────────────────────────────────────────
+
+async function loadInvitations() {
+    const container = document.getElementById('invitationsList');
+    if (!container) return;
+    try {
+        const resp = await fetch('?page=agenda&action=getInvitations');
+        const data = await resp.json();
+        if (!data.success || data.invitations.length === 0) {
+            container.innerHTML = '<div class="agenda-no-events" style="padding:24px 0;">No pending invitations.</div>';
+            return;
+        }
+        let html = '<div class="invitations-grid">';
+        data.invitations.forEach(function(inv) {
+            const typeLabel = inv.type === 'shared' ? '🤝 Cultural Exchange' : inv.type === 'public' ? '🌍 Public Event' : '🔒 Private';
+            const dateStr = inv.event_date ? new Date(inv.event_date).toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '—';
+            html += '<div class="invitation-card" id="inv-' + inv.id + '">';
+            html += '<div class="inv-type-badge">' + typeLabel + '</div>';
+            html += '<div class="inv-title">' + escapeHtml(inv.title) + '</div>';
+            html += '<div class="inv-meta">📅 ' + dateStr + '</div>';
+            if (inv.location) html += '<div class="inv-meta">📍 ' + escapeHtml(inv.location) + '</div>';
+            html += '<div class="inv-meta inv-from">From: <strong>' + escapeHtml(inv.organizer_username) + '</strong></div>';
+            html += '<div class="inv-actions">';
+            html += '<button class="inv-btn inv-btn--accept" onclick="respondInvitation(' + inv.id + ', ' + inv.event_id + ', \'accepted\')">✅ Accept</button>';
+            html += '<button class="inv-btn inv-btn--decline" onclick="respondInvitation(' + inv.id + ', ' + inv.event_id + ', \'declined\')">❌ Decline</button>';
+            html += '</div></div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    } catch(e) {
+        container.innerHTML = '<div class="agenda-no-events" style="padding:24px 0;">Error loading invitations.</div>';
+    }
+}
+
+async function respondInvitation(participantId, eventId, status) {
+    const card = document.getElementById('inv-' + participantId);
+    if (card) card.style.opacity = '0.5';
+    try {
+        const fd = new FormData();
+        fd.append('participant_id', participantId);
+        fd.append('event_id', eventId);
+        fd.append('status', status);
+        const resp = await fetch('?page=agenda&action=respondInvitation', {method:'POST', body:fd});
+        const data = await resp.json();
+        if (data.success) {
+            if (card) {
+                card.style.transition = 'all 0.3s';
+                card.style.transform  = 'scale(0.95)';
+                card.style.opacity    = '0';
+                setTimeout(function() { card.remove(); loadInvitations(); }, 300);
+            }
+            if (status === 'accepted') {
+                await loadEvents(); // Refresh calendar
+            }
+        } else {
+            if (card) card.style.opacity = '1';
+            alert(data.error || 'Error responding to invitation');
+        }
+    } catch(e) {
+        if (card) card.style.opacity = '1';
+        alert('Network error');
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     attachListeners();
     updateDayTitle(selectedDay);
     loadEvents();
+    loadInvitations();
 });
         </script>
+
+        <style>
+        .invitations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+            margin-top: 8px;
+        }
+        .invitation-card {
+            background: var(--card-bg, #1a1a2e);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: border-color 0.2s;
+        }
+        .invitation-card:hover { border-color: rgba(99,102,241,0.4); }
+        .inv-type-badge {
+            font-size: 11px; font-weight: 700; letter-spacing: .05em;
+            color: #a78bfa; text-transform: uppercase;
+        }
+        .inv-title {
+            font-size: 16px; font-weight: 700; color: #fff;
+            line-height: 1.3;
+        }
+        .inv-meta { font-size: 13px; color: rgba(255,255,255,0.5); }
+        .inv-from strong { color: rgba(255,255,255,0.8); }
+        .inv-actions { display: flex; gap: 8px; margin-top: 4px; }
+        .inv-btn {
+            flex: 1; padding: 8px 12px; border-radius: 8px;
+            border: none; cursor: pointer; font-size: 13px; font-weight: 600;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .inv-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .inv-btn--accept  { background: #22c55e; color: #fff; }
+        .inv-btn--decline { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+        .sidebar-nav-badge {
+            margin-left: auto;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 99px;
+            min-width: 18px;
+            text-align: center;
+            line-height: 16px;
+        }
+
+        /* ── Invite predictive search ── */
+        .invite-search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 0 12px;
+            gap: 8px;
+            transition: border-color 0.2s;
+        }
+        .invite-search-wrap:focus-within {
+            border-color: rgba(99,102,241,0.6);
+        }
+        .invite-search-icon { color: rgba(255,255,255,0.4); flex-shrink: 0; }
+        .invite-search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 14px;
+            padding: 10px 0;
+        }
+        .invite-search-input::placeholder { color: rgba(255,255,255,0.35); }
+
+        .invite-search-results {
+            display: none;
+            flex-direction: column;
+            background: #1e1e2e;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            margin-top: 4px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            z-index: 10001;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .invite-search-results.active { display: flex; }
+        .invite-search-loading {
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+        }
+        .invite-sr-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .invite-sr-item:hover { background: rgba(99,102,241,0.15); }
+        .invite-sr-avatar { flex-shrink: 0; }
+        .invite-sr-avatar-img {
+            width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+        }
+        .invite-sr-avatar-ph {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 11px; font-weight: 700;
+        }
+        .invite-sr-info { display: flex; flex-direction: column; gap: 1px; }
+        .invite-sr-name { color: #fff; font-weight: 600; font-size: 14px; }
+        .invite-sr-country { color: rgba(255,255,255,0.4); font-size: 12px; }
+
+        .invite-selected-user {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(99,102,241,0.15);
+            border: 1.5px solid rgba(99,102,241,0.4);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            color: #a78bfa;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .invite-clear-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 2px;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+        .invite-clear-btn:hover { color: #f87171; }
+        </style>
 HTML;
     }
 }

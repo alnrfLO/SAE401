@@ -285,6 +285,9 @@ class Profile extends View
 
             </div><!-- /.prof-body -->
 
+            <!-- ── AGENDA (visible seulement sur les profils dautres users) ── -->
+            ' . (!$isOwn ? $this->renderProfileAgenda($user, $this->data['profileEvents'] ?? []) : '') . '
+
         </div><!-- /.prof-wrapper -->
 
         <style>
@@ -711,5 +714,186 @@ if (avatarInput) {
             });
         }
         ';
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Mini-agenda affiché sur le profil d'un autre utilisateur
+    // ──────────────────────────────────────────────────────────────
+    private function renderProfileAgenda(array $user, array $events): string
+    {
+        $username = htmlspecialchars($user['username'], ENT_QUOTES);
+
+        if (empty($events)) {
+            $body = '<div class="profile-agenda-empty">
+                        <span>📅</span>
+                        <p>No upcoming public events.</p>
+                     </div>';
+        } else {
+            $body = '<div class="profile-agenda-list">';
+            foreach ($events as $e) {
+                $dt        = new DateTime($e['event_date']);
+                $dayNum    = $dt->format('d');
+                $monthAbbr = strtoupper($dt->format('M'));
+                $timeStr   = $dt->format('H:i');
+                $title     = htmlspecialchars($e['title'], ENT_QUOTES);
+                $location  = htmlspecialchars($e['location'] ?? '', ENT_QUOTES);
+
+                // Badge type
+                $isInvited = ($e['invite_status'] ?? '') === 'accepted';
+                if ($isInvited && $e['type'] !== 'public') {
+                    $typeCls   = 'profile-agenda-badge--invited';
+                    $typeLabel = '✉️ Invited';
+                } elseif ($e['type'] === 'shared') {
+                    $typeCls   = 'profile-agenda-badge--shared';
+                    $typeLabel = '🤝 Cultural Exchange';
+                } else {
+                    $typeCls   = 'profile-agenda-badge--public';
+                    $typeLabel = '🌍 Public';
+                }
+
+                // Extract end time from description "[end:HH:MM]"
+                $endTime = '';
+                if (!empty($e['description']) && preg_match('/\[end:(\d{1,2}:\d{2})\]/', $e['description'], $m)) {
+                    $endTime = ' — ' . $m[1];
+                }
+
+                $body .= '
+                <div class="profile-agenda-item">
+                    <div class="profile-agenda-date">
+                        <span class="profile-agenda-day">' . $dayNum . '</span>
+                        <span class="profile-agenda-month">' . $monthAbbr . '</span>
+                    </div>
+                    <div class="profile-agenda-info">
+                        <span class="profile-agenda-badge ' . $typeCls . '">' . $typeLabel . '</span>
+                        <div class="profile-agenda-title">' . $title . '</div>
+                        <div class="profile-agenda-meta">
+                            ⏰ ' . $timeStr . $endTime .
+                            ($location ? ' &nbsp;·&nbsp; 📍 ' . $location : '') . '
+                        </div>
+                    </div>
+                </div>';
+            }
+            $body .= '</div>';
+        }
+
+        return '
+        <div class="profile-agenda-section">
+            <div class="profile-agenda-header">
+                <h2 class="profile-agenda-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd"/>
+                    </svg>
+                    ' . $username . '\'s Upcoming Events
+                </h2>
+            </div>
+            ' . $body . '
+        </div>
+
+        <style>
+        .profile-agenda-section {
+            max-width: 1000px;
+            margin: 0 auto 48px;
+            padding: 0 24px;
+        }
+        .profile-agenda-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .profile-agenda-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: "Bungee", cursive;
+            font-size: 18px;
+            color: #fff;
+            margin: 0;
+        }
+        .profile-agenda-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .profile-agenda-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 14px 18px;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .profile-agenda-item:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .profile-agenda-date {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 48px;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 10px;
+            padding: 6px 10px;
+            flex-shrink: 0;
+        }
+        .profile-agenda-day {
+            font-size: 22px;
+            font-weight: 700;
+            color: #a78bfa;
+            line-height: 1;
+        }
+        .profile-agenda-month {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(167,139,250,0.7);
+            letter-spacing: .05em;
+        }
+        .profile-agenda-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .profile-agenda-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px;
+            margin-bottom: 4px;
+            letter-spacing: .04em;
+        }
+        .profile-agenda-badge--public   { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .profile-agenda-badge--shared   { background: rgba(251,174,64,0.15); color: #fbad40; border: 1px solid rgba(251,174,64,0.3); }
+        .profile-agenda-badge--invited  { background: rgba(99,102,241,0.15); color: #a78bfa; border: 1px solid rgba(99,102,241,0.3); }
+        .profile-agenda-title-text,
+        .profile-agenda-item .profile-agenda-info > div:not(.profile-agenda-meta):not(.profile-agenda-badge) {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .profile-agenda-title { font-size: 15px; font-weight: 600; color: #fff; }
+        .profile-agenda-meta {
+            font-size: 13px;
+            color: rgba(255,255,255,0.45);
+            margin-top: 3px;
+        }
+        .profile-agenda-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+        .profile-agenda-empty span { font-size: 32px; display: block; margin-bottom: 8px; }
+        .profile-agenda-empty p { margin: 0; font-size: 14px; }
+        </style>';
     }
 }
