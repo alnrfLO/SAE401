@@ -1,17 +1,15 @@
 <?php
 class Friendship
 {
-    private PDO $pdo;
+    private $pdo;
 
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
-    // ─── ENVOYER UNE DEMANDE D'AMI ────────────────────────────────────────
     public function sendRequest(int $senderId, int $receiverId): bool
     {
-        // Vérifie qu'aucun lien n'existe déjà (dans les deux sens)
         if ($this->getRelation($senderId, $receiverId)) return false;
 
         $stmt = $this->pdo->prepare(
@@ -20,7 +18,6 @@ class Friendship
         return $stmt->execute([$senderId, $receiverId]);
     }
 
-    // ─── ACCEPTER UNE DEMANDE ─────────────────────────────────────────────
     public function acceptRequest(int $requestId, int $receiverId): bool
     {
         $stmt = $this->pdo->prepare(
@@ -30,17 +27,14 @@ class Friendship
         return $stmt->execute([$requestId, $receiverId]) && $stmt->rowCount() > 0;
     }
 
-    // ─── REFUSER / ANNULER UNE DEMANDE ───────────────────────────────────
     public function deleteRequest(int $requestId, int $userId): bool
     {
-        // L'envoyeur peut annuler, le destinataire peut refuser
         $stmt = $this->pdo->prepare(
             'DELETE FROM friendships WHERE id = ? AND (sender_id = ? OR receiver_id = ?)'
         );
         return $stmt->execute([$requestId, $userId, $userId]) && $stmt->rowCount() > 0;
     }
 
-    // ─── SUPPRIMER UN AMI (relation acceptée) ────────────────────────────
     public function removeFriend(int $userId, int $friendId): bool
     {
         $stmt = $this->pdo->prepare(
@@ -54,8 +48,8 @@ class Friendship
         return $stmt->execute([$userId, $friendId, $friendId, $userId]);
     }
 
-    // ─── RELATION ENTRE DEUX USERS ───────────────────────────────────────
-    public function getRelation(int $userA, int $userB): ?array
+    // ❌ suppression de ?array
+    public function getRelation(int $userA, int $userB)
     {
         $stmt = $this->pdo->prepare(
             'SELECT * FROM friendships
@@ -65,10 +59,9 @@ class Friendship
         );
         $stmt->execute([$userA, $userB, $userB, $userA]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ?: null;
+        return $row ? $row : null;
     }
 
-    // ─── LISTE DES AMIS ACCEPTÉS ─────────────────────────────────────────
     public function getFriends(int $userId): array
     {
         $stmt = $this->pdo->prepare(
@@ -84,7 +77,6 @@ class Friendship
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ─── DEMANDES REÇUES (EN ATTENTE) ────────────────────────────────────
     public function getReceivedRequests(int $userId): array
     {
         $stmt = $this->pdo->prepare(
@@ -99,7 +91,6 @@ class Friendship
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ─── DEMANDES ENVOYÉES (EN ATTENTE) ──────────────────────────────────
     public function getSentRequests(int $userId): array
     {
         $stmt = $this->pdo->prepare(
@@ -114,7 +105,6 @@ class Friendship
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ─── RECHERCHE D'UTILISATEURS ────────────────────────────────────────
     public function searchUsers(int $currentUserId, string $query): array
     {
         $like = '%' . $query . '%';
@@ -137,7 +127,6 @@ class Friendship
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ─── NOMBRE D'AMIS ───────────────────────────────────────────────────
     public function countFriends(int $userId): int
     {
         $stmt = $this->pdo->prepare(
@@ -149,7 +138,6 @@ class Friendship
         return (int)$stmt->fetchColumn();
     }
 
-    // ─── NOMBRE DE DEMANDES REÇUES NON LUES ─────────────────────────────
     public function countPendingReceived(int $userId): int
     {
         $stmt = $this->pdo->prepare(

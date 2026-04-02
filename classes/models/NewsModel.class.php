@@ -6,6 +6,7 @@
 
 class NewsModel
 {
+    /** @var PDO|null */
     private $pdo;
 
     public function __construct(PDO $pdo = null)
@@ -19,7 +20,7 @@ class NewsModel
      */
     public function getAll(): array
     {
-        // For now using static data as per current implementation, 
+        // For now using static data as per current implementation,
         // but encapsulated in the model for MVC compliance.
         return [
             1 => [
@@ -57,7 +58,7 @@ class NewsModel
      * @param int $id
      * @return array|null
      */
-    public function findById(int $id): ?array
+    public function findById(int $id)
     {
         $all = $this->getAll();
         return $all[$id] ?? null;

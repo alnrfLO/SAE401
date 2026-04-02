@@ -1,4 +1,8 @@
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 define('CHARGE_AUTOLOAD', true);
 require_once 'inc/autoload.inc.php';
 require_once 'inc/database.php';

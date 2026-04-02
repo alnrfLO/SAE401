@@ -5,7 +5,8 @@
 
 class Messaging
 {
-    private PDO $pdo;
+    /** @var PDO */
+    private $pdo; // PHP 7.0: typed properties (private PDO $pdo) require PHP 7.4+
 
     public function __construct(PDO $pdo)
     {
@@ -69,7 +70,7 @@ class Messaging
     }
 
     // ─── ENVOYER UN MESSAGE ───────────────────────────────────
-    public function sendMessage(int $convId, int $senderId, string $content): ?array
+    public function sendMessage(int $convId, int $senderId, string $content)
     {
         // Vérifie que l'expéditeur est bien membre
         if (!$this->isMember($convId, $senderId)) return null;
@@ -201,13 +202,17 @@ class Messaging
         $all = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if ($exceptUserId) {
-            $all = array_filter($all, fn($m) => (int)$m['id'] !== $exceptUserId);
+            // PHP 7.0: arrow functions (fn() =>) require PHP 7.4+, use array_filter with anonymous function
+            $exceptUserId = $exceptUserId; // captured by use()
+            $all = array_filter($all, function($m) use ($exceptUserId) {
+                return (int)$m['id'] !== $exceptUserId;
+            });
         }
         return array_values($all);
     }
 
     // ─── DÉTAILS D'UNE CONVERSATION ──────────────────────────
-    public function getConversation(int $convId, int $userId): ?array
+    public function getConversation(int $convId, int $userId)
     {
         if (!$this->isMember($convId, $userId)) return null;
 
@@ -252,7 +257,7 @@ class Messaging
     }
 
     // ─── MARQUER COMME LU ────────────────────────────────────
-    public function markRead(int $convId, int $userId): void
+    public function markRead(int $convId, int $userId)
     {
         $this->pdo->prepare(
             'UPDATE conversation_members SET last_read_at = NOW()
@@ -271,7 +276,7 @@ class Messaging
     }
 
     // ─── UN SEUL MESSAGE ─────────────────────────────────────
-    private function getMessage(int $msgId): ?array
+    private function getMessage(int $msgId)
     {
         $stmt = $this->pdo->prepare(
             'SELECT m.id, m.content, m.created_at, m.sender_id, m.is_deleted,

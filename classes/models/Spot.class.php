@@ -19,8 +19,6 @@ class Spot
     /**
      * Crée un nouveau spot
      * Retourne l'ID du spot créé
-     */
-    /**
      * @return int|false
      */
     public function create(int $userId, array $data)
@@ -57,8 +55,6 @@ class Spot
 
     /**
      * Récupère un spot par son ID avec infos auteur et compteurs
-     */
-    /**
      * @return array|false
      */
     public function findById(int $id)
@@ -280,7 +276,7 @@ class Spot
 
     // ─── TAGS ─────────────────────────────────────────────────
 
-    private function attachTags(int $spotId, array $tagNames): void
+    private function attachTags(int $spotId, array $tagNames)
     {
         foreach ($tagNames as $name) {
             $name = strtolower(trim($name));
@@ -338,7 +334,7 @@ class Spot
         return $stmt->fetchColumn();
     }
 
-    private function incrementViews(int $spotId): void
+    private function incrementViews(int $spotId)
     {
         $stmt = $this->pdo->prepare("UPDATE spots SET views_count = views_count + 1 WHERE id = :id");
         $stmt->execute([':id' => $spotId]);

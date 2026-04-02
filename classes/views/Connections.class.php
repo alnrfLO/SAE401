@@ -33,36 +33,39 @@ class Connections extends View
             $flag     = $flags[strtolower($u['country'] ?? '')] ?? '🌍';
             $fid      = (int)($u['friendship_id'] ?? 0);
 
-            $actions = match($mode) {
-                'friend' => '
-                    <button class="conn-btn conn-btn--danger"
-                            onclick="friendAction(\'remove\', ' . $fid . ', this.closest(\'.conn-card\'))"
-                            title="Remove friend">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M10.375 2.25a4.125 4.125 0 100 8.25 4.125 4.125 0 000-8.25zM10.375 12a7.125 7.125 0 00-7.124 7.247.75.75 0 00.75.737h13.5a.75.75 0 00.75-.748 7.125 7.125 0 00-7.126-7.236zM16.5 6.75a.75.75 0 000 1.5h6a.75.75 0 000-1.5h-6z"/></svg>
-                        Remove
-                    </button>',
-                'received' => '
-                    <button class="conn-btn conn-btn--green"
-                            onclick="friendAction(\'accept\', ' . $fid . ', this.closest(\'.conn-card\'))"
-                            title="Accept">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clip-rule="evenodd"/></svg>
-                        Accept
-                    </button>
-                    <button class="conn-btn conn-btn--danger"
-                            onclick="friendAction(\'decline\', ' . $fid . ', this.closest(\'.conn-card\'))"
-                            title="Decline">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"/></svg>
-                        Decline
-                    </button>',
-                'sent' => '
-                    <button class="conn-btn conn-btn--outline"
-                            onclick="friendAction(\'cancel\', ' . $fid . ', this.closest(\'.conn-card\'))"
-                            title="Cancel request">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"/></svg>
-                        Cancel
-                    </button>',
-                default => ''
-            };
+                switch ($mode) {
+                    case 'friend':
+                        $actions = '
+                            <button class="conn-btn conn-btn--danger"
+                                onclick="friendAction(\'remove\', ' . $fid . ', this.closest(\'.conn-card\'))"
+                                title="Remove friend">
+                                Remove
+                            </button>';
+                        break;
+
+                    case 'received':
+                        $actions = '
+                            <button class="conn-btn conn-btn--green"
+                                onclick="friendAction(\'accept\', ' . $fid . ', this.closest(\'.conn-card\'))">
+                                Accept
+                            </button>
+                            <button class="conn-btn conn-btn--danger"
+                                onclick="friendAction(\'decline\', ' . $fid . ', this.closest(\'.conn-card\'))">
+                                Decline
+                            </button>';
+                        break;
+
+                    case 'sent':
+                        $actions = '
+                            <button class="conn-btn conn-btn--outline"
+                                onclick="friendAction(\'cancel\', ' . $fid . ', this.closest(\'.conn-card\'))">
+                                Cancel
+                            </button>';
+                        break;
+
+                    default:
+                        $actions = '';
+                }
 
             return '
             <div class="conn-card">
@@ -178,15 +181,24 @@ class Connections extends View
         }
 
         // ── Recherche avec debounce ──────────────────────────────────────
-        let searchTimer;
-        const searchInput   = document.getElementById("searchInput");
-        const searchResults = document.getElementById("searchResults");
+        document.addEventListener("DOMContentLoaded", function() {
+            let searchTimer;
+            const searchInput   = document.getElementById("searchInput");
+            const searchResults = document.getElementById("searchResults");
 
-        searchInput.addEventListener("input", function() {
-            clearTimeout(searchTimer);
-            const q = this.value.trim();
-            if (q.length < 2) { searchResults.innerHTML = ""; searchResults.classList.remove("active"); return; }
-            searchTimer = setTimeout(() => doSearch(q), 300);
+            if (!searchInput || !searchResults) return;
+
+            searchInput.addEventListener("input", function() {
+                clearTimeout(searchTimer);
+                const q = this.value.trim();
+                if (q.length < 2) {
+                    searchResults.innerHTML = "";
+                    searchResults.classList.remove("active");
+                    return;
+                }
+                searchTimer = setTimeout(() => doSearch(q), 300);
+            });
+
         });
 
         // Fermer les résultats si on clique ailleurs
