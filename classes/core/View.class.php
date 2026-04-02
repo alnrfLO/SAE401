@@ -24,6 +24,9 @@ class View
         require __DIR__ . '/../views/partials/footer.php';
         $footerHtml = ob_get_clean();
 
+        $showFooter = $this->data['showFooter'] ?? true;
+        $fullWidth  = $this->data['fullWidth']  ?? false;
+
         return
             '<!DOCTYPE html>
             <html lang="' . $lang . '">
@@ -39,10 +42,10 @@ class View
             </head>
             <body>
                 ' . $headerHtml . '
-                <main>
+                <main class="' . ($fullWidth ? 'main--full' : '') . '">
                     ' . $this->content() . '
                 </main>
-                ' . $footerHtml . '
+                ' . ($showFooter ? $footerHtml : '') . '
             </body>
             </html>';
     }

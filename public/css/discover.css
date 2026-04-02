@@ -1,13 +1,13 @@
 /* ───────────────────────────────────────────────────────── 
-   DISCOVER PAGE CSS - NEO-BRUTALISM 
+   DISCOVER PAGE CSS 
 ───────────────────────────────────────────────────────── */
 
 /* Layout global */
 .discover-main {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 140px 20px 100px 20px; /* Padding haut augmenté (140px au lieu de 60px) pour compenser le header fixé */
-    background-color: transparent; /* Hérité du parent, en principe beige/off-white */
+    padding: 140px 20px 100px 20px;
+    background-color: transparent;
 }
 
 /* Header Section */
@@ -21,7 +21,8 @@
 }
 
 .discover-badge {
-    background-color: #3aa26b; /* Vert retro */
+    background-color: #3aa26b;
+    /* Vert retro */
     color: white;
     font-family: 'Bungee', cursive;
     padding: 6px 16px;
@@ -70,7 +71,7 @@
 }
 
 .discover-filter-btn:hover {
-    background-color: #fbad40; /* Hover orange */
+    background-color: #fbad40;
     transform: translateY(-2px);
     box-shadow: 2px 2px 0px #212121;
 }
@@ -93,15 +94,16 @@
     border: 4px solid #212121;
     border-radius: 16px;
     box-shadow: 6px 6px 0px #212121;
-    background-color: #e5e3df; /* Placeholder if tiles fail */
-    z-index: 1; /* Keep leaflet controls below dropdowns if any */
+    background-color: #e5e3df;
+    z-index: 1;
 }
 
-/* Leaflet Overrides for Neo-Brutalism */
+/* AI CONTENT */
 .leaflet-bar {
     border: none !important;
     box-shadow: none !important;
 }
+
 .leaflet-bar a {
     border: 3px solid #212121 !important;
     border-radius: 8px !important;
@@ -115,12 +117,16 @@
     line-height: 28px !important;
     transition: transform 0.1s;
 }
+
 .leaflet-bar a:hover {
     background-color: #fbad40 !important;
     transform: translate(-1px, -1px);
     box-shadow: 4px 4px 0px #212121 !important;
 }
-.leaflet-control-zoom-in { margin-top: 10px !important; }
+
+.leaflet-control-zoom-in {
+    margin-top: 10px !important;
+}
 
 /* Custom Map Popup */
 .leaflet-popup-content-wrapper {
@@ -130,17 +136,24 @@
     padding: 0;
     background: #fff;
 }
-.leaflet-popup-tip-container { display: none; /* Hide the tip for a more solid look */ }
+
+.leaflet-popup-tip-container {
+    display: none;
+    /* Hide the tip for a more solid look */
+}
+
 .custom-popup {
     padding: 10px;
     font-family: 'Inter', sans-serif;
 }
+
 .custom-popup h4 {
     margin: 0 0 5px 0;
     font-family: 'Bungee', cursive;
     font-size: 14px;
     color: #212121;
 }
+
 .custom-popup p {
     margin: 0;
     font-size: 12px;
@@ -149,7 +162,8 @@
 
 /* Custom Marker */
 .map-marker {
-    background: #3aa26b; /* Green by default */
+    background: #3aa26b;
+    /* Green by default */
     border: 3px solid #212121;
     border-radius: 50%;
     box-shadow: 2px 2px 0px #212121;
@@ -158,17 +172,28 @@
     cursor: pointer;
     transition: transform 0.2s;
 }
+
 .map-marker:hover {
     transform: scale(1.2);
 }
 
 /* Specific colors based on tags */
-.map-marker[data-country="france"] { background: #4e8deb; }
-.map-marker[data-country="albania"] { background: #ee5b5b; }
-.map-marker[data-country="vietnam"] { background: #3aa26b; }
+.map-marker[data-country="france"] {
+    background: #4e8deb;
+}
+
+.map-marker[data-country="albania"] {
+    background: #ee5b5b;
+}
+
+.map-marker[data-country="vietnam"] {
+    background: #3aa26b;
+}
 
 
-/* Spots Grid Section */
+
+/* END OF AI CONTENT*/
+
 .discover-spots-section {
     display: flex;
     flex-direction: column;
@@ -183,12 +208,23 @@
 }
 
 @media (max-width: 992px) {
-    .discover-grid { grid-template-columns: repeat(2, 1fr); }
+    .discover-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
+
 @media (max-width: 600px) {
-    .discover-grid { grid-template-columns: 1fr; }
-    .discover-map-container { height: 350px; }
-    .discover-title { font-size: 32px; }
+    .discover-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .discover-map-container {
+        height: 350px;
+    }
+
+    .discover-title {
+        font-size: 32px;
+    }
 }
 
 /* Spot Card */
@@ -242,9 +278,22 @@
     background: #eee;
     text-transform: uppercase;
 }
-.card-country-badge.badge-france { background: #8bb7f0; } /* Light blue */
-.card-country-badge.badge-albania { background: #fca5a5; } /* Light red */
-.card-country-badge.badge-vietnam { background: #86efac; } /* Light green */
+
+.card-country-badge.badge-france {
+    background: #8bb7f0;
+}
+
+/* Light blue */
+.card-country-badge.badge-albania {
+    background: #fca5a5;
+}
+
+/* Light red */
+.card-country-badge.badge-vietnam {
+    background: #86efac;
+}
+
+/* Light green */
 
 .card-rating {
     font-size: 12px;
@@ -256,7 +305,11 @@
     gap: 4px;
 }
 
-.card-rating span { color: #fbad40; } /* Star color */
+.card-rating span {
+    color: #fbad40;
+}
+
+/* Star color */
 
 .discover-card-title {
     font-family: 'Bungee', cursive;
@@ -272,7 +325,8 @@
     font-size: 14px;
     color: #666;
     margin: 0 0 16px 0;
-    flex-grow: 1; /* Push footer down */
+    flex-grow: 1;
+    /* Push footer down */
     display: -webkit-box;
     line-clamp: 2;
     -webkit-line-clamp: 2;

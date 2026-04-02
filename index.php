@@ -406,21 +406,21 @@ switch ($page) {
     $userModel = new User($pdo);
     $userData  = $userModel->findById($_SESSION['user_id']);
     $profileStats = $userModel->getStats($_SESSION['user_id']);
-    $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats]);
+    $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats, 'fullWidth' => true, 'showFooter' => false]);
     break;
 
     case 'agenda':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);
         $userData  = $userModel->findById($_SESSION['user_id']);
-        $view = new Agenda(['profileUser' => $userData]);
+        $view = new Agenda(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false]);
     break;
 
     case 'messages':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);
         $userData  = $userModel->findById($_SESSION['user_id']);
-        $view = new Messages(['profileUser' => $userData]);
+        $view = new Messages(['profileUser' => $userData, 'fullWidth' => true, 'showFooter' => false]);
     break;
     
     case 'discover':
@@ -463,6 +463,8 @@ switch ($page) {
             'friends'     => $friendshipModel->getFriends($_SESSION['user_id']),
             'received'    => $friendshipModel->getReceivedRequests($_SESSION['user_id']),
             'sent'        => $friendshipModel->getSentRequests($_SESSION['user_id']),
+            'fullWidth'   => true,
+            'showFooter'  => false
         ]);
     break;
 
