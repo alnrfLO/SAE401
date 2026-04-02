@@ -21,7 +21,7 @@ class Notification
      * Crée une notification.
      * On évite les doublons pour certains types (ex: friend_request déjà envoyé).
      */
-    public function create(int $userId, int $actorId, string $type, ?int $referenceId = null): bool
+    public function create(int $userId, int $actorId, string $type, $referenceId = null): bool
     {
         // Ne pas notifier soi-même
         if ($userId === $actorId) return false;

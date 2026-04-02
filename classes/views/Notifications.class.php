@@ -51,7 +51,7 @@ class Notifications extends Dashboard
             }
         }
 
-        $hasUnread = !empty(array_filter($notifs, fn($n) => !$n['is_read']));
+        $hasUnread = !empty(array_filter($notifs, function($n) { return !$n['is_read']; }));
         $markAllBtn = $hasUnread
             ? '<button class="dash-edit-btn" onclick="markAllRead()">Mark all as read</button>'
             : '';

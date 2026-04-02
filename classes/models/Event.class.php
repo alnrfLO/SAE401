@@ -83,7 +83,7 @@ class Event {
     }
 
     // Get events by month with visibility filter (private events hidden for non-owners)
-    public function getByMonthVisible(int $userId, int $year, int $month, ?int $viewerId = null) {
+    public function getByMonthVisible(int $userId, int $year, int $month, $viewerId = null) {
         if ($viewerId === null) $viewerId = $userId;
         
         $from = sprintf('%04d-%02d-01 00:00:00', $year, $month);
