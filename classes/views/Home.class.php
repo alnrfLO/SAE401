@@ -62,9 +62,7 @@ class Home extends View
         <!-- VIDEO SECTION -->
         <section id="video" class="video-section">
             <div class="video-wrapper">
-                <video controls>
-                    <source src="/public/video.mp4" type="video/mp4">
-                </video>
+                <iframe width="800" height="500" src="https://www.youtube.com/embed/wAHNcEMZGY8?si=jNB6j6ZfJFM2Hj1I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             <button class="video-btn">
                 <i class="ph ph-play-circle"></i>

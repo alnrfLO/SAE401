@@ -22,11 +22,67 @@ $lang = [
 
     'legal_title' => 'Legal Information',
     'legal_editor_title' => 'Site Edition',
-    'legal_editor_text' => 'The FAV website is published by the SAE 401 team, located at the IUT of Troyes.',
+    'legal_editor_text' => 'The FAV website is published by the SAE 401 team, located at the IUT of Bobigny.',
     'legal_host_title' => 'Hosting',
-    'legal_host_text' => 'The site is hosted by the servers of the IUT of Troyes.',
+    'legal_host_text' => 'The site is hosted by the servers of the IUT of Bobigny.',
     'legal_privacy_title' => 'Data Collection',
     'legal_privacy_text' => 'In accordance with the GDPR, you have the right to access, rectify and delete your personal data.',
+
+    'legal_full_intro' => 'In accordance with French Law No. 2004-575 of June 21, 2004 on confidence in the digital economy (LCEN)',
+
+    'legal_s1_title' => '1. Site Publisher',
+    'legal_s1_text' => 'This site is published as part of an academic project (SAE 401) by the group:',
+    'legal_s1_group' => 'FAV Group',
+    'legal_s1_school' => 'Students of IUT de Bobigny at Université Sorbonne Paris Nord',
+    'legal_s1_address' => 'Institut Universitaire de Technologie de Bobigny<br>1 rue de Chablis, 93000 Bobigny',
+    'legal_s1_responsible' => 'Publication Manager',
+    'legal_s1_responsible_val' => 'FAV Group — SAE 401',
+    'legal_s1_contact' => 'Contact',
+    'legal_s1_contact_val' => 'contact@fav.com',
+
+    'legal_s2_title' => '2. Web Host',
+    'legal_s2_text' => 'This site is hosted by:',
+    'legal_s2_name' => 'Université Sorbonne Paris Nord',
+    'legal_s2_address' => '1 RUE DE CHABLIS<br>93000 BOBIGNY',
+    'legal_s2_phone' => 'Tel.',
+    'legal_s2_phone_val' => '+33 (0)1 49 40 30 00',
+    'legal_s2_site' => 'Website',
+    'legal_s2_site_val' => 'www.univ-paris13.fr',
+    'legal_s2_url' => 'Site URL',
+    'legal_s2_url_val' => 'https://international.iut-bobigny.univ-paris13.fr/~fav/',
+
+    'legal_s3_title' => '3. Nature of the Site',
+    'legal_s3_text' => 'This site was created as part of an educational project (SAE 401) at the IUT de Bobigny. It is strictly academic and non-commercial, with no sales, advertising, or solicitation activity.',
+
+    'legal_s4_title' => '4. Intellectual Property',
+    'legal_s4_text' => 'All content on this site (texts, images, illustrations, structure) is, unless otherwise stated, the exclusive property of the FAV group and royalty-free image sources. Any reproduction, representation, modification or adaptation, in whole or in part, without the prior written consent of the group, is strictly prohibited under articles L.335-2 et seq. of the French Intellectual Property Code.',
+
+    'legal_s5_title' => '5. Personal Data Collection & GDPR',
+    'legal_s5_text' => 'This site includes forms that may collect personal data (name, first name, email address, etc.). This data is collected solely within the framework of the SAE 401 academic project and is not used commercially, sold, or transferred to third parties.',
+    'legal_s5_intro' => 'In accordance with the General Data Protection Regulation (GDPR — EU Regulation 2016/679) and the French Data Protection Act of January 6, 1978 as amended, you have the following rights regarding your data:',
+    'legal_s5_rights' => [
+        'Right of access (art. 15 GDPR)',
+        'Right to rectification (art. 16 GDPR)',
+        'Right to erasure (art. 17 GDPR)',
+        'Right to restriction of processing (art. 18 GDPR)',
+        'Right to object (art. 21 GDPR)',
+    ],
+    'legal_s5_contact' => 'To exercise these rights, contact us at:',
+    'legal_s5_cnil' => 'If you have a complaint, you may contact the CNIL (French Data Protection Authority):',
+
+    'legal_s6_title' => '6. Cookies',
+    'legal_s6_text' => 'This site does not use any tracking, advertising, or analytics cookies. No browsing data is collected for profiling or user tracking purposes.',
+
+    'legal_s7_title' => '7. Hyperlinks',
+    'legal_s7_text' => 'This site may contain links to third-party websites. The FAV group accepts no responsibility for the content of these external sites. Setting up a hyperlink to this site requires the prior authorization of the group.',
+
+    'legal_s8_title' => '8. Limitation of Liability',
+    'legal_s8_text' => 'The FAV group strives to ensure the accuracy of the information published on this site and reserves the right to modify it at any time without notice. However, it cannot guarantee the completeness or absence of errors and accepts no liability for any direct or indirect damage resulting from the use of this information.',
+
+    'legal_s9_title' => '9. Applicable Law',
+    'legal_s9_text' => 'These legal notices are governed by French law. In the event of a dispute, the competent courts of the Bobigny jurisdiction shall have sole jurisdiction.',
+
+    'legal_last_update' => 'Last updated: April 2026 — FAV Group, SAE 401, IUT de Bobigny',
 
     'faq_title' => 'Frequently Asked Questions',
     'faq_q1' => 'How to add a spot?',
@@ -131,22 +187,4 @@ $lang = [
     'spot_error_comment' => 'Could not post comment',
     'spot_system_error' => 'System error',
     'spot_date_format' => 'F j, Y',
-    
-    // Missing translations for system messages
-    'error_invalid' => 'Invalid data',
-    'error_unauthorized' => 'Unauthorized',
-    'error_not_found' => 'Not found',
-    'error_server' => 'Server error',
-    'error_file_invalid' => 'Invalid file',
-    'error_upload_failed' => 'Upload failed',
-    'error_connection' => 'Connection error',
-    'not_logged_in' => 'Not logged in',
-    'invalid_id' => 'Invalid ID',
-    'invalid_data' => 'Invalid data',
-    'already_sent' => 'Already sent',
-    'already_exists' => 'Already exists',
-    'operation_failed' => 'Operation failed',
-    'success' => 'Success',
-    'loading' => 'Loading',
-    'please_wait' => 'Please wait',
 ];

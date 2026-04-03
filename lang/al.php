@@ -28,6 +28,62 @@ $lang = [
     'legal_privacy_title' => 'Mbledhja e të dhënave',
     'legal_privacy_text' => 'Në përputhje me RGPD (GDPR), ju keni të drejtën e aksesit, korrigjimit dhe fshirjes së të dhënave tuaja personale.',
 
+    'legal_full_intro' => 'Në përputhje me Ligjin francez nr. 2004-575 të 21 qershorit 2004 për besimin në ekonominë dixhitale (LCEN)',
+
+    'legal_s1_title' => '1. Botuesi i faqes',
+    'legal_s1_text' => 'Kjo faqe botohet në kuadër të një projekti akademik (SAE 401) nga grupi:',
+    'legal_s1_group' => 'Grupi FAV',
+    'legal_s1_school' => 'Studentë të IUT de Bobigny në Universitetin Sorbonne Paris Nord',
+    'legal_s1_address' => 'Institut Universitaire de Technologie de Bobigny<br>1 rue de Chablis, 93000 Bobigny',
+    'legal_s1_responsible' => 'Përgjegjës i botimit',
+    'legal_s1_responsible_val' => 'Grupi FAV — SAE 401',
+    'legal_s1_contact' => 'Kontakt',
+    'legal_s1_contact_val' => 'contact@fav.com',
+
+    'legal_s2_title' => '2. Hostuesi',
+    'legal_s2_text' => 'Kjo faqe hostohet nga:',
+    'legal_s2_name' => 'Université Sorbonne Paris Nord',
+    'legal_s2_address' => '1 RUE DE CHABLIS<br>93000 BOBIGNY',
+    'legal_s2_phone' => 'Tel.',
+    'legal_s2_phone_val' => '+33 (0)1 49 40 30 00',
+    'legal_s2_site' => 'Faqe web',
+    'legal_s2_site_val' => 'www.univ-paris13.fr',
+    'legal_s2_url' => 'URL e faqes',
+    'legal_s2_url_val' => 'https://international.iut-bobigny.univ-paris13.fr/~fav/',
+
+    'legal_s3_title' => '3. Natyra e faqes',
+    'legal_s3_text' => 'Kjo faqe është realizuar në kuadër të një projekti pedagogjik (SAE 401) në IUT de Bobigny. Bëhet fjalë për një faqe me qëllim rreptësisht akademik dhe jo-komercial, pa asnjë aktivitet shitjeje, reklamimi ose angazhimi tregtar.',
+
+    'legal_s4_title' => '4. Pronësia intelektuale',
+    'legal_s4_text' => 'I gjithë përmbajtja e kësaj faqeje (tekste, imazhe, ilustrime, strukturë) është, përveç nëse shënohet ndryshe, pronë ekskluzive e grupit FAV dhe imazheve me të drejta të lira. Çdo riprodhim, paraqitje, modifikim ose adaptim, i plotë ose i pjesshëm, pa autorizim paraprak me shkrim të grupit, është rreptësisht i ndaluar sipas neneve L.335-2 dhe vijues të Kodit të Pronësisë Intelektuale franceze.',
+
+    'legal_s5_title' => '5. Mbledhja e të dhënave personale dhe RGPD',
+    'legal_s5_text' => 'Kjo faqe përmban formularë që mund të mbledhin të dhëna personale (emër, mbiemër, adresë emaili, etj.). Këto të dhëna mblidhen vetëm në kuadër të projektit akademik SAE 401 dhe nuk i nënshtrohen asnjë përdorimi komercial, cesioni ose transmetimi te palë të treta.',
+    'legal_s5_intro' => 'Në përputhje me Rregulloren e Përgjithshme për Mbrojtjen e të Dhënave (RGPD — Rregullorja BE 2016/679) dhe Ligjin francez për Informatikën dhe Liritë të 6 janarit 1978 i ndryshuar, ju keni të drejtat e mëposhtme mbi të dhënat tuaja:',
+    'legal_s5_rights' => [
+        'E drejta e aksesit (neni 15 RGPD)',
+        'E drejta e korrigjimit (neni 16 RGPD)',
+        'E drejta e fshirjes (neni 17 RGPD)',
+        'E drejta e kufizimit të përpunimit (neni 18 RGPD)',
+        'E drejta e kundërshtimit (neni 21 RGPD)',
+    ],
+    'legal_s5_contact' => 'Për të ushtruar këto të drejta, na kontaktoni në:',
+    'legal_s5_cnil' => 'Në rast ankese, mund të drejtoheni te CNIL (Komisioni Kombëtar Francez i Informatikës dhe Lirive):',
+
+    'legal_s6_title' => '6. Cookies',
+    'legal_s6_text' => 'Kjo faqe nuk përdor asnjë cookie gjurmimi, reklamimi ose analitik. Asnjë të dhënë lëvizjeje nuk mblidhet për qëllime profilimi ose ndjekjeje të përdoruesve.',
+
+    'legal_s7_title' => '7. Lidhje hipertekstuale',
+    'legal_s7_text' => 'Kjo faqe mund të përmbajë lidhje drejt faqeve të palëve të treta. Grupi FAV heq dorë nga çdo përgjegjësi për përmbajtjen e këtyre faqeve të jashtme. Vendosja e një lidhjeje hipertekstuale drejt kësaj faqeje kërkon autorizimin paraprak të grupit.',
+
+    'legal_s8_title' => '8. Kufizimi i përgjegjësisë',
+    'legal_s8_text' => 'Grupi FAV përpiqet të sigurojë saktësinë e informacioneve të shpërndara në këtë faqe dhe rezervon të drejtën t\'i modifikojë ato në çdo kohë pa paralajmërim. Megjithatë, ai nuk mund të garantojë plotësinë ose mungesën e gabimeve dhe heq dorë nga çdo përgjegjësi për çdo dëm të drejtpërdrejtë ose të tërthortë që rezulton nga përdorimi i tyre.',
+
+    'legal_s9_title' => '9. E drejta e aplikueshme',
+    'legal_s9_text' => 'Këto njoftime ligjore i nënshtrohen ligjit francez. Në rast mosmarrëveshjeje, gjykatat kompetente të juridiksionit të Bobigny do të jenë të vetmet kompetente.',
+
+    'legal_last_update' => 'Përditësimi i fundit: prill 2026 — Grupi FAV, SAE 401, IUT de Bobigny',
+
     'faq_title' => 'Pyetjet e Shpeshta (FAQ)',
     'faq_q1' => 'Si të shtoni një spot?',
     'faq_a1' => 'Hyni në llogarinë tuaj, shkoni te profili juaj dhe klikoni në butonin "Shto një spot".',
@@ -131,22 +187,4 @@ $lang = [
     'spot_error_comment' => 'Nuk mund të dërgoheh komenti',
     'spot_system_error' => 'Gabim sistemi',
     'spot_date_format' => 'j F Y',
-    
-    // Missing translations for system messages
-    'error_invalid' => 'Të dhënat e pavlefshme',
-    'error_unauthorized' => 'Jo i autorizuar',
-    'error_not_found' => 'Nuk u gjet',
-    'error_server' => 'Gabim serveri',
-    'error_file_invalid' => 'Skedari i pavlefshëm',
-    'error_upload_failed' => 'Dërgimi dështoi',
-    'error_connection' => 'Gabim lidhje',
-    'not_logged_in' => 'Jo i lidhur',
-    'invalid_id' => 'ID i pavlefshëm',
-    'invalid_data' => 'Të dhëna të pavlefshme',
-    'already_sent' => 'Tashmë i dërguar',
-    'already_exists' => 'Tashmë ekziston',
-    'operation_failed' => 'Operacioni dështoi',
-    'success' => 'Sukses',
-    'loading' => 'Po ngarkohet',
-    'please_wait' => 'Ju lutem prisni',
 ];

@@ -28,6 +28,62 @@ $lang = [
     'legal_privacy_title' => 'Thu thập dữ liệu',
     'legal_privacy_text' => 'Theo quy định của GDPR, bạn có quyền truy cập, chỉnh sửa và xóa dữ liệu cá nhân của mình.',
 
+    'legal_full_intro' => 'Theo Luật số 2004-575 ngày 21 tháng 6 năm 2004 của Pháp về tin tưởng trong nền kinh tế kỹ thuật số (LCEN)',
+
+    'legal_s1_title' => '1. Nhà xuất bản trang web',
+    'legal_s1_text' => 'Trang web này được xuất bản trong khuôn khổ dự án học thuật (SAE 401) bởi nhóm:',
+    'legal_s1_group' => 'Nhóm FAV',
+    'legal_s1_school' => 'Sinh viên IUT de Bobigny tại Đại học Sorbonne Paris Nord',
+    'legal_s1_address' => 'Institut Universitaire de Technologie de Bobigny<br>1 rue de Chablis, 93000 Bobigny',
+    'legal_s1_responsible' => 'Người chịu trách nhiệm xuất bản',
+    'legal_s1_responsible_val' => 'Nhóm FAV — SAE 401',
+    'legal_s1_contact' => 'Liên hệ',
+    'legal_s1_contact_val' => 'contact@fav.com',
+
+    'legal_s2_title' => '2. Nhà cung cấp dịch vụ lưu trữ',
+    'legal_s2_text' => 'Trang web này được lưu trữ bởi:',
+    'legal_s2_name' => 'Université Sorbonne Paris Nord',
+    'legal_s2_address' => '1 RUE DE CHABLIS<br>93000 BOBIGNY',
+    'legal_s2_phone' => 'Điện thoại',
+    'legal_s2_phone_val' => '+33 (0)1 49 40 30 00',
+    'legal_s2_site' => 'Trang web',
+    'legal_s2_site_val' => 'www.univ-paris13.fr',
+    'legal_s2_url' => 'URL trang web',
+    'legal_s2_url_val' => 'https://international.iut-bobigny.univ-paris13.fr/~fav/',
+
+    'legal_s3_title' => '3. Tính chất của trang web',
+    'legal_s3_text' => 'Trang web này được thực hiện trong khuôn khổ dự án giáo dục (SAE 401) tại IUT de Bobigny. Đây là trang web có mục đích hoàn toàn học thuật và phi thương mại, không có hoạt động bán hàng, quảng cáo hay tiếp thị.',
+
+    'legal_s4_title' => '4. Sở hữu trí tuệ',
+    'legal_s4_text' => 'Toàn bộ nội dung của trang web này (văn bản, hình ảnh, minh họa, cấu trúc) là, trừ khi có ghi chú khác, tài sản độc quyền của nhóm FAV và các hình ảnh miễn phí bản quyền. Mọi sao chép, thể hiện, sửa đổi hoặc điều chỉnh, toàn bộ hoặc một phần, khi chưa có sự đồng ý trước bằng văn bản của nhóm, đều bị nghiêm cấm theo các điều khoản L.335-2 và tiếp theo của Bộ luật Sở hữu trí tuệ Pháp.',
+
+    'legal_s5_title' => '5. Thu thập dữ liệu cá nhân và GDPR',
+    'legal_s5_text' => 'Trang web này có các biểu mẫu có thể thu thập dữ liệu cá nhân (họ, tên, địa chỉ email, v.v.). Những dữ liệu này chỉ được thu thập trong khuôn khổ dự án học thuật SAE 401 và không được sử dụng cho mục đích thương mại, chuyển nhượng hoặc truyền cho bên thứ ba.',
+    'legal_s5_intro' => 'Theo Quy định chung về Bảo vệ Dữ liệu (GDPR — Quy định EU 2016/679) và Luật Tin học và Tự do của Pháp ngày 6 tháng 1 năm 1978 đã sửa đổi, bạn có các quyền sau đây đối với dữ liệu của mình:',
+    'legal_s5_rights' => [
+        'Quyền truy cập (điều 15 GDPR)',
+        'Quyền chỉnh sửa (điều 16 GDPR)',
+        'Quyền xóa (điều 17 GDPR)',
+        'Quyền hạn chế xử lý (điều 18 GDPR)',
+        'Quyền phản đối (điều 21 GDPR)',
+    ],
+    'legal_s5_contact' => 'Để thực hiện các quyền này, hãy liên hệ với chúng tôi tại:',
+    'legal_s5_cnil' => 'Trong trường hợp khiếu nại, bạn có thể liên hệ với CNIL (Ủy ban Quốc gia Pháp về Tin học và Tự do):',
+
+    'legal_s6_title' => '6. Cookie',
+    'legal_s6_text' => 'Trang web này không sử dụng bất kỳ cookie theo dõi, quảng cáo hay phân tích nào. Không có dữ liệu duyệt web nào được thu thập cho mục đích lập hồ sơ hay theo dõi người dùng.',
+
+    'legal_s7_title' => '7. Liên kết siêu văn bản',
+    'legal_s7_text' => 'Trang web này có thể chứa các liên kết đến các trang web bên thứ ba. Nhóm FAV không chịu trách nhiệm về nội dung của các trang web bên ngoài đó. Việc thiết lập liên kết siêu văn bản đến trang web này cần có sự cho phép trước của nhóm.',
+
+    'legal_s8_title' => '8. Giới hạn trách nhiệm',
+    'legal_s8_text' => 'Nhóm FAV cố gắng đảm bảo tính chính xác của thông tin được đăng trên trang web này và bảo lưu quyền sửa đổi bất kỳ lúc nào mà không cần thông báo trước. Tuy nhiên, nhóm không thể đảm bảo tính đầy đủ hoặc không có lỗi của thông tin này và từ chối mọi trách nhiệm về bất kỳ thiệt hại trực tiếp hoặc gián tiếp nào phát sinh từ việc sử dụng chúng.',
+
+    'legal_s9_title' => '9. Luật áp dụng',
+    'legal_s9_text' => 'Các thông tin pháp lý này tuân theo luật pháp Pháp. Trong trường hợp có tranh chấp, các tòa án có thẩm quyền thuộc khu vực Bobigny sẽ là cơ quan duy nhất có thẩm quyền.',
+
+    'legal_last_update' => 'Cập nhật lần cuối: tháng 4 năm 2026 — Nhóm FAV, SAE 401, IUT de Bobigny',
+
     'faq_title' => 'Các câu hỏi thường gặp (FAQ)',
     'faq_q1' => 'Làm thế nào để thêm một địa điểm?',
     'faq_a1' => 'Đăng nhập vào tài khoản của bạn, truy cập hồ sơ của bạn và nhấp vào nút "Thêm địa điểm".',
@@ -131,22 +187,4 @@ $lang = [
     'spot_error_comment' => 'Không thể gửi bình luận',
     'spot_system_error' => 'Lỗi hệ thống',
     'spot_date_format' => 'j F, Y',
-    
-    // Missing translations for system messages
-    'error_invalid' => 'Dữ liệu không hợp lệ',
-    'error_unauthorized' => 'Không được phép',
-    'error_not_found' => 'Không tìm thấy',
-    'error_server' => 'Lỗi máy chủ',
-    'error_file_invalid' => 'Tệp không hợp lệ',
-    'error_upload_failed' => 'Tải lên thất bại',
-    'error_connection' => 'Lỗi kết nối',
-    'not_logged_in' => 'Chưa đăng nhập',
-    'invalid_id' => 'ID không hợp lệ',
-    'invalid_data' => 'Dữ liệu không hợp lệ',
-    'already_sent' => 'Đã gửi',
-    'already_exists' => 'Đã tồn tại',
-    'operation_failed' => 'Thao tác thất bại',
-    'success' => 'Thành công',
-    'loading' => 'Đang tải',
-    'please_wait' => 'Vui lòng chờ',
 ];

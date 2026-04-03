@@ -40,22 +40,100 @@ class LegalPages extends View
 
     private function renderLegal()
     {
+        $l = $this->lang;
+
+        // Build GDPR rights list
+        $rightsList = '';
+        if (!empty($l['legal_s5_rights']) && is_array($l['legal_s5_rights'])) {
+            $rightsList .= '<ul class="legal-rights-list">';
+            foreach ($l['legal_s5_rights'] as $right) {
+                $rightsList .= '<li><i class="ph ph-check-circle"></i> ' . $right . '</li>';
+            }
+            $rightsList .= '</ul>';
+        }
+
         return '
         <div class="legal-header">
-            <h1 class="legal-title">' . $this->lang['legal_title'] . '</h1>
+            <h1 class="legal-title">' . $l['legal_title'] . '</h1>
+            <p class="legal-intro-law">' . $l['legal_full_intro'] . '</p>
         </div>
+
         <section class="legal-section">
-            <h2><i class="ph ph-identification-card"></i> ' . $this->lang['legal_editor_title'] . '</h2>
-            <p>' . $this->lang['legal_editor_text'] . '</p>
+            <h2><i class="ph ph-identification-card"></i> ' . $l['legal_s1_title'] . '</h2>
+            <p>' . $l['legal_s1_text'] . '</p>
+            <div class="legal-info-block">
+                <p><strong>' . $l['legal_s1_group'] . '</strong></p>
+                <p>' . $l['legal_s1_school'] . '</p>
+                <p>' . $l['legal_s1_address'] . '</p>
+                <p><strong>' . $l['legal_s1_responsible'] . ' :</strong> ' . $l['legal_s1_responsible_val'] . '</p>
+                <p><strong>' . $l['legal_s1_contact'] . ' :</strong>
+                    <a href="mailto:' . $l['legal_s1_contact_val'] . '">' . $l['legal_s1_contact_val'] . '</a>
+                </p>
+            </div>
         </section>
+
         <section class="legal-section">
-            <h2><i class="ph ph-hard-drive"></i> ' . $this->lang['legal_host_title'] . '</h2>
-            <p>' . $this->lang['legal_host_text'] . '</p>
+            <h2><i class="ph ph-hard-drive"></i> ' . $l['legal_s2_title'] . '</h2>
+            <p>' . $l['legal_s2_text'] . '</p>
+            <div class="legal-info-block">
+                <p><strong>' . $l['legal_s2_name'] . '</strong></p>
+                <p>' . $l['legal_s2_address'] . '</p>
+                <p><strong>' . $l['legal_s2_phone'] . ' </strong>' . $l['legal_s2_phone_val'] . '</p>
+                <p><strong>' . $l['legal_s2_site'] . ' : </strong>
+                    <a href="https://' . $l['legal_s2_site_val'] . '" target="_blank" rel="noopener">' . $l['legal_s2_site_val'] . '</a>
+                </p>
+                <p><strong>' . $l['legal_s2_url'] . ' : </strong>
+                    <a href="' . $l['legal_s2_url_val'] . '" target="_blank" rel="noopener">' . $l['legal_s2_url_val'] . '</a>
+                </p>
+            </div>
         </section>
+
         <section class="legal-section">
-            <h2><i class="ph ph-shield-check"></i> ' . $this->lang['legal_privacy_title'] . '</h2>
-            <p>' . $this->lang['legal_privacy_text'] . '</p>
-        </section>';
+            <h2><i class="ph ph-book-open"></i> ' . $l['legal_s3_title'] . '</h2>
+            <p>' . $l['legal_s3_text'] . '</p>
+        </section>
+
+        <section class="legal-section">
+            <h2><i class="ph ph-copyright"></i> ' . $l['legal_s4_title'] . '</h2>
+            <p>' . $l['legal_s4_text'] . '</p>
+        </section>
+
+        <section class="legal-section">
+            <h2><i class="ph ph-shield-check"></i> ' . $l['legal_s5_title'] . '</h2>
+            <p>' . $l['legal_s5_text'] . '</p>
+            <p>' . $l['legal_s5_intro'] . '</p>
+            ' . $rightsList . '
+            <p>' . $l['legal_s5_contact'] . '
+                <a href="mailto:' . $l['legal_s1_contact_val'] . '">' . $l['legal_s1_contact_val'] . '</a>
+            </p>
+            <p>' . $l['legal_s5_cnil'] . '
+                <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>
+            </p>
+        </section>
+
+        <section class="legal-section">
+            <h2><i class="ph ph-cookie"></i> ' . $l['legal_s6_title'] . '</h2>
+            <p>' . $l['legal_s6_text'] . '</p>
+        </section>
+
+        <section class="legal-section">
+            <h2><i class="ph ph-link"></i> ' . $l['legal_s7_title'] . '</h2>
+            <p>' . $l['legal_s7_text'] . '</p>
+        </section>
+
+        <section class="legal-section">
+            <h2><i class="ph ph-warning-circle"></i> ' . $l['legal_s8_title'] . '</h2>
+            <p>' . $l['legal_s8_text'] . '</p>
+        </section>
+
+        <section class="legal-section">
+            <h2><i class="ph ph-scales"></i> ' . $l['legal_s9_title'] . '</h2>
+            <p>' . $l['legal_s9_text'] . '</p>
+        </section>
+
+        <div class="legal-update">
+            <i class="ph ph-clock"></i> ' . $l['legal_last_update'] . '
+        </div>';
     }
 
     private function renderFaq()

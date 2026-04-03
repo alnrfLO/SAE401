@@ -14,6 +14,13 @@ document.addEventListener('DOMContentLoaded', function() {
         maxZoom: 18
     });
 
+    // Disable auto-pan when popups open
+    map.on('popupopen', function(e) {
+        if (e.popup && e.popup.options) {
+            e.popup.options.autoPan = false;
+        }
+    });
+
     // ─── ADD OPENSTREETMAP TILES ────────────────────────────────
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors © CARTO',
@@ -93,14 +100,21 @@ document.addEventListener('DOMContentLoaded', function() {
         // Track if popup was clicked
         let popupClickedManually = false;
 
-        // Bind popup to marker
+        // Bind popup to marker — autoPan disabled to prevent map scrolling on hover
         marker.bindPopup(popupContent, {
-            maxWidth: 320,
+            maxWidth: 220,
             className: 'fav-spot-popup-custom',
             closeButton: true,
-            autoPan: true,
+            autoPan: false,
+            autoPanPadding: [0, 0],
             autoClose: false
         });
+
+        // Override internal Leaflet pan method as a safety net
+        const popup = marker.getPopup();
+        if (popup) {
+            popup._adjustPan = function() { return; };
+        }
 
         // Hover handling
         marker.on('mouseover', function() {
@@ -312,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .fav-spot-popup-custom .leaflet-popup-content {
                 margin: 0;
                 padding: 0;
-                width: 280px;
+                width: 200px;
             }
 
             .fav-spot-popup-custom .leaflet-popup-tip {
@@ -351,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /* ─── IMAGE ──────────────────────────────────────── */
             .fav-popup-image {
                 width: 100%;
-                height: 160px;
+                height: 100px;
                 overflow: hidden;
                 background: linear-gradient(135deg, #f5eedc 0%, #e8dcc8 100%);
                 position: relative;
@@ -370,13 +384,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             /* ─── CONTENT ────────────────────────────────────── */
             .fav-popup-content {
-                padding: 16px;
+                padding: 10px;
             }
 
             /* ─── TITLE ──────────────────────────────────────── */
             .fav-popup-title {
-                margin: 0 0 8px 0;
-                font-size: 16px;
+                margin: 0 0 5px 0;
+                font-size: 13px;
                 font-weight: 700;
                 font-family: 'Bungee', cursive;
                 color: #212121;
@@ -385,8 +399,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             /* ─── LOCATION ───────────────────────────────────── */
             .fav-popup-location {
-                margin: 0 0 8px 0;
-                font-size: 13px;
+                margin: 0 0 5px 0;
+                font-size: 11px;
                 color: #666;
                 display: flex;
                 align-items: center;
@@ -396,9 +410,9 @@ document.addEventListener('DOMContentLoaded', function() {
             /* ─── CATEGORY ───────────────────────────────────── */
             .fav-popup-category {
                 display: inline-block;
-                padding: 4px 12px;
+                padding: 2px 8px;
                 border-radius: 20px;
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: 600;
                 color: white;
                 border: 2px solid #212121;
@@ -443,15 +457,15 @@ document.addEventListener('DOMContentLoaded', function() {
             .fav-popup-btn {
                 display: inline-block;
                 width: 100%;
-                margin-top: 12px;
-                padding: 12px;
+                margin-top: 8px;
+                padding: 8px;
                 background: linear-gradient(135deg, #3aa26b 0%, #2d8659 100%);
                 color: white;
                 text-decoration: none;
                 border-radius: 8px;
                 font-weight: 700;
                 font-family: 'Bungee', cursive;
-                font-size: 12px;
+                font-size: 11px;
                 border: 2px solid #212121;
                 text-align: center;
                 box-shadow: 4px 4px 0px rgba(33, 33, 33, 0.15);

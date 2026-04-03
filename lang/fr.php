@@ -28,6 +28,62 @@ $lang = [
     'legal_privacy_title' => 'Collecte de données',
     'legal_privacy_text' => 'Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données personnelles.',
 
+    'legal_full_intro' => 'Conformément à la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l\'économie numérique (LCEN)',
+
+    'legal_s1_title' => '1. Éditeur du site',
+    'legal_s1_text' => 'Ce site est édité dans le cadre d\'un projet académique (SAE 401) par le groupe :',
+    'legal_s1_group' => 'Groupe FAV',
+    'legal_s1_school' => 'Étudiants de l\'IUT de Bobigny à l\'Université Sorbonne Paris Nord',
+    'legal_s1_address' => 'Institut Universitaire de Technologie de Bobigny<br>1 rue de Chablis, 93000 Bobigny',
+    'legal_s1_responsible' => 'Responsable de la publication',
+    'legal_s1_responsible_val' => 'Groupe FAV — SAE 401',
+    'legal_s1_contact' => 'Contact',
+    'legal_s1_contact_val' => 'contact@fav.com',
+
+    'legal_s2_title' => '2. Hébergeur',
+    'legal_s2_text' => 'Ce site est hébergé par :',
+    'legal_s2_name' => 'Université Sorbonne Paris Nord',
+    'legal_s2_address' => '1 RUE DE CHABLIS<br>93000 BOBIGNY',
+    'legal_s2_phone' => 'Tél.',
+    'legal_s2_phone_val' => '+33 (0)1 49 40 30 00',
+    'legal_s2_site' => 'Site',
+    'legal_s2_site_val' => 'www.univ-paris13.fr',
+    'legal_s2_url' => 'URL du site',
+    'legal_s2_url_val' => 'https://international.iut-bobigny.univ-paris13.fr/~fav/',
+
+    'legal_s3_title' => '3. Nature du site',
+    'legal_s3_text' => 'Ce site est réalisé dans le cadre d\'un projet pédagogique (SAE 401) à l\'IUT de Bobigny. Il s\'agit d\'un site à but strictement académique et non commercial, sans activité de vente, de publicité ou de démarchage.',
+
+    'legal_s4_title' => '4. Propriété intellectuelle',
+    'legal_s4_text' => 'L\'ensemble du contenu de ce site (textes, images, illustrations, structure) est, sauf mention contraire, la propriété exclusive du groupe FAV et des images libre de droit. Toute reproduction, représentation, modification ou adaptation, totale ou partielle, sans autorisation préalable et écrite du groupe, est strictement interdite conformément aux articles L.335-2 et suivants du Code de la propriété intellectuelle.',
+
+    'legal_s5_title' => '5. Collecte de données personnelles et RGPD',
+    'legal_s5_text' => 'Ce site comporte des formulaires susceptibles de collecter des données personnelles (nom, prénom, adresse email, etc.). Ces données sont collectées uniquement dans le cadre du projet académique SAE 401 et ne font l\'objet d\'aucune utilisation commerciale, cession ou transmission à des tiers.',
+    'legal_s5_intro' => 'Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée, vous disposez des droits suivants sur vos données :',
+    'legal_s5_rights' => [
+        'Droit d\'accès (art. 15 RGPD)',
+        'Droit de rectification (art. 16 RGPD)',
+        'Droit à l\'effacement (art. 17 RGPD)',
+        'Droit à la limitation du traitement (art. 18 RGPD)',
+        'Droit d\'opposition (art. 21 RGPD)',
+    ],
+    'legal_s5_contact' => 'Pour exercer ces droits, contactez-nous à :',
+    'legal_s5_cnil' => 'En cas de réclamation, vous pouvez saisir la CNIL (Commission Nationale de l\'Informatique et des Libertés) :',
+
+    'legal_s6_title' => '6. Cookies',
+    'legal_s6_text' => 'Ce site n\'utilise aucun cookie de traçage, publicitaire ou analytique. Aucune donnée de navigation n\'est collectée à des fins de profilage ou de suivi des utilisateurs.',
+
+    'legal_s7_title' => '7. Liens hypertextes',
+    'legal_s7_text' => 'Ce site peut contenir des liens vers des sites tiers. Le groupe FAV décline toute responsabilité quant au contenu de ces sites externes. La mise en place d\'un lien hypertexte vers ce site nécessite l\'autorisation préalable du groupe.',
+
+    'legal_s8_title' => '8. Limitation de responsabilité',
+    'legal_s8_text' => 'Le groupe FAV s\'efforce d\'assurer l\'exactitude des informations diffusées sur ce site et se réserve le droit de les modifier à tout moment sans préavis. Toutefois, il ne peut garantir l\'exhaustivité ou l\'absence d\'erreur de ces informations et décline toute responsabilité pour tout dommage direct ou indirect résultant de leur utilisation.',
+
+    'legal_s9_title' => '9. Droit applicable',
+    'legal_s9_text' => 'Les présentes mentions légales sont soumises au droit français. En cas de litige, les tribunaux compétents du ressort de Bobigny seront seuls compétents.',
+
+    'legal_last_update' => 'Dernière mise à jour : avril 2026 — Groupe FAV, SAE 401, IUT de Bobigny',
+
     'faq_title' => 'Foire Aux Questions',
     'faq_q1' => 'Comment ajouter un spot ?',
     'faq_a1' => 'Connectez-vous à votre compte, rendez-vous sur votre profil et cliquez sur le bouton "Ajouter un spot".',
@@ -131,22 +187,4 @@ $lang = [
     'spot_error_comment' => 'Impossible de poster le commentaire',
     'spot_system_error' => 'Erreur système',
     'spot_date_format' => 'd F Y',
-    
-    // Missing translations for system messages
-    'error_invalid' => 'Données invalides',
-    'error_unauthorized' => 'Non autorisé',
-    'error_not_found' => 'Non trouvé',
-    'error_server' => 'Erreur serveur',
-    'error_file_invalid' => 'Fichier invalide',
-    'error_upload_failed' => 'Téléchargement échoué',
-    'error_connection' => 'Erreur de connexion',
-    'not_logged_in' => 'Non connecté',
-    'invalid_id' => 'ID invalide',
-    'invalid_data' => 'Données invalides',
-    'already_sent' => 'Déjà envoyé',
-    'already_exists' => 'Existe déjà',
-    'operation_failed' => 'Opération échouée',
-    'success' => 'Succès',
-    'loading' => 'Chargement',
-    'please_wait' => 'Veuillez patienter',
 ];
