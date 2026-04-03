@@ -35,13 +35,22 @@ if (isset($_GET['action'])) {
     if (!User::isLoggedIn()) {
         if (in_array($action, ['updateStatus', 'updateBio', 'updateAvatar', 'create'])) {
             header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Non connecté']);
+            echo json_encode(['success' => false, 'error' => 'Non connect��']);
             exit;
         }
     }
 
     $userModel = new User($pdo);
     $userId = $_SESSION['user_id'] ?? null;
+
+    // ── SPOTS : GET ALL FOR MAP ────────────────────────────────
+    if ($action === 'getSpotsForMap' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        header('Content-Type: application/json');
+        $spotModel = new Spot($pdo);
+        $spots = $spotModel->getAllWithCoordinates();
+        echo json_encode(['success' => true, 'spots' => $spots]);
+        exit;
+    }
 
     // ── NOTIFICATIONS : MARK READ / MARK ALL ────────────────────
     if ($action === 'markRead' && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -261,7 +270,6 @@ if (isset($_GET['action'])) {
         exit;
     }
 
-
     if ($action === 'searchUsers' && $_SERVER['REQUEST_METHOD'] === 'GET') {
         header('Content-Type: application/json');
         if (!User::isLoggedIn()) { echo json_encode([]); exit; }
@@ -271,6 +279,7 @@ if (isset($_GET['action'])) {
         echo json_encode($friendshipModel->searchUsers($_SESSION['user_id'], $q));
         exit;
     }
+
     if ($action === 'saveFullProfile' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
             'username' => trim($_POST['username'] ?? ''),
@@ -327,7 +336,6 @@ if (isset($_GET['action'])) {
         }
         exit;
     }
-
 
     // ── LISTE DES CONVERSATIONS ──────────────────────────────────
     if ($action === 'getConversations') {
@@ -527,7 +535,7 @@ if (isset($_GET['action'])) {
         exit;
     }
 
-    // AJOUT D'UN SPOT
+    // ── AJOUT D'UN SPOT ───────────────────────────────────────────
     if ($action === 'create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
 
@@ -535,6 +543,8 @@ if (isset($_GET['action'])) {
             'title'       => $_POST['title'] ?? '',
             'location'    => $_POST['location'] ?? '',
             'description' => $_POST['description'] ?? '',
+            'latitude'    => $_POST['latitude'] ?? null,
+            'longitude'   => $_POST['longitude'] ?? null,
             'category'    => $_POST['category'] ?? ''
         ];
 
@@ -631,8 +641,8 @@ if ($page === 'register' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['pays'] ?? '',
         'en'  // ✅ valeur fixe pour l'instant, on règle $lang après
     );
-$langRaw = $_GET['lang'] ?? $_SESSION['lang'] ?? 'en';
-$lang = is_array($langRaw) ? 'en' : (string)$langRaw;
+    $langRaw = $_GET['lang'] ?? $_SESSION['lang'] ?? 'en';
+    $lang = is_array($langRaw) ? 'en' : (string)$langRaw;
     if (is_int($res)) {
         $newUser = $userModel->findById($res);
         User::startSession($newUser);
@@ -768,6 +778,7 @@ switch ($page) {
         }
         $view = new Admin(['page' => 'admin']);
     break;
+    
     case 'notifications':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
         $userModel = new User($pdo);
@@ -786,13 +797,13 @@ switch ($page) {
     break;
 
     case 'dashboard':
-    if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
-    $userModel = new User($pdo);
-    $userData  = $userModel->findById($_SESSION['user_id']);
-    $profileStats = $userModel->getStats($_SESSION['user_id']);
-    $notifModel = new Notification($pdo);
-    $unreadNotifs = $notifModel->countUnread($_SESSION['user_id']);
-    $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats, 'unreadNotifs' => $unreadNotifs, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
+        if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
+        $userModel = new User($pdo);
+        $userData  = $userModel->findById($_SESSION['user_id']);
+        $profileStats = $userModel->getStats($_SESSION['user_id']);
+        $notifModel = new Notification($pdo);
+        $unreadNotifs = $notifModel->countUnread($_SESSION['user_id']);
+        $view = new Dashboard(['profileUser' => $userData, 'profileStats' => $profileStats, 'unreadNotifs' => $unreadNotifs, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
 
     case 'agenda':
@@ -812,7 +823,7 @@ switch ($page) {
         $unreadNotifs = $notifModel->countUnread($_SESSION['user_id']);
         $view = new Messages(['profileUser' => $userData, 'unreadNotifs' => $unreadNotifs, 'fullWidth' => true, 'showFooter' => false, 'showHeader' => false]);
     break;
-    
+
     case 'discover':
         $spotModel = new Spot($pdo);
         $allSpots  = $spotModel->getFeed(500, 0); // 500 spots max pour la map
@@ -820,7 +831,7 @@ switch ($page) {
     break;
 
     case 'directory':
-    $view = new Directory(['page' => 'directory']);
+        $view = new Directory(['page' => 'directory']);
     break;
 
     case 'news':
@@ -841,7 +852,6 @@ switch ($page) {
         
         $view = new SingleNews(['page' => 'article', 'article' => $articleData]);
     break;
-
 
     case 'connections':
         if (!User::isLoggedIn()) { header('Location: ?page=login'); exit; }
@@ -869,7 +879,7 @@ switch ($page) {
     case 'faq':
     case 'user-agreement':
     case 'tos':
-    $view = new LegalPages(['page' => $page]);
+        $view = new LegalPages(['page' => $page]);
     break;
 
     default:

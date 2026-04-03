@@ -8,6 +8,10 @@ class Discover extends View {
             $s['title']       = htmlspecialchars($s['title'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $s['description'] = htmlspecialchars($s['description'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $s['location']    = htmlspecialchars($s['location'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $s['category']    = htmlspecialchars($s['category'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $s['latitude']    = isset($s['latitude']) ? floatval($s['latitude']) : null;
+            $s['longitude']   = isset($s['longitude']) ? floatval($s['longitude']) : null;
+            $s['likes_count'] = isset($s['likes_count']) ? intval($s['likes_count']) : 0;
             return $s;
         }, $spots);
 
@@ -21,13 +25,26 @@ class Discover extends View {
             $modalHtml = '
             <!-- Modal Ajouter un spot -->
             <div class="modal-overlay" id="spotModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; flex-direction:column;">
-                <div class="modal-box" style="background:#fff; border:4px solid #212121; border-radius:16px; box-shadow:8px 8px 0px #212121; padding:32px; max-width:500px; width:90%; position:relative;">
-                    <button class="modal-close" onclick="closeSpotModal()" style="position:absolute; top:20px; right:20px; background:none; border:2px solid #212121; border-radius:50%; width:36px; height:36px; font-weight:bold; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0px #212121;">✕</button>
+                <div class="modal-box" style="background:#fff; border:4px solid #212121; border-radius:16px; box-shadow:8px 8px 0px #212121; padding:32px; max-width:600px; width:90%; position:relative; max-height:90vh; overflow-y:auto;">
+                    <button class="modal-close" onclick="closeSpotModal()" style="position:absolute; top:20px; right:20px; background:none; border:2px solid #212121; border-radius:50%; width:36px; height:36px; font-weight:bold; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0px #212121; z-index:1;">✕</button>
                     <h2 class="modal-title" style="margin:0 0 24px 0; font-family:\'Bungee\', cursive; font-size:24px;">' . $this->lang['discover_modal_title'] . '</h2>
                     <form onsubmit="return false;" style="display:flex; flex-direction:column; gap:16px; font-family:\'Inter\', sans-serif;">
+                        <!-- Titre -->
                         <input type="text" placeholder="' . $this->lang['discover_title_placeholder'] . '" id="spotTitle" style="padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none;" required>
+                        
+                        <!-- Location -->
                         <input type="text" placeholder="' . $this->lang['discover_location_placeholder'] . '" id="spotLocation" style="padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none;" required>
+                        
+                        <!-- Description -->
                         <textarea placeholder="' . $this->lang['discover_description_placeholder'] . '" id="spotDescription" rows="3" style="padding:12px; border:3px solid #212121; border-radius:8px; font-family:inherit; font-size:14px; outline:none; resize:vertical;"></textarea>
+                        
+                        <!-- Latitude & Longitude -->
+                        <div style="display:flex; gap:12px; width:100%;">
+                            <input type="number" placeholder="📍 Latitude (ex: 48.8566)" id="spotLatitude" step="0.000001" min="-90" max="90" style="flex:1; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none;" required>
+                            <input type="number" placeholder="📍 Longitude (ex: 2.3522)" id="spotLongitude" step="0.000001" min="-180" max="180" style="flex:1; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none;" required>
+                        </div>
+                        
+                        <!-- Catégorie & Image -->
                         <div style="display:flex; align-items:center; gap:16px; width:100%;">
                             <select id="spotCategory" style="flex:1; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none; cursor:pointer;">
                                 <option value="nature">🌿 ' . $this->lang['discover_category_nature'] . '</option>
@@ -40,26 +57,64 @@ class Discover extends View {
                             </select>
                             <input type="file" accept="image/*" id="spotImage" style="flex:1; min-width:0; padding:12px; border:3px solid #212121; border-radius:8px; font-size:14px; outline:none; background:#f5eedc; overflow:hidden; max-width:100%;">
                         </div>
+                        
+                        <!-- Submit Button -->
                         <button type="button" onclick="saveSpot()" style="margin-top:8px; padding:14px; border:3px solid #212121; border-radius:8px; background:#fbad40; color:#212121; font-family:\'Bungee\', cursive; font-size:16px; cursor:pointer; box-shadow:4px 4px 0px #212121; transition:transform 0.1s;">' . $this->lang['discover_publish'] . '</button>
                     </form>
                 </div>
             </div>
             <script>
             function openSpotModal() { document.getElementById("spotModal").style.display = "flex"; }
-            function closeSpotModal() { document.getElementById("spotModal").style.display = "none"; }
+            function closeSpotModal() { 
+                document.getElementById("spotModal").style.display = "none";
+                // Réinitialiser le formulaire
+                document.getElementById("spotTitle").value = "";
+                document.getElementById("spotLocation").value = "";
+                document.getElementById("spotDescription").value = "";
+                document.getElementById("spotLatitude").value = "";
+                document.getElementById("spotLongitude").value = "";
+                document.getElementById("spotCategory").value = "nature";
+                document.getElementById("spotImage").value = "";
+            }
+            
             function saveSpot() {
                 const title = document.getElementById("spotTitle").value.trim();
                 const location = document.getElementById("spotLocation").value.trim();
                 const description = document.getElementById("spotDescription").value.trim();
+                const latitude = document.getElementById("spotLatitude").value.trim();
+                const longitude = document.getElementById("spotLongitude").value.trim();
                 const category = document.getElementById("spotCategory").value;
                 const imageFile = document.getElementById("spotImage").files[0];
 
-                if (!title || !location) { alert("' . $this->lang['discover_error_fill'] . '"); return; }
+                if (!title || !location) { 
+                    alert("' . $this->lang['discover_error_fill'] . '"); 
+                    return; 
+                }
+
+                if (!latitude || !longitude) { 
+                    alert("Les coordonnées GPS (latitude et longitude) sont obligatoires !"); 
+                    return; 
+                }
+
+                const lat = parseFloat(latitude);
+                const lng = parseFloat(longitude);
+
+                if (isNaN(lat) || lat < -90 || lat > 90) {
+                    alert("Latitude invalide ! Doit être entre -90 et 90");
+                    return;
+                }
+
+                if (isNaN(lng) || lng < -180 || lng > 180) {
+                    alert("Longitude invalide ! Doit être entre -180 et 180");
+                    return;
+                }
 
                 const formData = new FormData();
                 formData.append("title", title);
                 formData.append("location", location);
                 formData.append("description", description);
+                formData.append("latitude", latitude);
+                formData.append("longitude", longitude);
                 formData.append("category", category);
                 if (imageFile) {
                     formData.append("image", imageFile);
@@ -148,6 +203,11 @@ class Discover extends View {
                 of: "' . ($this->lang['discover_of'] ?? 'OF') . '"
             };
         </script>
+        
+        <!-- ✅ CHARGER DISCOVER-MAP.JS POUR LA CARTE -->
+        <script src="public/js/discover-map.js"></script>
+        
+        <!-- ✅ CHARGER DISCOVER.JS POUR LA GRILLE DES SPOTS -->
         <script src="public/js/discover.js"></script>
         ';
     }

@@ -195,6 +195,38 @@ class Spot
         return $stmt->fetchAll();
     }
 
+    /**
+     * ✨ NOUVEAU — Récupère tous les spots avec coordonnées pour la carte (Discover)
+     * Utilisé par le JavaScript Leaflet pour afficher les marqueurs
+     */
+    public function getAllWithCoordinates(int $limit = 500): array
+    {
+        $sql = "SELECT s.id, 
+                       s.title, 
+                       s.description, 
+                       s.image, 
+                       s.location, 
+                       s.latitude, 
+                       s.longitude, 
+                       s.category,
+                       s.created_at,
+                       u.username,
+                       (SELECT COUNT(*) FROM likes WHERE spot_id = s.id) AS likes_count
+                FROM spots s
+                JOIN users u ON u.id = s.user_id
+                WHERE s.status = 'published' 
+                  AND u.is_active = 1 
+                  AND s.latitude IS NOT NULL 
+                  AND s.longitude IS NOT NULL
+                ORDER BY s.created_at DESC
+                LIMIT :limit";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // ─── MODIFICATION ────────────────────────────────────────
 
     /**
