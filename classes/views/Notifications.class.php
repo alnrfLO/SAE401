@@ -89,8 +89,8 @@ class Notifications extends Dashboard
             transition: background 0.15s, border-color 0.15s;
             position: relative;
         }
-        .notif-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
-        .notif-item--unread { background: rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.2); }
+        .notif-item:hover { background: rgb(70, 0, 184); border-color: rgba(255,255,255,0.12); }
+        .notif-item--unread { background: rgb(99, 101, 241); border-color: rgba(99,102,241,0.2); }
         .notif-item--unread:hover { background: rgba(99,102,241,0.12); }
 
         .notif-avatar { flex-shrink: 0; }

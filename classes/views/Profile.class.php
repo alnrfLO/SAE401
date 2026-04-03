@@ -51,12 +51,19 @@ class Profile extends View
 
         // Build spots grid HTML
         $spotsHtml = '<style>
-            .prof-spot-card { border: 2px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.05); transition: all 0.2s; display: block; text-decoration: none; color: inherit; }
-            .prof-spot-card:hover { border-color: #fbad40; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+            .prof-spots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin: 16px; width: 100%; box-sizing: border-box; }
+            .prof-spot-card { border: 2px solid #212121; border-radius: 10px; overflow: hidden; background: #fff; transition: all 0.2s; display: flex; flex-direction: column; text-decoration: none; color: inherit; box-shadow: 3px 3px 0 #212121; min-width: 0; }
+            .prof-spot-card:hover { border-color: #fbad40; transform: translateY(-2px); box-shadow: 3px 5px 0 #fbad40; }
+            .prof-spot-card-img-wrap { aspect-ratio: 4/3; overflow: hidden; position: relative; flex-shrink: 0; }
+            .prof-spot-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+            .prof-spot-card-likes { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.65); color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+            .prof-spot-card-body { padding: 10px 12px 12px; }
+            .prof-spot-card-title { margin: 0; font-size: 14px; font-weight: 700; font-family: "Bungee", cursive; color: #212121; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .prof-spot-card-loc { margin: 4px 0 0; font-size: 13px; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         </style>';
         
         if ($spotsCount > 0 && !empty($userSpots)) {
-            $spotsHtml .= '<div class="prof-spots-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">';
+            $spotsHtml .= '<div class="prof-spots-grid">';
             foreach ($userSpots as $spot) {
                 $imgSrc = !empty($spot['image']) ? htmlspecialchars($spot['image'], ENT_QUOTES) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23212121%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23fff%22 font-family=%22sans-serif%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ENO IMAGE%3C/text%3E%3C/svg%3E';
                 $title = htmlspecialchars($spot['title'], ENT_QUOTES);
@@ -65,15 +72,13 @@ class Profile extends View
                 
                 $spotsHtml .= '
                 <a href="?page=spot&id=' . $spotId . '" class="prof-spot-card">
-                    <div style="aspect-ratio: 4/3; overflow: hidden; position: relative;">
-                        <img src="' . $imgSrc . '" alt="' . $title . '" style="width: 100%; height: 100%; object-fit: cover;">
-                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
-                            ♥ ' . ($spot['likes_count'] ?? 0) . '
-                        </div>
+                    <div class="prof-spot-card-img-wrap">
+                        <img src="' . $imgSrc . '" alt="' . $title . '">
+                        <div class="prof-spot-card-likes">♥ ' . ($spot['likes_count'] ?? 0) . '</div>
                     </div>
-                    <div style="padding: 12px;">
-                        <h3 style="margin: 0; font-size: 16px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: \'Bungee\', cursive;">' . $title . '</h3>
-                        <p style="margin: 4px 0 0 0; font-size: 14px; color: #ccc;">📍 ' . $location . '</p>
+                    <div class="prof-spot-card-body">
+                        <h3 class="prof-spot-card-title">' . $title . '</h3>
+                        <p class="prof-spot-card-loc">📍 ' . $location . '</p>
                     </div>
                 </a>';
             }
@@ -188,14 +193,6 @@ class Profile extends View
                 <div class="prof-stat">
                     <span class="prof-stat-value">' . $spotsCount . '</span>
                     <span class="prof-stat-label">Spots</span>
-                </div>
-                <div class="prof-stat">
-                    <span class="prof-stat-value">' . $followersCount . '</span>
-                    <span class="prof-stat-label">Followers</span>
-                </div>
-                <div class="prof-stat">
-                    <span class="prof-stat-value">' . $followingCount . '</span>
-                    <span class="prof-stat-label">Following</span>
                 </div>
                 <div class="prof-stat">
                     <span class="prof-stat-value">' . $likesCount . '</span>
@@ -778,15 +775,15 @@ if (avatarInput) {
 
         return '
         <div class="profile-agenda-section">
-            <div class="profile-agenda-header">
-                <h2 class="profile-agenda-title">
+            <div class="prof-card prof-card--agenda">
+                <h2 class="prof-card-title profile-agenda-heading">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                         <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd"/>
                     </svg>
                     ' . $username . '\'s Upcoming Events
                 </h2>
+                ' . $body . '
             </div>
-            ' . $body . '
         </div>
 
         <style>
@@ -795,20 +792,8 @@ if (avatarInput) {
             margin: 0 auto 48px;
             padding: 0 24px;
         }
-        .profile-agenda-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .profile-agenda-heading {
             margin-bottom: 16px;
-        }
-        .profile-agenda-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: "Bungee", cursive;
-            font-size: 18px;
-            color: #fff;
-            margin: 0;
         }
         .profile-agenda-list {
             display: flex;
@@ -819,15 +804,15 @@ if (avatarInput) {
             display: flex;
             align-items: flex-start;
             gap: 16px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.1);
             border-radius: 12px;
             padding: 14px 18px;
             transition: border-color 0.15s, background 0.15s;
         }
         .profile-agenda-item:hover {
-            background: rgba(255,255,255,0.07);
-            border-color: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.07);
+            border-color: rgba(0,0,0,0.18);
         }
         .profile-agenda-date {
             display: flex;
@@ -835,8 +820,8 @@ if (avatarInput) {
             align-items: center;
             justify-content: center;
             min-width: 48px;
-            background: rgba(99,102,241,0.15);
-            border: 1px solid rgba(99,102,241,0.3);
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.35);
             border-radius: 10px;
             padding: 6px 10px;
             flex-shrink: 0;
@@ -844,13 +829,13 @@ if (avatarInput) {
         .profile-agenda-day {
             font-size: 22px;
             font-weight: 700;
-            color: #a78bfa;
+            color: #4f46e5;
             line-height: 1;
         }
         .profile-agenda-month {
             font-size: 11px;
             font-weight: 700;
-            color: rgba(167,139,250,0.7);
+            color: #6d66c8;
             letter-spacing: .05em;
         }
         .profile-agenda-info {
@@ -866,30 +851,30 @@ if (avatarInput) {
             margin-bottom: 4px;
             letter-spacing: .04em;
         }
-        .profile-agenda-badge--public   { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
-        .profile-agenda-badge--shared   { background: rgba(251,174,64,0.15); color: #fbad40; border: 1px solid rgba(251,174,64,0.3); }
-        .profile-agenda-badge--invited  { background: rgba(99,102,241,0.15); color: #a78bfa; border: 1px solid rgba(99,102,241,0.3); }
+        .profile-agenda-badge--public   { background: rgba(34,197,94,0.15);  color: #16a34a; border: 1px solid rgba(34,197,94,0.4); }
+        .profile-agenda-badge--shared   { background: rgba(251,174,64,0.18); color: #b45309; border: 1px solid rgba(251,174,64,0.5); }
+        .profile-agenda-badge--invited  { background: rgba(99,102,241,0.12); color: #4f46e5; border: 1px solid rgba(99,102,241,0.35); }
         .profile-agenda-title-text,
         .profile-agenda-item .profile-agenda-info > div:not(.profile-agenda-meta):not(.profile-agenda-badge) {
             font-size: 15px;
             font-weight: 600;
-            color: #fff;
+            color: #111;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .profile-agenda-title { font-size: 15px; font-weight: 600; color: #fff; }
+        .profile-agenda-title { font-size: 15px; font-weight: 600; color: #111; }
         .profile-agenda-meta {
             font-size: 13px;
-            color: rgba(255,255,255,0.45);
+            color: rgba(0,0,0,0.5);
             margin-top: 3px;
         }
         .profile-agenda-empty {
             text-align: center;
             padding: 40px 20px;
-            color: rgba(255,255,255,0.35);
-            background: rgba(255,255,255,0.03);
-            border: 1px dashed rgba(255,255,255,0.1);
+            color: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.03);
+            border: 1px dashed rgba(0,0,0,0.12);
             border-radius: 12px;
         }
         .profile-agenda-empty span { font-size: 32px; display: block; margin-bottom: 8px; }
