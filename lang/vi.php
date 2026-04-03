@@ -187,4 +187,17 @@ $lang = [
     'spot_error_comment' => 'Không thể gửi bình luận',
     'spot_system_error' => 'Lỗi hệ thống',
     'spot_date_format' => 'j F, Y',
+
+    'presentation_title' => 'GIỚI THIỆU VỀ FAV',
+    'presentation_subtitle' => 'Liên minh văn hóa giữa Pháp, Albania và Việt Nam.',
+    'presentation_principle_title' => 'NGUYÊN TẮC CỦA CHÚNG TÔI',
+    'presentation_principle_text' => 'FAV là một nền tảng hợp tác ra đời từ một dự án sinh viên (SAE 401). Mục tiêu của chúng tôi là tạo ra một cây cầu kỹ thuật số giữa ba nền văn hóa tuyệt vời: Pháp, Albania và Việt Nam. Chúng tôi tin rằng việc chia sẻ các "địa điểm" địa phương cho dù đó là phong cảnh tiềm ẩn, nhà hàng đích thực hay thắng cảnh văn hóa là cách tốt nhất để thúc đẩy sự khám phá và tôn trọng lẫn nhau.',
+    'presentation_team_title' => 'NHÓM FAV',
+    'presentation_team_subtitle' => 'Những sinh viên đam mê từ nhiều lĩnh vực khác nhau.',
+    'presentation_team_france' => 'Nhóm Pháp',
+    'presentation_team_albania' => 'Nhóm Albania',
+    'presentation_team_vietnam' => 'Nhóm Việt Nam',
+    'presentation_team_desc_fr' => 'Sinh viên MMI tại IUT de Bobigny, mang đến chuyên môn kỹ thuật và sáng tạo.',
+    'presentation_team_desc_al' => 'Những sinh viên đam mê chia sẻ những viên ngọc ẩn của vùng Balkan.',
+    'presentation_team_desc_vi' => 'Đại sứ văn hóa Việt Nam và những phong cảnh ngoạn mục của đất nước.',
 ];

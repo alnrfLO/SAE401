@@ -834,6 +834,10 @@ switch ($page) {
         $view = new Directory(['page' => 'directory']);
     break;
 
+    case 'presentation':
+        $view = new Presentation(['page' => 'presentation']);
+    break;
+
     case 'news':
         $newsModel = new NewsModel($pdo);
         $newsItems = $newsModel->getAll();

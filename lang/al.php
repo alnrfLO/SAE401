@@ -187,4 +187,17 @@ $lang = [
     'spot_error_comment' => 'Nuk mund të dërgoheh komenti',
     'spot_system_error' => 'Gabim sistemi',
     'spot_date_format' => 'j F Y',
+
+    'presentation_title' => 'PREZANTIMI I FAV',
+    'presentation_subtitle' => 'Aleanca kulturore midis Francës, Shqipërisë dhe Vietnamit.',
+    'presentation_principle_title' => 'PARIMI YNË',
+    'presentation_principle_text' => 'FAV është një platformë bashkëpunuese e lindur nga një projekt studentor (SAE 401). Qëllimi ynë është të krijojmë një urë dixhitale midis tre kulturave të mrekullueshme: Francës, Shqipërisë dhe Vietnamit. Ne besojmë se ndarja e "pikave" lokale qofshin ato peizazhe të fshehura, restorante autentike ose monumente kulturore është mënyra më e mirë për të nxitur zbulimin dhe respektin reciprok.',
+    'presentation_team_title' => 'EKIEPI FAV',
+    'presentation_team_subtitle' => 'Studentë të apasionuar nga horizonte të ndryshme.',
+    'presentation_team_france' => 'Ekipi Francez',
+    'presentation_team_albania' => 'Ekipi Shqiptar',
+    'presentation_team_vietnam' => 'Ekipi Vietnamez',
+    'presentation_team_desc_fr' => 'Studentë të MMI në IUT de Bobigny, duke sjellë ekspertizë teknike dhe kreative.',
+    'presentation_team_desc_al' => 'Studentë të apasionuar që ndajnë xhevahiret e fshehura të Ballkanit.',
+    'presentation_team_desc_vi' => 'Ambasadorë të kulturës vietnameze dhe peizazheve të saj mahnitëse.',
 ];

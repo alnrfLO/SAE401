@@ -187,4 +187,17 @@ $lang = [
     'spot_error_comment' => 'Could not post comment',
     'spot_system_error' => 'System error',
     'spot_date_format' => 'F j, Y',
+
+    'presentation_title' => 'PRESENTATION OF FAV',
+    'presentation_subtitle' => 'The cultural alliance between France, Albania, and Vietnam.',
+    'presentation_principle_title' => 'OUR PRINCIPLE',
+    'presentation_principle_text' => 'FAV is a collaborative platform born from a student project (SAE 401). Our goal is to create a digital bridge between three magnificent cultures: France, Albania, and Vietnam. We believe that sharing local "spots"  whether they are hidden landscapes, authentic restaurants, or cultural landmarks is the best way to foster discovery and mutual respect.',
+    'presentation_team_title' => 'THE FAV TEAM',
+    'presentation_team_subtitle' => 'Passionate students from diverse horizons.',
+    'presentation_team_france' => 'French Team',
+    'presentation_team_albania' => 'Albanian Team',
+    'presentation_team_vietnam' => 'Vietnamese Team',
+    'presentation_team_desc_fr' => 'MMI students at IUT de Bobigny, bringing technical and creative expertise.',
+    'presentation_team_desc_al' => 'Passionate students sharing the hidden gems of the Balkans.',
+    'presentation_team_desc_vi' => 'Ambassadors of Vietnamese culture and its breathtaking landscapes.',
 ];
