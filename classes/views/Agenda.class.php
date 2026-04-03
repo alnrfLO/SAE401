@@ -192,7 +192,6 @@ class Agenda extends Dashboard
                     <div class="modal-field">
                         <label>SEARCH USER</label>
                         <div class="invite-search-wrap">
-                            <svg class="invite-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd"/></svg>
                             <input type="text" class="invite-search-input" id="inviteSearchInput"
                                    placeholder="Type a username…" autocomplete="off">
                         </div>
@@ -692,7 +691,7 @@ document.addEventListener('DOMContentLoaded', function() {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 14px;
-            margin-top: 8px;
+            margin: 8px;
         }
         .invitation-card {
             background: var(--card-bg, #1a1a2e);
@@ -746,7 +745,7 @@ document.addEventListener('DOMContentLoaded', function() {
             background: rgba(255,255,255,0.06);
             border: 1.5px solid rgba(255,255,255,0.15);
             border-radius: 10px;
-            padding: 0 12px;
+            padding: 0;
             gap: 8px;
             transition: border-color 0.2s;
         }

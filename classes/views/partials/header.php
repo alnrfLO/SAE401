@@ -10,7 +10,7 @@
         border-radius: 10px;
         background: rgba(255,255,255,0.07);
         border: 1px solid rgba(255,255,255,0.1);
-        color: rgba(255,255,255,0.8);
+        color: rgba(0, 0, 0, 0.8);
         text-decoration: none;
         font-size: 18px;
         transition: background 0.15s, color 0.15s;
