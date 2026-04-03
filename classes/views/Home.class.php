@@ -63,7 +63,7 @@ class Home extends View
         <section id="video" class="video-section">
             <div class="video-wrapper">
                 <video controls>
-                    <source src="" type="video/mp4">
+                    <source src="public/video.mp4" type="video/mp4">
                 </video>
             </div>
             <button class="video-btn">
